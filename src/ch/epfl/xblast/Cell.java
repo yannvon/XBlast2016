@@ -30,6 +30,9 @@ public final class Cell {
     //retourne le tableau de cellules dans l'ordre spirale
     private static ArrayList<Cell> spiralOrder(){
         //test
+        int[] ix={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+        int[] iy={0,1,2,3,4,5,6,7,8,9,10,11,12};
+        
         
     }
     
