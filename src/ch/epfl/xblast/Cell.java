@@ -30,10 +30,13 @@ public final class Cell {
     //retourne le tableau de cellules dans l'ordre spirale
     private static ArrayList<Cell> spiralOrder(){
         //test
-        ArrayList<Cell> ix=new ArrayList<Cell>();
-        ArrayList<Cell> iy=new ArrayList<Cell>();
+        ArrayList<Integer> ix=new ArrayList<Integer>();
+        ArrayList<Integer> iy=new ArrayList<Integer>();
         for(int i=0; i<COLUMNS;i++){
-            ix.add
+            ix.add(i)
+        }
+        for(int i=0; i<ROWS;i++){
+            iy.add(i)
         }
         boolean horizontal=true;
         ArrayList<Cell> spiral=new ArrayList<Cell>();
