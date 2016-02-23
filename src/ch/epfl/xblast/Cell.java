@@ -12,7 +12,7 @@ public final class Cell {
 
     public final static int COLUMNS=15,ROWS=13,COUNT=ROWS*COLUMNS;
     public final static List<Cell> ROW_MAJOR_ORDER=Collections.unmodifiableList(rowMajorOrder());
-    public final static List<Cell> SPIRAL_ORDER;
+    public final static List<Cell> SPIRAL_ORDER=Collections.unmodifiableList(spiralOrder());;
     private final int x,y;
     
     //retourne le tableau de cellules dans l'ordre de lecture
@@ -50,6 +50,7 @@ public final class Cell {
             i1= Collection.reverse(i1);
             horizontal= !horizontal;
         }
+        return spiral;
         
     }
     
