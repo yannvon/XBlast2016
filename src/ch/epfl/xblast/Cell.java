@@ -30,14 +30,19 @@ public final class Cell {
     //retourne le tableau de cellules dans l'ordre spirale
     private static ArrayList<Cell> spiralOrder(){
         //test
-        int[] ix={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
-        int[] iy={0,1,2,3,4,5,6,7,8,9,10,11,12};
-        
+        ArrayList<Cell> ix=new ArrayList<Cell>();
+        ArrayList<Cell> iy=new ArrayList<Cell>();
+        for(int i=0; i<COLUMNS;i++){
+            ix.add
+        }
+        boolean horizontal=true;
+        ArrayList<Cell> spiral=new ArrayList<Cell>();
+        while()
         
     }
     
     
-    
+    //constructeur
     public Cell(int x,int y){
         this.x=Math.floorMod(x, COLUMNS);
         this.y=Math.floorMod(x, ROWS);;
