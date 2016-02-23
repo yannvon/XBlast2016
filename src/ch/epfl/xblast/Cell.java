@@ -40,9 +40,12 @@ public final class Cell {
         boolean horizontal=true;
         ArrayList<Cell> spiral=new ArrayList<Cell>();
         while(!ix.isEmpty() && !iy.isEmpty()){
-            ArrayList<Integer> i1 = horizontal ? ix : iy
-            
-            
+            ArrayList<Integer> i1 = horizontal ? ix : iy ;
+            ArrayList<Integer> i2 = horizontal ? iy : ix ;
+            int c2 = 
+            for (int c1=0; c1<i1.size(); c1++){
+                
+            }
         }
         
     }
