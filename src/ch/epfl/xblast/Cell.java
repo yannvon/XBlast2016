@@ -48,13 +48,13 @@ public final class Cell {
     }
     
     public int rowMajorIndex(){
-        return x+y*ROWS;
+        return x+y*ROWS;    //FIXME shouldn't it be COLUMNS?
     }
     
     public  Cell neighbor(Direction dir){
         switch(dir){
         case N:
-            return new Cell(x,Math.floorMod(y-1,ROWS));
+            return new Cell(x,Math.floorMod(y-1,ROWS)); //FIXME do we really need to use floorMod here?
         case S:
             return new Cell(x,Math.floorMod(y+1,ROWS));
         case W:
@@ -62,7 +62,7 @@ public final class Cell {
         case E:
             return new Cell(Math.floorMod(x+1,COLUMNS),y);
         }
-        throw new Error("quel est cette direction?");
+        throw new Error("quel est cette direction?");   //FIXME maybe we should add Direction NONE?
     }
     
     public boolean equals(Object that){
