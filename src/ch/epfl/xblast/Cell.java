@@ -29,7 +29,6 @@ public final class Cell {
     
     //retourne le tableau de cellules dans l'ordre spirale
     private static ArrayList<Cell> spiralOrder(){
-        //test
         ArrayList<Integer> ix=new ArrayList<Integer>();
         ArrayList<Integer> iy=new ArrayList<Integer>();
         for(int i=0; i<COLUMNS;i++){
@@ -40,7 +39,11 @@ public final class Cell {
         }
         boolean horizontal=true;
         ArrayList<Cell> spiral=new ArrayList<Cell>();
-        while()
+        while(!ix.isEmpty() && !iy.isEmpty()){
+            ArrayList<Integer> i1 = horizontal ? ix : iy
+            
+            
+        }
         
     }
     
@@ -60,7 +63,7 @@ public final class Cell {
     }
     
     public int rowMajorIndex(){
-        return x+y*ROWS;    //FIXME shouldn't it be COLUMNS?
+        return x+y*COLUMNS;    //FIXME shouldn't it be COLUMNS?
     }
     
     public Cell neighbor(Direction dir){
