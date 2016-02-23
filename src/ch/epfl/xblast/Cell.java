@@ -42,10 +42,13 @@ public final class Cell {
         while(!ix.isEmpty() && !iy.isEmpty()){
             ArrayList<Integer> i1 = horizontal ? ix : iy ;
             ArrayList<Integer> i2 = horizontal ? iy : ix ;
-            int c2 = 
+            int c2 = i2.get(0);
+            i2.remove(0);
             for (int c1=0; c1<i1.size(); c1++){
-                
+                spiral.add(horizontal? new Cell(c1,c2) :new Cell(c2,c1) );
             }
+            i1= Collection.reverse(i1);
+            horizontal= !horizontal;
         }
         
     }
