@@ -1,19 +1,24 @@
 package ch.epfl.xblast;
 
 /**
- * Represents a sub cell.
+ * An immutable sub cell.
  * 
  * @author Loïc Vandenberghe (257742)
- * @author Yann (258857)
+ * @author Yann Vonlanthen (258857)
  *
  */
 public final class SubCell {
     
-    //attributes
+    // Constants related to the devision of the Game Board into Sub Cells
+    public final static int COLUMNS = 240;
+    public final static int ROWS = 208;
+    public final static int COUNT = ROWS * COLUMNS;
+    public final static int SUBDIVISION = 16;
+    public final static int CENTRAL = 8;
+    
+    // Attributes
     private final int x, y;
-    //constants
-    public final static int COLUMNS = 240, ROWS = 208, COUNT = ROWS * COLUMNS;
-    public final static int SUBDIVISION = 16, CENTRAL=8;
+    
     /**
      * @param cell
      * @return 

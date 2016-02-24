@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * An immutable Cell.
  *  
- * @author LoicVandenberghe (257742)
+ * @author Loic Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  */
 public final class Cell {
@@ -21,7 +21,7 @@ public final class Cell {
     public final static List<Cell> ROW_MAJOR_ORDER = Collections.unmodifiableList(rowMajorOrder());
     public final static List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());
 
-    // Class Variables
+    // Attributes
     private final int x, y;           //FIXME ask assistant if its better on one line or not (ca m'interess ;)
 
     /**
