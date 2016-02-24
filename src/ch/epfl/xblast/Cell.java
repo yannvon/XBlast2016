@@ -5,81 +5,71 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * An immutable Cell.
+ *  
  * @author LoicVandenberghe (257742)
  * @author Yann Vonlanthen (258857)
- *
  */
 public final class Cell {
+
+    // Constants defining the Game Board size
+    public final static int COLUMNS = 15;
+    public final static int ROWS = 13;
+    public final static int COUNT = ROWS * COLUMNS;
     
-    //Constants
-    public final static int COLUMNS = 15, ROWS = 13, COUNT = ROWS * COLUMNS;
+    // Unmodifiable arrays containing all Cells of the Game Board
     public final static List<Cell> ROW_MAJOR_ORDER = Collections.unmodifiableList(rowMajorOrder());
-    public final static List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());;
-    //attributes
-    private final int x, y;
+    public final static List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());
+
+    // Class Variables
+    private final int x, y;           //FIXME ask assistant if its better on one line or not (ca m'interess ;)
 
     /**
-     * @return ArrayList<Cell> tableau de cellules dans l'ordre de lecture
+     * Sole Cell constructor.
+     * Accepts every integer as parameter, but the coordinates are then
+     * normalized to fit inside the Game Board.
+     * 
+     * @param x
+     *            x-coordinate
+     * @param y
+     *            y-coordinate
      */
-    private static ArrayList<Cell> rowMajorOrder() {
-        ArrayList<Cell> order = new ArrayList<Cell>();
-
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                order.add(new Cell(j, i));
-            }
-        }
-        return order;
-    }
-
-    // retourne le tableau de cellules dans l'ordre spirale
-    private static ArrayList<Cell> spiralOrder() {
-        ArrayList<Integer> ix = new ArrayList<Integer>();
-        ArrayList<Integer> iy = new ArrayList<Integer>();
-        for (int i = 0; i < COLUMNS; i++) {
-            ix.add(i);
-        }
-        for (int i = 0; i < ROWS; i++) {
-            iy.add(i);
-        }
-        boolean horizontal = true;
-        ArrayList<Cell> spiral = new ArrayList<Cell>();
-        while (!ix.isEmpty() && !iy.isEmpty()) {
-            ArrayList<Integer> i1 = horizontal ? ix : iy;
-            ArrayList<Integer> i2 = horizontal ? iy : ix;
-            int c2 = i2.get(0);
-            i2.remove(0);
-            for (int c1 = 0; c1 < i1.size(); c1++) {
-                spiral.add(horizontal ? new Cell(i1.get(c1), c2) : new Cell(c2,i1.get(c1) ));
-            }
-            Collections.reverse(i1);
-            horizontal = !horizontal;
-        }
-        return spiral;
-
-    }
-
-    // constructeur
     public Cell(int x, int y) {
         this.x = Math.floorMod(x, COLUMNS);
         this.y = Math.floorMod(y, ROWS);
     }
-
+    
+    /**
+     * Getter for the x-coordinate of the Cell.
+     * @return the x-coordinate
+     */
     public int x() {
         return x;
     }
 
+    /**
+     * Getter for the y-coordinate of the Cell.
+     * @return the y-coordinate
+     */
     public int y() {
         return y;
     }
-
-    public int rowMajorIndex() {
-        return x + y * COLUMNS; // FIXME shouldn't it be COLUMNS?
-    }
-
+    
     /**
+     * Returns the Index of the Cell following the reading order.
+     * @return reading order index of Cell
+     */
+    public int rowMajorIndex() {
+        return x + y * COLUMNS;
+    }
+    
+    /**
+     * Returns the neighboring cell in given Direction. Since the Game Board is
+     * considered a torus, this Cell always exists.
+     * 
      * @param dir
-     * @return
+     *            direction of the neighbor
+     * @return the neighboring Cell in given Direction
      */
     public Cell neighbor(Direction dir) {
         switch (dir) {
@@ -94,7 +84,8 @@ public final class Cell {
         }
         throw new Error();
     }
-
+    
+    @Override   //FIXME not 100 % sure how to comment this correctly, seems okey though
     public boolean equals(Object that) {
         if (that == null) {
             return false;
@@ -104,8 +95,65 @@ public final class Cell {
         }
         return false;
     }
-
+    
+    @Override
     public String toString() {
         return "(" + x + "," + y + ")";
     }
+    
+    /**
+     * Constructs an array containing all Cells of the Game Board following the
+     * reading order.
+     * 
+     * @return ordered array of Cells
+     */
+    private static ArrayList<Cell> rowMajorOrder() {
+        ArrayList<Cell> readingOrder = new ArrayList<Cell>();
+
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                readingOrder.add(new Cell(j, i));
+            }
+        }
+        return readingOrder;
+    }
+
+    /**
+     * Constructs an array containing all Game Board Cells following the spiral
+     * order (using the COLUMNS and ROWS constants)
+     * 
+     * @return ordered array of Cells
+     */
+    private static ArrayList<Cell> spiralOrder() {
+        // Declare and fill two arrays that are useful for the ordering algorithm
+        ArrayList<Integer> ix = new ArrayList<Integer>();
+        ArrayList<Integer> iy = new ArrayList<Integer>();
+        for (int i = 0; i < COLUMNS; i++) {
+            ix.add(i);
+        }
+        for (int i = 0; i < ROWS; i++) {
+            iy.add(i);
+        }
+        
+        // Declare needed variables
+        boolean horizontal = true;
+        ArrayList<Cell> spiral = new ArrayList<Cell>();
+        
+        // Ordering Algorithm
+        while (!ix.isEmpty() && !iy.isEmpty()) {
+            ArrayList<Integer> i1 = horizontal ? ix : iy;
+            ArrayList<Integer> i2 = horizontal ? iy : ix;
+            int c2 = i2.get(0);
+            i2.remove(0);
+            for (int c1 : i1) {
+                spiral.add(horizontal ? new Cell(c1, c2)
+                        : new Cell(c2, c1));
+            }
+            Collections.reverse(i1);
+            horizontal = !horizontal;
+        }
+        return spiral;
+    }
+    
+    //TODO add method hashCode()
 }
