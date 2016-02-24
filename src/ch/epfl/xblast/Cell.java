@@ -22,9 +22,9 @@ public final class Cell {
     private static ArrayList<Cell> rowMajorOrder() {
         ArrayList<Cell> order = new ArrayList<Cell>();
 
-        for (int i = 0; i < COLUMNS; i++) {
-            for (int j = 0; j < ROWS; j++) {
-                order.add(new Cell(i, j));
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                order.add(new Cell(j, i));
             }
         }
         return order;
@@ -48,7 +48,7 @@ public final class Cell {
             int c2 = i2.get(0);
             i2.remove(0);
             for (int c1 = 0; c1 < i1.size(); c1++) {
-                spiral.add(horizontal ? new Cell(c1, c2) : new Cell(c2, c1));
+                spiral.add(horizontal ? new Cell(i1.get(c1), c2) : new Cell(c2,i1.get(c1) ));
             }
             Collections.reverse(i1);
             horizontal = !horizontal;
