@@ -1,13 +1,18 @@
-//-------Project:XBlast
-//-------Name:LoicVandenberghe
-
-//------------------------------------
 package ch.epfl.xblast;
 
+/**
+ * Enum of Directions.
+ * 
+ * @author LoicVandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ */
 public enum Direction {
     N, E, S, W;
 
-    // retourne l'opposé
+    /**
+     * Returns the opposite Direction.
+     * @return the opposite Direction
+     */
     public Direction opposite() {
         switch (this) {
         case N:
@@ -19,11 +24,14 @@ public enum Direction {
         case W:
             return E;
         default:
-            throw new Error();
+            throw new Error();  //FIXME
         }
     }
 
-    // retourne true si la direction est horizontale
+    /**
+     * Determines whether the Direction is horizontal or not.
+     * @return true if horizontal, false otherwise
+     */
     public boolean isHorizontal() {
         switch (this) {
         case E:
@@ -37,7 +45,13 @@ public enum Direction {
         }
     }
 
-    // retourne true si la direction est parallèle à celle donné
+    /**
+     * Determines whether two Directions are parallel to each other
+     * 
+     * @param that
+     *            the other Direction
+     * @return true if that is parallel to Direction, false otherwise
+     */
     public boolean isParallelTo(Direction that) {
         return this == that || this == that.opposite();
     }
