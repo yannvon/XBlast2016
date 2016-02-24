@@ -65,6 +65,16 @@ public final class SubCell {
         return new Cell(x/SUBDIVISION,y/SUBDIVISION);
     }
     
+    public boolean equals(Object that){
+        if (that == null) {
+            return false;
+        }
+        if (this.getClass().equals(that.getClass())) {
+            return this.x == ((SubCell) that).x() && this.y() == ((SubCell) that).y();
+        }
+        return false;
+    }
+    
     public int y(){
         return y;
     }
@@ -73,6 +83,9 @@ public final class SubCell {
         return x;
     }
     
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
     
 
 }

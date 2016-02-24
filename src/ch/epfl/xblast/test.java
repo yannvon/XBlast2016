@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class test {
     public static void main(String[] args) {
-        final List<String> a = null;
-        System.out.println(a.getClass());
+        Cell a= new Cell(0,1);
+        SubCell.centralSubCellOf(a);
     }
 }
