@@ -22,7 +22,6 @@ public final class SubCell {
         //define the coordinates of the SubCell according to the given cell
         int x = cell.x()*SUBDIVISION+CENTRAL;
         int y = cell.y()*SUBDIVISION+CENTRAL;
-        System.out.println(x+"  "+y);
         return new SubCell(x,y);
     }
     
