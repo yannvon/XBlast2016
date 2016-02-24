@@ -13,16 +13,16 @@ public final class SubCell {
     private final int x, y;
     //constants
     public final static int COLUMNS = 240, ROWS = 208, COUNT = ROWS * COLUMNS;
-    public final static int SUBDIVISION = 16;
+    public final static int SUBDIVISION = 16, CENTRAL=8;
     /**
      * @param cell
      * @return 
      */
     public static SubCell centralSubCellOf(Cell cell){
-        //define the coordinates of the subcell according to the given cell
-        int x = cell.x()*16+7;
-        int y = cell.y()*16+7;
-        
+        //define the coordinates of the SubCell according to the given cell
+        int x = cell.x()*SUBDIVISION+CENTRAL;
+        int y = cell.y()*SUBDIVISION+CENTRAL;
+        System.out.println(x+"  "+y);
         return new SubCell(x,y);
     }
     
@@ -38,25 +38,40 @@ public final class SubCell {
     }
     
     public int distanceToCentral(){
-        //TODO
-        int manhattanDist=0;
+        int manhattanDist= Math.abs( x%16 - CENTRAL ) + Math.abs( y%16 - CENTRAL );
         return manhattanDist;
     }
     
     public boolean isCentral(){
-      //TODO
-        return false;
+      
+        return CENTRAL==x%SUBDIVISION && CENTRAL==y%SUBDIVISION;
     }
     
     public SubCell neighbor(Direction d){
-        //TODO
-        return null;
+        switch (d) {
+        case N:
+            return new SubCell(x, y - 1);
+        case S:
+            return new SubCell(x, y + 1);
+        case W:
+            return new SubCell(x - 1, y);
+        case E:
+            return new SubCell(x + 1, y);
+        }
+        throw new Error(); //shouldn't happen
     }
     
     public Cell containingCell(){
         return new Cell(x/SUBDIVISION,y/SUBDIVISION);
     }
     
+    public int y(){
+        return y;
+    }
+    
+    public int x(){
+        return x;
+    }
     
     
 

@@ -10,10 +10,12 @@ import java.util.List;
  *
  */
 public final class Cell {
-
+    
+    //Constants
     public final static int COLUMNS = 15, ROWS = 13, COUNT = ROWS * COLUMNS;
     public final static List<Cell> ROW_MAJOR_ORDER = Collections.unmodifiableList(rowMajorOrder());
     public final static List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());;
+    //attributes
     private final int x, y;
 
     /**
