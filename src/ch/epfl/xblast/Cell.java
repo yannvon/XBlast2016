@@ -61,7 +61,6 @@ public final class Cell {
     public Cell(int x, int y) {
         this.x = Math.floorMod(x, COLUMNS);
         this.y = Math.floorMod(y, ROWS);
-        ;
     }
 
     public int x() {
