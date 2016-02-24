@@ -1,13 +1,14 @@
-//-------Project:XBlast
-//-------Name:LoicVandenberghe
-
-//------------------------------------
 package ch.epfl.xblast;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author LoicVandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ *
+ */
 public final class Cell {
 
     public final static int COLUMNS = 15, ROWS = 13, COUNT = ROWS * COLUMNS;
