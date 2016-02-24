@@ -8,50 +8,72 @@ package ch.epfl.xblast;
  *
  */
 public final class SubCell {
-    
+
     // Constants related to the devision of the Game Board into Sub Cells
-    public final static int COLUMNS = 240;
-    public final static int ROWS = 208;
-    public final static int COUNT = ROWS * COLUMNS;
     public final static int SUBDIVISION = 16;
     public final static int CENTRAL = 8;
-    
+    public final static int COLUMNS = Cell.COLUMNS * SUBDIVISION; // FIXME je trouvais ca assez cool, q'est ce que t en pense?
+    public final static int ROWS = Cell.ROWS * SUBDIVISION;
+    public final static int COUNT = ROWS * COLUMNS; // FIXME necessaire?
+
     // Attributes
     private final int x, y;
-    
+
     /**
-     * @param cell
-     * @return 
-     */
-    public static SubCell centralSubCellOf(Cell cell){
-        //define the coordinates of the SubCell according to the given cell
-        int x = cell.x()*SUBDIVISION+CENTRAL;
-        int y = cell.y()*SUBDIVISION+CENTRAL;
-        return new SubCell(x,y);
-    }
-    
-    /**
-     * Constructs a subcell with given x and y coordinates.
+     * Retrieves the central SubCell of any given Cell.
      * 
-     * @param x coordinate
-     * @param y coordinate
+     * @param cell
+     *            for which the SubCell has to be found
+     * @return the SubCell that lays in the center of given Cell
+     */
+    public static SubCell centralSubCellOf(Cell cell) {
+        // define the coordinates of the SubCell using the defined constants
+        int x = cell.x() * SUBDIVISION + CENTRAL;
+        int y = cell.y() * SUBDIVISION + CENTRAL;
+        return new SubCell(x, y);
+    }
+
+    /**
+     * Sole SubCell constructor. Accepts every integer as parameter, but the
+     * coordinates are then normalized to fit inside the Game Board.
+     * 
+     * @param x
+     *            x-coordinate
+     * @param y
+     *            y-coordinate
      */
     public SubCell(int x, int y) {
         this.x = Math.floorMod(x, COLUMNS);
         this.y = Math.floorMod(y, ROWS);
     }
-    
-    public int distanceToCentral(){
-        int manhattanDist= Math.abs( x%16 - CENTRAL ) + Math.abs( y%16 - CENTRAL );
+
+    /**
+     * Determines the Manhattan distance to closest central SubCell.
+     * 
+     * @return length of shortest Manhattan path to a central SubCell
+     */
+    public int distanceToCentral() {
+        int manhattanDist = Math.abs(x % 16 - CENTRAL) + Math.abs(y % 16 - CENTRAL);
         return manhattanDist;
     }
-    
-    public boolean isCentral(){
-      
-        return CENTRAL==x%SUBDIVISION && CENTRAL==y%SUBDIVISION;
+
+    /**
+     * Determine whether this SubCell is a central SubCell or not.
+     * @return true if SubCell is central, false otherwise
+     */
+    public boolean isCentral() {
+        return CENTRAL == x % SUBDIVISION && CENTRAL == y % SUBDIVISION;
     }
-    
-    public SubCell neighbor(Direction d){
+
+    /**
+     * Returns the neighboring SubCell. Like for Cells, there always exists a
+     * neighbor, due to the (conceptual) Torus shape of the Game Board.
+     * 
+     * @param d
+     *            Direction of neighbor SubCell
+     * @return new SubCell that is located in given Direction from this SubCell
+     */
+    public SubCell neighbor(Direction d) {
         switch (d) {
         case N:
             return new SubCell(x, y - 1);
@@ -62,34 +84,49 @@ public final class SubCell {
         case E:
             return new SubCell(x + 1, y);
         }
-        throw new Error(); //shouldn't happen
+        throw new Error(); // shouldn't happen
     }
-    
-    public Cell containingCell(){
-        return new Cell(x/SUBDIVISION,y/SUBDIVISION);
+
+    /**
+     * Returns the Cell in which this SubCell is located
+     * 
+     * @return Cell in which SubCell is located
+     */
+    public Cell containingCell() {
+        return new Cell(x / SUBDIVISION, y / SUBDIVISION);  //FIXME int / int = int? est-ce clair comme ca?
     }
-    
-    public boolean equals(Object that){
+
+    @Override
+    public boolean equals(Object that) {
         if (that == null) {
             return false;
         }
         if (this.getClass().equals(that.getClass())) {
-            return this.x == ((SubCell) that).x() && this.y() == ((SubCell) that).y();
+            return this.x == ((SubCell) that).x()
+                    && this.y() == ((SubCell) that).y();
         }
         return false;
     }
-    
-    public int y(){
-        return y;
-    }
-    
-    public int x(){
+
+    /**
+     * Getter for the x-coordinate of the SubCell.
+     * @return the x-coordinate
+     */
+    public int x() {
         return x;
     }
     
+    /**
+     * Getter for the y-coordinate of the SubCell.
+     * @return the y-coordinate
+     */
+    public int y() {
+        return y;
+    }
+
+    @Override
     public String toString() {
         return "(" + x + "," + y + ")";
     }
-    
 
 }
