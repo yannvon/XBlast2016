@@ -4,13 +4,12 @@
 //------------------------------------
 package ch.epfl.xblast;
 
-
 public enum Direction {
-    N,E,S,W;
-    
-    //retourne l'opposé
-    public Direction opposite(){
-        switch(this){
+    N, E, S, W;
+
+    // retourne l'opposé
+    public Direction opposite() {
+        switch (this) {
         case N:
             return S;
         case S:
@@ -19,14 +18,14 @@ public enum Direction {
             return W;
         case W:
             return E;
-         default:
-             throw new Error("quel est cette direction?");
-        }    
+        default:
+            throw new Error();
+        }
     }
-    
-    //retourne true si la direction est horizontale
-    public boolean isHorizontal(){
-        switch(this){
+
+    // retourne true si la direction est horizontale
+    public boolean isHorizontal() {
+        switch (this) {
         case E:
         case W:
             return true;
@@ -34,12 +33,12 @@ public enum Direction {
         case N:
             return false;
         default:
-           throw new Error("quel est cette direction?");
+            throw new Error();
         }
     }
-    
-    //retourne true si la direction est parallèle à celle donné
-    public boolean isParallelTo(Direction that){
-        return this==that || this==that.opposite();
+
+    // retourne true si la direction est parallèle à celle donné
+    public boolean isParallelTo(Direction that) {
+        return this == that || this == that.opposite();
     }
 }
