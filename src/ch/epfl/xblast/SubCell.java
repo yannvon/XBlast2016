@@ -13,7 +13,7 @@ public final class SubCell {
     private final int x, y;
     //constants
     public final static int COLUMNS = 240, ROWS = 208, COUNT = ROWS * COLUMNS;
-
+    public final static int SUBDIVISION = 16;
     /**
      * @param cell
      * @return 
@@ -38,8 +38,8 @@ public final class SubCell {
     }
     
     public int distanceToCentral(){
-        int manhattanDist = ;
-        
+        //TODO
+        int manhattanDist=0;
         return manhattanDist;
     }
     
@@ -54,7 +54,7 @@ public final class SubCell {
     }
     
     public Cell containingCell(){
-        return new Cell(x/16,y/16);
+        return new Cell(x/SUBDIVISION,y/SUBDIVISION);
     }
     
     
