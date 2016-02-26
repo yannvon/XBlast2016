@@ -12,9 +12,8 @@ public final class SubCell {
     // Constants related to the devision of the Game Board into Sub Cells
     public final static int SUBDIVISION = 16;
     public final static int CENTRAL = 8;
-    public final static int COLUMNS = Cell.COLUMNS * SUBDIVISION; // FIXME je trouvais ca assez cool, q'est ce que t en pense?
+    public final static int COLUMNS = Cell.COLUMNS * SUBDIVISION;
     public final static int ROWS = Cell.ROWS * SUBDIVISION;
-    public final static int COUNT = ROWS * COLUMNS; // FIXME necessaire?
 
     // Attributes
     private final int x, y;
@@ -84,7 +83,7 @@ public final class SubCell {
         case E:
             return new SubCell(x + 1, y);
         }
-        throw new Error(); // shouldn't happen
+        throw new Error(); // will never happen
     }
 
     /**
@@ -93,7 +92,7 @@ public final class SubCell {
      * @return Cell in which SubCell is located
      */
     public Cell containingCell() {
-        return new Cell(x / SUBDIVISION, y / SUBDIVISION);  //FIXME int / int = int? est-ce clair comme ca?
+        return new Cell(x / SUBDIVISION, y / SUBDIVISION);
     }
 
     @Override

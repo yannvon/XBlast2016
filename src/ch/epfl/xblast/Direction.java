@@ -24,7 +24,7 @@ public enum Direction {
         case W:
             return E;
         default:
-            throw new Error();  //FIXME
+            throw new Error(); // will never happen
         }
     }
 
@@ -41,7 +41,7 @@ public enum Direction {
         case N:
             return false;
         default:
-            throw new Error();
+            throw new Error(); // will never happen
         }
     }
 

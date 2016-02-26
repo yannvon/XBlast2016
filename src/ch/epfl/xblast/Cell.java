@@ -22,8 +22,8 @@ public final class Cell {
     public final static List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());
 
     // Attributes
-    private final int x, y;           //FIXME ask assistant if its better on one line or not (ca m'interess ;)
-
+    private final int x, y;
+    
     /**
      * Sole Cell constructor.
      * Accepts every integer as parameter, but the coordinates are then
@@ -82,10 +82,10 @@ public final class Cell {
         case E:
             return new Cell(x + 1, y);
         }
-        throw new Error();
+        throw new Error(); // will never happen
     }
     
-    @Override   //FIXME not 100 % sure how to comment this correctly, seems okey though
+    @Override
     public boolean equals(Object that) {
         if (that == null) {
             return false;
