@@ -10,5 +10,4 @@ public interface Ticks {
     public static final int WALL_CRUMBLING_TICKS = 30;
     public static final int BONUS_DISAPPEARING_TICKS = 30;
     
-    
 }
