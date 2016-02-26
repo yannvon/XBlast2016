@@ -90,8 +90,12 @@ public final class Cell {
         if (that == null) {
             return false;
         }
+        if (this == that){
+            return true;
+        }
+        // to compare two Cells it is sufficient to compare their unique indexes
         if (this.getClass().equals(that.getClass())) {
-            return this.x == ((Cell) that).x() && this.y() == ((Cell) that).y();
+            return this.rowMajorIndex() == ((Cell) that).rowMajorIndex();
         }
         return false;
     }

@@ -100,9 +100,11 @@ public final class SubCell {
         if (that == null) {
             return false;
         }
+        if (this == that){
+            return true;
+        }
         if (this.getClass().equals(that.getClass())) {
-            return this.x == ((SubCell) that).x()
-                    && this.y() == ((SubCell) that).y();
+            return this.x == ((SubCell) that).x() && this.y() == ((SubCell) that).y();
         }
         return false;
     }
