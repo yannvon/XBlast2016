@@ -2,7 +2,7 @@ package ch.epfl.xblast.server;
 
 public interface Ticks {
     
-    //constants
+    // Constants
     public static final int PLAYER_DYING_TICKS = 8;
     public static final int PLAYER_INVULNERABLE_TICKS = 64;
     public static final int BOMB_FUSE_TICKS = 100;
