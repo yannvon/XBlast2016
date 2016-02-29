@@ -49,8 +49,6 @@ public class ListsTest {
     @Test(expected = java.lang.IllegalArgumentException.class)
     public void emptyListMirrored() {
         List<Integer> a = new ArrayList<>();
-        List<Integer> b = new ArrayList<>(a);
-        
         a=Lists.mirrored(a);
        }
 
