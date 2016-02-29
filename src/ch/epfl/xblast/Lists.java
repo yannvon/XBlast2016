@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
 
 /**
  * Non-instantiable class containing static methods to work on Lists.
@@ -31,7 +30,7 @@ public final class Lists {
         
         List<T> mirrored = new ArrayList<T>(l);
 
-        List<T> reversed = new ArrayList<T>(l.subList(0, l.size() - 2));
+        List<T> reversed = new ArrayList<T>(l.subList(0, l.size() - 1));
         Collections.reverse(reversed);
         
         mirrored.addAll(reversed);
