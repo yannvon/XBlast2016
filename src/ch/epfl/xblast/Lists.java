@@ -16,11 +16,19 @@ public final class Lists {
 
     
     /**
-     * 
+     * Empty private constructor: the class is not instantiable.
      */
     private Lists() {
     }
     
+    /**
+     * mirrored() returns a symmetric copy of the input list. Note that the last
+     * element of the input list appears only once in the result.
+     * 
+     * @param l
+     *            list that has to be mirrored
+     * @return the mirrored list
+     */
     public static <T> List<T> mirrored(List<T> l){
         
         // if argument is empty , throw exception
@@ -29,11 +37,12 @@ public final class Lists {
         }
         
         List<T> mirrored = new ArrayList<T>(l);
-
+        
+        // create sublist, reverse it and add it to input list
         List<T> reversed = new ArrayList<T>(l.subList(0, l.size() - 1));
         Collections.reverse(reversed);
-        
         mirrored.addAll(reversed);
+        
         return mirrored;
     }
     
