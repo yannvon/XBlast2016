@@ -12,6 +12,7 @@ public enum Direction {
     /**
      * Returns the opposite Direction.
      * @return the opposite Direction
+     * @throws Error when the argument is not one of the 4 direction
      */
     public Direction opposite() {
         switch (this) {
@@ -31,6 +32,7 @@ public enum Direction {
     /**
      * Determines whether the Direction is horizontal or not.
      * @return true if horizontal, false otherwise
+     * @throws Error when the argument is not one of the 4 direction
      */
     public boolean isHorizontal() {
         switch (this) {

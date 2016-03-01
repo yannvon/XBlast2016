@@ -71,6 +71,7 @@ public final class SubCell {
      * @param d
      *            Direction of neighbor SubCell
      * @return new SubCell that is located in given Direction from this SubCell
+     * @throws Error when the argument is not one of the 4 direction
      */
     public SubCell neighbor(Direction d) {
         switch (d) {
