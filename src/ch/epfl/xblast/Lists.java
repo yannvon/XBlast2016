@@ -28,6 +28,7 @@ public final class Lists {
      * @param l
      *            list that has to be mirrored
      * @return the mirrored list
+     * @throws IllegalArgumentException  if the list is empty
      */
     public static <T> List<T> mirrored(List<T> l){
         
