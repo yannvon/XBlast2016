@@ -1,6 +1,7 @@
 package ch.epfl.xblast.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ch.epfl.cs108.Sq;
@@ -28,7 +29,7 @@ public final class Board {
      */
     public Board(List<Sq<Block>> blocks) {
         if (board.size() != Cell.COUNT) {// FIXME added constant instead of 195
-            throw new IllegalArgumentException();   //FIXME add message?
+            throw new IllegalArgumentException(); // FIXME add message?
         }
 
         board = new ArrayList<>(blocks); // FIXME cant use List?
@@ -36,7 +37,7 @@ public final class Board {
     }
 
     /**
-     * Constructs a constant Board, a given block matrix.
+     * Constructs a constant Board, given block matrix.
      * 
      * @param rows
      *            a matrix of blocks
@@ -44,20 +45,114 @@ public final class Board {
      * @throws IllegalArgumentException
      *             if the list rows is not in the right format
      */
-    public static final Board ofRows(List<List<Block>> rows) {
-        // TODO
-        for (int i = 0; i < rows.size();) {
+    public static final Board ofRows(List<List<Block>> rows) { // FIXME final?
+        // check matrix
+        checkBlockMatrix(rows, Cell.ROWS, Cell.COLUMNS);
 
+        // add a constant sequence of given block to a temporary ArrayList
+        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
+
+        for (int i = 0; i < Cell.ROWS; i++) {
+            for (int j = 0; j < Cell.COLUMNS; j++) {
+                tempBoard.add(Sq.constant(rows.get(i).get(j)));
+            }
         }
 
+        // return the new Board
+        return new Board(tempBoard);
+
+    }
+
+    /**
+     * Constructs a constant, walled Board, given the matrix of the inner
+     * Blocks.
+     * 
+     * @param innerBlocks
+     *            a matrix of Blocks without the outer ring
+     * @return a constant and walled Board
+     * @throws IllegalArgumentException
+     *             if the list innerBlocks is not in the right format
+     */
+    public static Board ofInnerBlocksWalled(List<List<Block>> innerBlocks) {
+        // check matrix
+        checkBlockMatrix(innerBlocks, Cell.ROWS - 2, Cell.COLUMNS - 2);
+        
+        // create temporary ArrayList
+        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
+        
+        // add the first row of Wall-Blocks
+        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
+        
+        for (int i = 0; i < Cell.ROWS-2; i++) {
+            tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
+
+            for (int j = 0; j < Cell.COLUMNS-2; j++) {
+                tempBoard.add(Sq.constant(innerBlocks.get(i).get(j)));
+            }
+            
+            tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
+
+        }
+        
+        // add the last row of Wall-Blocks  //TODO duplication de code, methode?
+        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
+
+
+        // return the new Board
+        return new Board(tempBoard);
+    }
+
+    /**
+     * Constructs a constant, symmetric and walled Board, given the matrix of
+     * the inner Blocks of the North-West quadrant.
+     * 
+     * @param quadrantNWBlocks
+     *            a matrix of the inner Blocks of the N-W quadrant
+     * @return a constant, walled and symmetric Board
+     * @throws IllegalArgumentException
+     *             if the list quadrantNWBlocks is not in the right format
+     */
+    public static Board ofQuadrantNWBlocksWalled(
+            List<List<Block>> quadrantNWBlocks) {
+        // check matrix
+        checkBlockMatrix(quadrantNWBlocks, Cell.ROWS, Cell.COLUMNS);    //FIXME
+
+        // TODO
         return null;
     }
-    
-    
 
+    /**
+     * Checks if the given matrix has the desired size.
+     * 
+     * @param matrix
+     *            a list of lists of blocks
+     * @param rows
+     *            the amount of rows that the matrix should have
+     * @param columns
+     *            the amount of columns that the matrix should have
+     * @throws IllegalArgumentException
+     *             if the matrix doesn't have the right size
+     */
     public static final void checkBlockMatrix(List<List<Block>> matrix,
             int rows, int columns) {
-        // TODO
+
+        int matrixRows = matrix.size();
+
+        // 1) check if the amount of rows is correct
+        if (matrixRows != rows) {
+            throw new IllegalArgumentException(
+                    "The amount of rows does not match desired value.");
+        }
+        // 2) check if the amount of blocks in each column is correct
+        else {
+            for (int i = 0; i < matrixRows; i++) {
+                if (matrix.get(i).size() != columns) {
+                    throw new IllegalArgumentException(
+                            "The amount of elements of row " + i
+                                    + "does not match the desired value");
+                }
+            }
+        }
 
     }
 }
