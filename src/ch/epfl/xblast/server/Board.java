@@ -143,6 +143,10 @@ public final class Board {
         return new Board(tempBoard);
     }
     
+    /**
+     * @param halfRow
+     * @return
+     */
     private static List<Sq<Block>> quadrantRowBuilder(List<Block> halfRow){
         
         ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
