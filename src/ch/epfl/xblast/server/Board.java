@@ -6,6 +6,7 @@ import java.util.List;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Lists;
 
 /**
  * The immutable class Board represents the Game Board of the xblast game.
@@ -17,7 +18,7 @@ import ch.epfl.xblast.Cell;
 public final class Board {
 
     // Attributes
-    private List<Sq<Block>> board; // FIXME final since immutable class?
+    private final List<Sq<Block>> board; //FIXME final?
 
     /**
      * Constructor of a board taking a list of block sequences as param.
@@ -28,8 +29,8 @@ public final class Board {
      *             if the size of the List is not correct
      */
     public Board(List<Sq<Block>> blocks) {
-        if (board.size() != Cell.COUNT) {// FIXME added constant instead of 195
-            throw new IllegalArgumentException(); // FIXME add message?
+        if (blocks.size() != Cell.COUNT) {
+            throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
         }
 
         board = new ArrayList<>(blocks); // FIXME cant use List?
@@ -45,7 +46,7 @@ public final class Board {
      * @throws IllegalArgumentException
      *             if the list rows is not in the right format
      */
-    public static final Board ofRows(List<List<Block>> rows) { // FIXME final?
+    public static Board ofRows(List<List<Block>> rows) {
         // check matrix
         checkBlockMatrix(rows, Cell.ROWS, Cell.COLUMNS);
 
@@ -114,12 +115,70 @@ public final class Board {
      */
     public static Board ofQuadrantNWBlocksWalled(
             List<List<Block>> quadrantNWBlocks) {
+        
+        int rows = (Cell.ROWS - 1)/2;
+        int cols = (Cell.COLUMNS - 1)/2;
+        
         // check matrix
-        checkBlockMatrix(quadrantNWBlocks, Cell.ROWS, Cell.COLUMNS);    //FIXME
+        checkBlockMatrix(quadrantNWBlocks, rows, cols);
+        
+        // create temporary ArrayList
+        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
+        
+        // add the first row of Wall-Blocks
+        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
+        
+        for (int i = 0; i < rows; i++) {
+            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
+        }
+        
+        for (int i = rows-2; i >= 0; i--){
+            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
+        }
+        
+        // add the last row of Wall-Blocks  //TODO duplication de code, methode?
+        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
 
-        // TODO
-        return null;
+        // return the new Board
+        return new Board(tempBoard);
     }
+    
+    private static List<Sq<Block>> quadrantRowBuilder(List<Block> halfRow){
+        
+        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
+
+        
+        tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
+        
+        List<Block> mir = Lists.mirrored(halfRow);
+        
+        for (int j = 0; j < Cell.COLUMNS - 2; j++) {
+            tempBoard.add(Sq.constant(mir.get(j)));
+        }
+        
+        tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
+        
+        return tempBoard;
+    }
+    
+    
+    /**
+     * @param c
+     * @return
+     */
+    public Sq<Block> blocksAt(Cell c){
+        return board.get(c.rowMajorIndex());
+    }
+    
+    /**
+     * @param c
+     * @return
+     */
+    public Block blockAt(Cell c){
+        return board.get(c.rowMajorIndex()).head();
+    }
+    
+    
 
     /**
      * Checks if the given matrix has the desired size.
