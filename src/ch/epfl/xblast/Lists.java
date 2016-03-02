@@ -32,9 +32,9 @@ public final class Lists {
      */
     public static <T> List<T> mirrored(List<T> l){
         
-        // if argument is empty , throw exception
+        // if argument is empty, throw exception
         if(l.isEmpty()){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("List given as parameter is empty!");
         }
         
         List<T> mirrored = new ArrayList<T>(l);

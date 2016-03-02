@@ -75,32 +75,23 @@ public final class Board {
      *             if the list innerBlocks is not in the right format
      */
     public static Board ofInnerBlocksWalled(List<List<Block>> innerBlocks) {
+        
         // check matrix
         checkBlockMatrix(innerBlocks, Cell.ROWS - 2, Cell.COLUMNS - 2);
-        
-        // create temporary ArrayList
-        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
-        
-        // add the first row of Wall-Blocks
-        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
-        
-        for (int i = 0; i < Cell.ROWS-2; i++) {
-            tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
 
-            for (int j = 0; j < Cell.COLUMNS-2; j++) {
-                tempBoard.add(Sq.constant(innerBlocks.get(i).get(j)));
-            }
-            
-            tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
-
+        // add walls at beginning and end of list   //FIXME effets de bord! 
+        for (int i = 0; i < (Cell.ROWS-1)/2; ++i) { //innerblocks contient plusieurs fois la meme référence
+            innerBlocks.get(i).add(0, Block.INDESTRUCTIBLE_WALL);
+            innerBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
         }
         
-        // add the last row of Wall-Blocks  //TODO duplication de code, methode?
-        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
-
+        // add the first and last row of Wall-Blocks
+        innerBlocks.add(0, Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL));
+        innerBlocks.add(Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL));
 
         // return the new Board
-        return new Board(tempBoard);
+        return ofRows(innerBlocks);
+        
     }
 
     /**
@@ -125,75 +116,13 @@ public final class Board {
         // temporary block matrix
         List<List<Block>> finalMatrix = new ArrayList<List<Block>>();
         
+        // mirror every row to get entire rows of the upper half board
         for(int i = 0; i < quadrantNWBlocks.size(); i++){
             finalMatrix.add(Lists.mirrored(quadrantNWBlocks.get(i)));
         }
         
-        finalMatrix = Lists.mirrored(finalMatrix);
-        
-        return ofRows(finalMatrix);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-//        // add the first row of wall block sequences
-//        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
-//        
-//        // add one row after the other to the temporary Board
-//        for (int i = 0; i < rows; i++) {
-//            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
-//        }
-//        
-//        for (int i = rows-2; i >= 0; i--){
-//            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
-//        }
-//        
-//        // add the last row of Wall-Blocks  //TODO duplication de code, methode?
-//        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
-//
-//        return new Board(tempBoard);
-    }
-    
-    /**
-     * Supplementary Method: Build a single row of a Board, used by the
-     * ofQuadrantNWBlocksWalled method.
-     * 
-     * @param halfRow
-     *            half the blocks of a row
-     * @return the full row including walls
-     */
-    private static List<Sq<Block>> quadrantRowBuilder(List<Block> halfRow){
-        
-        // declare new Array that will contain entire row
-        ArrayList<Sq<Block>> fullRow = new ArrayList<>();
-        
-        // add Wall on the left side of row
-        fullRow.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
-        
-        // mirror halfRow to obtain entire row
-        List<Block> mir = Lists.mirrored(halfRow);
-        
-        // turn every block into sequence and add to fullRow
-        for (int j = 0; j < Cell.COLUMNS - 2; j++) {
-            fullRow.add(Sq.constant(mir.get(j)));
-        }
-        
-        //add Wall on the right of the row
-        fullRow.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
-        
-        return fullRow;
+        // mirror upper half board to get entire inner board
+        return ofInnerBlocksWalled(Lists.mirrored(finalMatrix));
     }
     
     
@@ -249,7 +178,7 @@ public final class Board {
                 if (matrix.get(i).size() != columns) {
                     throw new IllegalArgumentException(
                             "The amount of elements of row " + i
-                                    + "does not match the desired value");
+                                    + " does not match the desired value");
                 }
             }
         }
