@@ -113,79 +113,116 @@ public final class Board {
      * @throws IllegalArgumentException
      *             if the list quadrantNWBlocks is not in the right format
      */
-    public static Board ofQuadrantNWBlocksWalled(
-            List<List<Block>> quadrantNWBlocks) {
+    public static Board ofQuadrantNWBlocksWalled(List<List<Block>> quadrantNWBlocks) {
         
+        // the expected matrix dimensions
         int rows = (Cell.ROWS - 1)/2;
         int cols = (Cell.COLUMNS - 1)/2;
         
         // check matrix
         checkBlockMatrix(quadrantNWBlocks, rows, cols);
         
-        // create temporary ArrayList
-        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
+        // temporary block matrix
+        List<List<Block>> finalMatrix = new ArrayList<List<Block>>();
         
-        // add the first row of Wall-Blocks
-        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
-        
-        for (int i = 0; i < rows; i++) {
-            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
+        for(int i = 0; i < quadrantNWBlocks.size(); i++){
+            finalMatrix.add(Lists.mirrored(quadrantNWBlocks.get(i)));
         }
         
-        for (int i = rows-2; i >= 0; i--){
-            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
-        }
+        finalMatrix = Lists.mirrored(finalMatrix);
         
-        // add the last row of Wall-Blocks  //TODO duplication de code, methode?
-        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
-
-        // return the new Board
-        return new Board(tempBoard);
+        return ofRows(finalMatrix);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//        // add the first row of wall block sequences
+//        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
+//        
+//        // add one row after the other to the temporary Board
+//        for (int i = 0; i < rows; i++) {
+//            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
+//        }
+//        
+//        for (int i = rows-2; i >= 0; i--){
+//            tempBoard.addAll(quadrantRowBuilder(quadrantNWBlocks.get(i)));
+//        }
+//        
+//        // add the last row of Wall-Blocks  //TODO duplication de code, methode?
+//        tempBoard.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
+//
+//        return new Board(tempBoard);
     }
     
     /**
+     * Supplementary Method: Build a single row of a Board, used by the
+     * ofQuadrantNWBlocksWalled method.
+     * 
      * @param halfRow
-     * @return
+     *            half the blocks of a row
+     * @return the full row including walls
      */
     private static List<Sq<Block>> quadrantRowBuilder(List<Block> halfRow){
         
-        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
-
+        // declare new Array that will contain entire row
+        ArrayList<Sq<Block>> fullRow = new ArrayList<>();
         
-        tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
+        // add Wall on the left side of row
+        fullRow.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
         
+        // mirror halfRow to obtain entire row
         List<Block> mir = Lists.mirrored(halfRow);
         
+        // turn every block into sequence and add to fullRow
         for (int j = 0; j < Cell.COLUMNS - 2; j++) {
-            tempBoard.add(Sq.constant(mir.get(j)));
+            fullRow.add(Sq.constant(mir.get(j)));
         }
         
-        tempBoard.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
+        //add Wall on the right of the row
+        fullRow.add(Sq.constant(Block.INDESTRUCTIBLE_WALL));
         
-        return tempBoard;
+        return fullRow;
     }
     
     
     /**
+     * Returns the block sequence of a given cell
+     * 
      * @param c
-     * @return
+     *            Cell for which you want the block sequence
+     * @return the block sequence of a specific cell
      */
     public Sq<Block> blocksAt(Cell c){
         return board.get(c.rowMajorIndex());
     }
     
     /**
+     * Returns the current block of a cell.
+     * 
      * @param c
-     * @return
+     *            Cell for which block sequence head is searched
+     * @return the block of a specific cell
      */
     public Block blockAt(Cell c){
-        return board.get(c.rowMajorIndex()).head();
+        return blocksAt(c).head();
     }
     
     
 
     /**
-     * Checks if the given matrix has the desired size.
+     * Checks if a given matrix of blocks has the desired size.
      * 
      * @param matrix
      *            a list of lists of blocks
@@ -204,7 +241,7 @@ public final class Board {
         // 1) check if the amount of rows is correct
         if (matrixRows != rows) {
             throw new IllegalArgumentException(
-                    "The amount of rows does not match desired value.");
+                    "The amount of rows does not match desired value");
         }
         // 2) check if the amount of blocks in each column is correct
         else {
@@ -216,6 +253,5 @@ public final class Board {
                 }
             }
         }
-
     }
 }
