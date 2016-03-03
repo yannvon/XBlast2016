@@ -42,7 +42,17 @@ public final class Lists {
         // create sublist, reverse it and add it to input list
         List<T> reversed = new ArrayList<T>(l.subList(0, l.size() - 1));
         Collections.reverse(reversed);
+        
         mirrored.addAll(reversed);
+        
+        //FIXME alternative, not sure for the compatibility.
+       /* for(int i=0; i<reversed.size(); i++){
+            mirrored.add((T) reversed.get(i).clone());
+        }
+        
+        */
+        
+        
         
         return mirrored;
     }

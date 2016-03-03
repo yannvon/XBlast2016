@@ -19,10 +19,14 @@ import java.util.ArrayList;
  */
 public class test {
     public static void main(String[] args) {
-        Sq<String> s = Sq.constant("bla");
-        while (!s.isEmpty()) {
-          System.out.println(s.head());
-          s = s.tail();
-        }
+        ArrayList<ArrayList<String>> a = new ArrayList<ArrayList<String>>();
+        a.add(new ArrayList<String>());
+        ArrayList<ArrayList<String>> b = (ArrayList<ArrayList<String>>) a.clone();
+        
+        a.get(0).add("1");
+        System.out.println(a.toString()+"\n"+b.toString());
+        
+        
+        
     }
 }

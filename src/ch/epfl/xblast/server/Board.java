@@ -80,7 +80,7 @@ public final class Board {
         checkBlockMatrix(innerBlocks, Cell.ROWS - 2, Cell.COLUMNS - 2);
 
         // add walls at beginning and end of list   //FIXME effets de bord! 
-        for (int i = 0; i < (Cell.ROWS-1)/2; ++i) { //innerblocks contient plusieurs fois la meme référence
+        for (int i = 0; i < Cell.ROWS-2; ++i) { //innerblocks contient plusieurs fois la meme référence
             innerBlocks.get(i).add(0, Block.INDESTRUCTIBLE_WALL);
             innerBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
         }
@@ -112,6 +112,9 @@ public final class Board {
         
         // check matrix
         checkBlockMatrix(quadrantNWBlocks, rows, cols);
+       
+        //mirrored first the matrix
+        quadrantNWBlocks = Lists.mirrored(quadrantNWBlocks); //FIXME best solution for the moment
         
         // temporary block matrix
         List<List<Block>> finalMatrix = new ArrayList<List<Block>>();
@@ -119,10 +122,12 @@ public final class Board {
         // mirror every row to get entire rows of the upper half board
         for(int i = 0; i < quadrantNWBlocks.size(); i++){
             finalMatrix.add(Lists.mirrored(quadrantNWBlocks.get(i)));
+            
         }
         
+        
         // mirror upper half board to get entire inner board
-        return ofInnerBlocksWalled(Lists.mirrored(finalMatrix));
+        return ofInnerBlocksWalled(finalMatrix);
     }
     
     

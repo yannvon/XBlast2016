@@ -187,6 +187,10 @@ public class BoardTest {
         }
 
     }
+    
+    
+    
+    @Test
     public void ofRowsVsOfInner(){
         Board boardOfRows = Board.ofRows(Arrays.asList(
                 Arrays.asList(XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX,
@@ -246,5 +250,31 @@ public class BoardTest {
                     boardOfRows.blockAt(new Cell(j, i)));
             }
         }
+    }
+    
+    
+    @Test
+    public void CellsHaveNotTheSameReference(){
+         
+        Board boardOfQuadrant = Board.ofQuadrantNWBlocksWalled(
+            Arrays.asList(
+                    Arrays.asList(__, __, __, __, __, xx, __),
+                    Arrays.asList(__, XX, xx, XX, xx, XX, xx),
+                    Arrays.asList(__, xx, __, __, __, xx, __),
+                    Arrays.asList(xx, XX, __, XX, XX, XX, XX),
+                    Arrays.asList(__, xx, __, xx, __, __, __),
+                    Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
+        
+        
+        assertNotEquals( boardOfQuadrant.blockAt(new Cell(1,1)),boardOfQuadrant.blockAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
+
+        assertNotEquals( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
+
+        assertNotEquals( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,1)));
+
+        assertNotEquals( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(1 ,Cell.COLUMNS-1)));
+        
+        
+        
     }
 }
