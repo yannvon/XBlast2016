@@ -18,6 +18,9 @@ public class BoardTest {
     Block xx = Block.DESTRUCTIBLE_WALL;
  
 
+    /**
+     * test the size exception for all functions
+     */
     @Test(expected = java.lang.IllegalArgumentException.class)
     public void constructorSizeException() {
         Board a= new Board(new ArrayList<Sq<Block>>());
@@ -40,6 +43,9 @@ public class BoardTest {
     
   
  
+    /**
+     * show the different Board in the console 
+     */
     @Test
     public void show(){
         Board boardOfRows = Board.ofRows(Arrays.asList(
@@ -79,7 +85,7 @@ public class BoardTest {
                     Arrays.asList(__, xx, __, xx, __, __, __),
                     Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
     
-    Board boardOfInner= Board.ofInnerBlocksWalled( Arrays.asList(
+  /*  Board boardOfInner= Board.ofInnerBlocksWalled( Arrays.asList(
             Arrays.asList( __, __, __, __, __, xx, __, xx, __, __, __,
                     __, __),
             Arrays.asList( __, XX, xx, XX, xx, XX, xx, XX, xx, XX, xx,
@@ -103,7 +109,7 @@ public class BoardTest {
             Arrays.asList( __, __, __, __, __, xx, __, xx, __, __, __,
                     __, __)
             ));
-    
+    */
         System.out.println("\n\tBoard of rows:");
         
         for (int i = 0; i < Cell.ROWS; i++) {
@@ -116,14 +122,14 @@ public class BoardTest {
 
         System.out.println("\n\tBoard of inner blocks walled:");
         
-        
+      /*  
         for (int i = 0; i < Cell.ROWS; i++) {
             for (int j = 0; j < Cell.COLUMNS; j++) {
                 System.out
                         .print(boardOfInner.blockAt(new Cell(j, i)) + " ");
             }
             System.out.println();
-        }
+        }*/
 
         System.out.println("\n\tBoard of quadrant NW blocks walled:");
         
@@ -136,10 +142,13 @@ public class BoardTest {
             System.out.println();
         }
         
-        
     }
     
     
+    
+    /**
+     * test if a board of Rows and a board of quadrant are the same
+     */
     @Test
     public void ofRowsVsOfQuadrant(){
         Board boardOfRows = Board.ofRows(Arrays.asList(
@@ -190,6 +199,9 @@ public class BoardTest {
     
     
     
+    /**
+     * test if a board of rows and a board of inner are the same
+     */
     @Test
     public void ofRowsVsOfInner(){
         Board boardOfRows = Board.ofRows(Arrays.asList(
@@ -253,6 +265,9 @@ public class BoardTest {
     }
     
     
+    /**
+     * test if the references to different sequences of blocks from quadrant are different
+     */
     @Test
     public void CellsHaveNotTheSameReference(){
          
@@ -265,14 +280,11 @@ public class BoardTest {
                     Arrays.asList(__, xx, __, xx, __, __, __),
                     Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
         
+        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.COLUMNS-2 ,Cell.ROWS-2)));
         
-        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
+        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.COLUMNS-2 ,1)));
 
-        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
-
-        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,1)));
-
-        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(1 ,Cell.COLUMNS-1)));
+        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(1 ,Cell.ROWS-2)));
         
         
         

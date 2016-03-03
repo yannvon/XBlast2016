@@ -52,8 +52,11 @@ public class ListsTest {
         a=Lists.mirrored(a);
        }
     
+    /**
+     * test if the elements of a mirrored list are not the same
+     */
     @Test
-    public void notthesamereference() {
+    public void notTheSameReference() {
         List<List<Integer>> a = new ArrayList<>();
         a.add(new ArrayList<>());
         a.add(new ArrayList<>());
