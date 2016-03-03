@@ -51,5 +51,21 @@ public class ListsTest {
         List<Integer> a = new ArrayList<>();
         a=Lists.mirrored(a);
        }
+    
+    @Test
+    public void notthesamereference() {
+        List<List<Integer>> a = new ArrayList<>();
+        a.add(new ArrayList<>());
+        a.add(new ArrayList<>());
+        
+        List<List<Integer>> b= Lists.mirrored(a);
+        
+        //test the reference between the argument and the result
+        assertNotSame(a.get(0),b.get(0));
+        
+        //test the reference between 2 elements mirrored
+        assertNotSame(b.get(0),b.get(2));
+        
+    }
 
 }

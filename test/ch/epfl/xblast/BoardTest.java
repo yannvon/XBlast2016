@@ -266,13 +266,13 @@ public class BoardTest {
                     Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
         
         
-        assertNotEquals( boardOfQuadrant.blockAt(new Cell(1,1)),boardOfQuadrant.blockAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
+        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
 
-        assertNotEquals( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
+        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,Cell.COLUMNS-1)));
 
-        assertNotEquals( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,1)));
+        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(Cell.ROWS-1 ,1)));
 
-        assertNotEquals( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(1 ,Cell.COLUMNS-1)));
+        assertNotSame( boardOfQuadrant.blocksAt(new Cell(1,1)),boardOfQuadrant.blocksAt(new Cell(1 ,Cell.COLUMNS-1)));
         
         
         
