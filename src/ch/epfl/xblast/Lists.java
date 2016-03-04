@@ -25,6 +25,8 @@ public final class Lists {
      * mirrored() returns a symmetric copy of the input list. Note that the last
      * element of the input list appears only once in the result.
      * 
+     * Warning: the added elements keep the same reference!
+     * 
      * @param l
      *            list that has to be mirrored
      * @return the mirrored list
@@ -44,15 +46,6 @@ public final class Lists {
         Collections.reverse(reversed);
         
         mirrored.addAll(reversed);
-        
-        //FIXME alternative, not sure for the compatibility.
-       /* for(int i=0; i<reversed.size(); i++){
-            mirrored.add((T) reversed.get(i).clone());
-        }
-        
-        */
-        
-        
         
         return mirrored;
     }

@@ -18,7 +18,7 @@ import ch.epfl.xblast.Lists;
 public final class Board {
 
     // Attributes
-    private final List<Sq<Block>> board; //FIXME final?
+    private final List<Sq<Block>> board;
 
     /**
      * Constructor of a board taking a list of block sequences as param.
@@ -33,7 +33,7 @@ public final class Board {
             throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
         }
 
-        board = new ArrayList<>(blocks); // FIXME cant use List?
+        board = new ArrayList<>(blocks);
 
     }
 
@@ -75,22 +75,26 @@ public final class Board {
      *             if the list innerBlocks is not in the right format
      */
     public static Board ofInnerBlocksWalled(List<List<Block>> innerBlocks) {
-        
         // check matrix
         checkBlockMatrix(innerBlocks, Cell.ROWS - 2, Cell.COLUMNS - 2);
 
-        // add walls at beginning and end of list   //FIXME effets de bord! 
-        for (int i = 0; i < Cell.ROWS-2; ++i) { //innerblocks contient plusieurs fois la meme référence
-            innerBlocks.get(i).add(0, Block.INDESTRUCTIBLE_WALL);
-            innerBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
+        List<List<Block>> walledBlocks = new ArrayList<>();
+        
+        // add walls and copy the blocks of given matrix into new walled matrix
+        for (int i = 0; i < Cell.ROWS-2; ++i) {
+            walledBlocks.add( new ArrayList<>());
+            walledBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
+            walledBlocks.get(i).addAll(innerBlocks.get(i));
+            walledBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
         }
         
         // add the first and last row of Wall-Blocks
-        innerBlocks.add(0, Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL));
-        innerBlocks.add(Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL));
+        List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
+        walledBlocks.add(0, walledRow);
+        walledBlocks.add(walledRow);
 
-        // return the new Board
-        return ofRows(innerBlocks);
+        // call ofRows method to construct Board from walledBlocks matrix
+        return ofRows(walledBlocks);
         
     }
 
@@ -113,20 +117,18 @@ public final class Board {
         // check matrix
         checkBlockMatrix(quadrantNWBlocks, rows, cols);
        
-        //mirrored first the matrix
-        quadrantNWBlocks = Lists.mirrored(quadrantNWBlocks); //FIXME best solution for the moment
-        
         // temporary block matrix
-        List<List<Block>> finalMatrix = new ArrayList<List<Block>>();
+        List<List<Block>> finalMatrix = new ArrayList<>();
         
         // mirror every row to get entire rows of the upper half board
-        for(int i = 0; i < quadrantNWBlocks.size(); i++){
+        for(int i = 0; i < rows; i++){
             finalMatrix.add(Lists.mirrored(quadrantNWBlocks.get(i)));
-            
         }
         
-        
-        // mirror upper half board to get entire inner board
+        // mirror the upper half board to get entire inner Board
+        finalMatrix = Lists.mirrored(finalMatrix);
+
+        // call ofInnerBlocksWalled to add walls and construct board
         return ofInnerBlocksWalled(finalMatrix);
     }
     
