@@ -1,10 +1,13 @@
 package ch.epfl.xblast.server;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 
 /**
@@ -21,6 +24,7 @@ public class Bomb {
 
     /**
      * constructor with a sequence of fuseLengths
+     * 
      * @param ownerId
      * @param position
      * @param fuseLengths
@@ -38,9 +42,10 @@ public class Bomb {
         }
         this.fuseLengths = Objects.requireNonNull(fuseLengths);
     }
-    
+
     /**
      * constructor with a int of fuseLength
+     * 
      * @param ownerId
      * @param position
      * @param fuseLengths
@@ -48,12 +53,11 @@ public class Bomb {
      * @throws NullPointerException
      * @throws IllegalArgumentException
      */
-    public Bomb(PlayerID ownerId, Cell position, int fuseLengths,
-            int range) {
-        this(ownerId, position, Sq.iterate(fuseLengths, i-> i-1).limit(fuseLengths), range);
+    public Bomb(PlayerID ownerId, Cell position, int fuseLengths, int range) {
+        this(ownerId, position,
+                Sq.iterate(fuseLengths, i -> i - 1).limit(fuseLengths), range);
     }
 
-    
     public PlayerID ownerId() {
         return ownerId;
     }
@@ -63,16 +67,45 @@ public class Bomb {
     }
 
     public Sq<Integer> fuseLengths() {
-        return fuseLengths;//FIXME return the reference of the object 
+        return fuseLengths;// FIXME return the reference of the object
     }
-    public int fuseLength(){
+
+    public int fuseLength() {
         return fuseLengths.head();
     }
 
     public int range() {
         return range;
     }
+    
+    
+    
+    /**
+     * 
+     * @return
+     */
+    public List<Sq<Sq<Cell>>> explosion(){
+        List<Sq<Sq<Cell>>> explosion= new ArrayList<>();
+        
+        for(Direction dir:Direction.values()){
+            explosion.add(explosionArmTowards(dir));
+        }
+        return explosion;
+        
+    }
+    
+    
+    
 
-    
-    
+    /**
+     * @param dir
+     * @return
+     */
+    private Sq<Sq<Cell>> explosionArmTowards(Direction dir) {
+
+        Sq<Cell> part = Sq.iterate(position, c -> c.neighbor(dir)).limit(range);
+
+        return Sq.repeat(Ticks.EXPLOSION_TICKS, part);
+    }
+
 }
