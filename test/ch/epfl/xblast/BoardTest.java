@@ -12,6 +12,13 @@ import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 
+/**
+ * Test Board class.
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen(258857)
+ *
+ */
 public class BoardTest {
     Block __ = Block.FREE;
     Block XX = Block.INDESTRUCTIBLE_WALL;
