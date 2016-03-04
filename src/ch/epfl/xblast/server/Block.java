@@ -43,20 +43,4 @@ public enum Block {
             return false;
         }
     }
-    
-    @Override
-    public String toString(){
-        switch(this){
-        case INDESTRUCTIBLE_WALL:
-            return "XX";
-        case DESTRUCTIBLE_WALL:
-            return "xx";
-        case CRUMBLING_WALL:
-            return "cc";
-        case FREE:
-            return "  ";
-        }
-        return null;
-    }
-
 }
