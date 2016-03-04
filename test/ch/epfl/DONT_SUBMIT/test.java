@@ -14,17 +14,12 @@ import java.util.ArrayList;
  * @author Yann Vonlanthen (258857)
  *
  * class to try, test the result or the efficient of some method.
- * this files is a "sandbox" everything can be erase and replace by another code if we want to test something else
+ * this class is a "sandbox" everything can be erase and replace by another code if we want to test something else
  *
  */
 public class test {
     public static void main(String[] args) {
-        ArrayList<ArrayList<String>> a = new ArrayList<ArrayList<String>>();
-        a.add(new ArrayList<String>());
-        ArrayList<ArrayList<String>> b = (ArrayList<ArrayList<String>>) a.clone();
-        
-        a.get(0).add("1");
-        System.out.println(a.toString()+"\n"+b.toString());
+       
         
         
         
