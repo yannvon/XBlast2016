@@ -3,6 +3,8 @@ package ch.epfl.DONT_SUBMIT;
 
 import java.util.List;
 
+import com.sun.javafx.scene.traversal.Direction;
+
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.SubCell;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 public class test {
     public static void main(String[] args) {
        
-        
+        System.out.println(Direction.values()[0]);
         
         
     }
