@@ -44,7 +44,7 @@ public class Bomb {
     }
 
     /**
-     * constructor with a int of fuseLength
+     * constructor with a int to indicate the initial fuseLength
      * 
      * @param ownerId
      * @param position
@@ -82,7 +82,7 @@ public class Bomb {
     
     /**
      * 
-     * @return
+     * @return List<Sq<Sq<Cell>>> to represent the explosion of the current bomb over the time
      */
     public List<Sq<Sq<Cell>>> explosion(){
         List<Sq<Sq<Cell>>> explosion= new ArrayList<>();
@@ -99,7 +99,7 @@ public class Bomb {
 
     /**
      * @param dir
-     * @return
+     * @return the sequence representing only one direction of the explosion over the time
      */
     private Sq<Sq<Cell>> explosionArmTowards(Direction dir) {
 
