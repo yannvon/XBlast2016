@@ -1,4 +1,4 @@
-package ch.epfl.xblast;
+package ch.epfl.xblast.server;
 
 import static org.junit.Assert.*;
 
@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Test;
 
 import ch.epfl.cs108.Sq;
+import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 
