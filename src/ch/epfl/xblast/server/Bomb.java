@@ -67,7 +67,7 @@ public class Bomb {
     }
 
     public Sq<Integer> fuseLengths() {
-        return fuseLengths;// FIXME return the reference of the object
+        return fuseLengths;
     }
 
     public int fuseLength() {
@@ -77,7 +77,6 @@ public class Bomb {
     public int range() {
         return range;
     }
-    
     
     
     /**
