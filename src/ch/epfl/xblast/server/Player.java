@@ -10,6 +10,8 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 
 /**
+ * A player being characterized by a multitude of attributes.
+ * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
@@ -17,27 +19,33 @@ import ch.epfl.xblast.SubCell;
 public final class Player {
 
     /**
-     *
+     * LifeState of the Player. (Represents the amount of lives and the players
+     * current state)
      */
     public static final class LifeState {
 
         /**
-         *
+         * An enum of all possible states that the player can be in.
          */
         public enum State {
             INVULNERABLE, VULNERABLE, DYING, DEAD;
-
         }
 
-        // ATTRIBUTES
+        // Attributes
         private int lives;
         private State state;
 
         /**
+         * Sole constructor of a LifeState.
+         * 
          * @param lives
+         *            amount of lives
          * @param State
+         *            state of the player upon construction
          * @throws IllegalArgumentException
+         *             if lives is negative
          * @throws NullPointerException
+         *             if state is null
          */
         public LifeState(int lives, State State) {
             this.lives = ArgumentChecker.requireNonNegative(lives);
@@ -45,21 +53,24 @@ public final class Player {
         }
 
         /**
-         * @return
+         * Returns the amount of lives the player has.
+         * @return amount of lives
          */
         public int lives() {
             return lives;
         }
 
         /**
-         * @return
+         * Return current state of the player.
+         * @return state of the player
          */
         public State state() {
             return state;
         }
 
         /**
-         * @return
+         * Determines if the player can move or not.
+         * @return true if the player is allowed to move, false otherwise
          */
         public boolean canMove() {
             switch (state) {
@@ -74,21 +85,30 @@ public final class Player {
     }
 
     /**
-     *
+     *  A directed position is another attribute of a player.
      */
     public static final class DirectedPosition {
 
         /**
+         * Static method that returns an infinite sequence of the given directed
+         * position.
+         * 
          * @param p
-         * @return
+         *            directed position
+         * @return a infinite sequence of that directed position
          */
         public static Sq<DirectedPosition> stopped(DirectedPosition p) {
             return Sq.constant(p);
         }
 
         /**
+         * Static method that returns an infinite sequence representing the
+         * Player moving forward towards a given direction.
+         * 
          * @param p
-         * @return
+         *            directed Position
+         * @return Sequence of directed position representing the player moving
+         *         forwards
          */
         public static Sq<DirectedPosition> moving(DirectedPosition p) {
             return Sq.iterate(p,
@@ -97,14 +117,19 @@ public final class Player {
                             pos.direction));
         }
 
-        // ATTRIBUTES
+        // Attributes
         private SubCell position;
         private Direction direction;
 
         /**
+         * Constructs a directed position with given parameters.
+         * 
          * @param position
+         *            SubCell position of player
          * @param direction
+         *            Direction towards which player is heading
          * @throws NullPointerException
+         *             if one of the parameters is null
          */
         public DirectedPosition(SubCell position, Direction direction) {
             this.position = Objects.requireNonNull(position);
@@ -112,30 +137,34 @@ public final class Player {
         }
 
         /**
-         * @return
+         * Returns the position of the directed position.
+         * @return position
          */
         public SubCell position() {
             return position;
         }
 
         /**
-         * @return
+         * Returns the direction of the directed position.
+         * @return direction
          */
         public Direction direction() {
             return direction;
         }
 
         /**
+         * Returns a new directed position with same direction but new position.
          * @param newPosition
-         * @return
+         * @return DirectedPosition with changed position but same direction
          */
         public DirectedPosition withPosition(SubCell newPosition) {
             return new DirectedPosition(newPosition, direction);
         }
 
         /**
+         * Returns a new directed position with same position as this but new direction.
          * @param newDirection
-         * @return
+         * @return DirectedPosition with changed direction but same position
          */
         public DirectedPosition withDirection(Direction newDirection) {
             return new DirectedPosition(position, newDirection);
@@ -178,6 +207,7 @@ public final class Player {
 
     /**
      * Constructor
+     * 
      * @param id
      * @param lives
      * @param position
@@ -185,102 +215,109 @@ public final class Player {
      * @param bombRange
      * @throws //TODO
      */
-    public Player(PlayerID id, int lives, Cell position, int maxBombs, int bombRange) {
-        this(id, 
-                lifeStateSqCreation(lives),
-                DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),
-                maxBombs, 
-                bombRange);
+    public Player(PlayerID id, int lives, Cell position, int maxBombs,
+            int bombRange) {
+        this(id, lifeStateSqCreation(lives),
+                DirectedPosition.stopped(new DirectedPosition(
+                        SubCell.centralSubCellOf(position), Direction.S)),
+                maxBombs, bombRange);
     }
-    
+
     /**
      * @return
      */
-    public PlayerID id(){
+    public PlayerID id() {
         return id;
     }
-    
-    public Sq<LifeState> lifeStates(){
+
+    public Sq<LifeState> lifeStates() {
         return lifeStates;
     }
-    
+
     /**
      * @return
      */
-    public LifeState lifeState(){
+    public LifeState lifeState() {
         return lifeStates.head();
     }
-    
+
     /**
      * @return
      */
-    public Sq<LifeState> statesForNextLife(){
-        return Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(), LifeState.State.DYING)).concat(lifeStateSqCreation(lives() - 1));
+    public Sq<LifeState> statesForNextLife() {
+        return Sq
+                .repeat(Ticks.PLAYER_DYING_TICKS,
+                        new LifeState(lives(), LifeState.State.DYING))
+                .concat(lifeStateSqCreation(lives() - 1));
     }
-    
+
     /**
      * @return
      */
-    public int lives(){
+    public int lives() {
         return lifeState().lives();
     }
-    
+
     /**
      * @return
      */
-    public boolean isAlive(){
+    public boolean isAlive() {
         return lives() > 0;
     }
-    
+
     /**
      * Getter for directedPos
+     * 
      * @return
      */
-    public Sq<DirectedPosition> directedPositions(){
+    public Sq<DirectedPosition> directedPositions() {
         return directedPos;
     }
-    
+
     /**
      * @return
      */
-    public SubCell position(){
+    public SubCell position() {
         return directedPos.head().position();
     }
-    
+
     /**
      * @return
      */
-    public Direction direction(){
+    public Direction direction() {
         return directedPos.head().direction();
     }
-    
+
     /**
      * @return
      */
-    public int maxBombs(){
+    public int maxBombs() {
         return maxBombs;
     }
-    
+
     /**
      * @param newMaxBombs
      * @return
      */
-    public Player withMaxBombs(int newMaxBombs){
+    public Player withMaxBombs(int newMaxBombs) {
         return new Player(id, lifeStates, directedPos, newMaxBombs, bombRange);
     }
-    
-    
+
     /**
-     * SUPPLEMENTARY METHOD
-     *  TODO
+     * SUPPLEMENTARY METHOD TODO
+     * 
      * @param lives
      * @return
      */
-    private static Sq<LifeState> lifeStateSqCreation(int lives){
-        if(lives <= 0){
+    private static Sq<LifeState> lifeStateSqCreation(int lives) {
+        if (lives <= 0) {
             return Sq.constant(new LifeState(0, LifeState.State.DEAD));
-        }else{
-            return Sq.repeat(Ticks.PLAYER_INVULNERABLE_TICKS,new LifeState(lives, LifeState.State.INVULNERABLE)).concat(Sq.constant(new LifeState(lives, LifeState.State.VULNERABLE)));
+        } else {
+            return Sq
+                    .repeat(Ticks.PLAYER_INVULNERABLE_TICKS,
+                            new LifeState(lives, LifeState.State.INVULNERABLE))
+                    .concat(Sq.constant(
+                            new LifeState(lives, LifeState.State.VULNERABLE)));
         }
     }
 
