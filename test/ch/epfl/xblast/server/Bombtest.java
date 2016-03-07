@@ -46,7 +46,7 @@ public class Bombtest {
            fuseLast =fuseLast.tail();
         }
         
-        assertEquals(1,(int)fuseLast.head());
+        fuseLast.head();
     }
     
     /**
