@@ -188,9 +188,9 @@ public final class Player {
      * @param directedPos
      *            directedPosition of the player
      * @param maxBombs
-     *            maximal number of bombs
+     *            maximal number of bombs the player can drop
      * @param bombRange
-     *            bomb range
+     *            range of the players bombs
      * @throws IllegalArgumentException
      *             if one of the first three arguments is null.
      * @throws NullPointerException
@@ -206,108 +206,164 @@ public final class Player {
     }
 
     /**
-     * Constructor
+     * Constructs a player from given arguments. This constructor doesn't take a
+     * directed position and a sequence of LifeStates, but only the amount of
+     * lives and the Cell the player will be in.
      * 
      * @param id
+     *            id of the player
      * @param lives
+     *            amount of lives the new player will have
      * @param position
+     *            Cell in which the player will be located
      * @param maxBombs
+     *            maximal number of bombs the player can drop
      * @param bombRange
-     * @throws //TODO
+     *            range of the players bombs
+     * @throws NullPointerException
+     *             if id or position is null
+     * @throws IllegalArgumentException
+     *             if lives or maxBombs are negative
      */
     public Player(PlayerID id, int lives, Cell position, int maxBombs,
             int bombRange) {
-        this(id, lifeStateSqCreation(lives),
-                DirectedPosition.stopped(new DirectedPosition(
-                        SubCell.centralSubCellOf(position), Direction.S)),
-                maxBombs, bombRange);
+        this(id, 
+                lifeStateSqCreation(lives),
+                DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),
+                maxBombs, 
+                bombRange);
     }
 
     /**
-     * @return
+     * Returns the id of the player.
+     * @return id of the player
      */
     public PlayerID id() {
         return id;
     }
 
+    /**
+     * Returns the sequence of the LifeState couples (number of lives and state)
+     * of the player.
+     * 
+     * @return the sequence of LifeStates
+     */
     public Sq<LifeState> lifeStates() {
         return lifeStates;
     }
 
     /**
-     * @return
+     * Returns the current LifeState couple (number of lives and state) the
+     * player is in.
+     * 
+     * @return current lifeState
      */
     public LifeState lifeState() {
         return lifeStates.head();
     }
 
     /**
-     * @return
+     * Returns the sequence of LifeStates for the next life. (The player
+     * will go into DYING state and then either be dead forever, or he will be
+     * INVULNERABLE for a moment and then start all over again but with one life less)
+     * 
+     * @return the appropriate sequence of LifeStates for the players next life
      */
     public Sq<LifeState> statesForNextLife() {
-        return Sq
-                .repeat(Ticks.PLAYER_DYING_TICKS,
-                        new LifeState(lives(), LifeState.State.DYING))
+        // 1) creating DYING sequence 
+        // 2) calling lifeStateSqCreation to add the
+        //      appropriate sequence (either DEAD or INVULNERABLE followed by
+        //      VULNERABLE with one life less)
+        return Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(), LifeState.State.DYING))
                 .concat(lifeStateSqCreation(lives() - 1));
     }
 
     /**
-     * @return
+     * Returns the current number of remaining lives the player has.
+     * 
+     * @return number of lives the player currently has
      */
     public int lives() {
         return lifeState().lives();
     }
 
     /**
-     * @return
+     * Determines if the player is alive or not.
+     * 
+     * @return true if the player is alive, false otherwise
      */
     public boolean isAlive() {
         return lives() > 0;
     }
 
     /**
-     * Getter for directedPos
+     * Getter for directedPosition sequence of the player.
      * 
-     * @return
+     * @return the sequence of directed positions the player has
      */
     public Sq<DirectedPosition> directedPositions() {
         return directedPos;
     }
 
     /**
-     * @return
+     * Returns the current position of the player.
+     * 
+     * @return current position
      */
     public SubCell position() {
         return directedPos.head().position();
     }
 
     /**
-     * @return
+     * Returns the direction towards which the player is currently facing.
+     * 
+     * @return the direction towards which the player is looking
      */
     public Direction direction() {
         return directedPos.head().direction();
     }
 
     /**
-     * @return
+     * Returns the maximal amount of bombs that the player can drop.
+     * @return maximal bomb drop amount
      */
     public int maxBombs() {
         return maxBombs;
     }
 
     /**
+     * Returns a new player that is completly identical except for the maximal
+     * amount of bombs that he can drop.
+     * 
      * @param newMaxBombs
-     * @return
+     *            new amount of bombs that the player can drop
+     * @return almost identical player but with a new maxBomb value
      */
     public Player withMaxBombs(int newMaxBombs) {
         return new Player(id, lifeStates, directedPos, newMaxBombs, bombRange);
     }
 
+    //TODO bombRange()
+    
+    //TODO withbombRange()
+    
+    //TODO newBomb()
+    
+    
+    
+    
+    
+    
     /**
-     * SUPPLEMENTARY METHOD TODO
+     * SUPPLEMENTARY METHOD: given an amount of lives this method will create
+     * the appropriate sequence of lifeStates. If the amount of lives is
+     * non-positive the returned sequence will consist of the state DEAD,
+     * otherwise the INVULNERABLE state will anticipate an infinite state of
+     * VULNERABLE)
      * 
      * @param lives
-     * @return
+     *            amount of lives
+     * @return sequence of liveStates according to input value
      */
     private static Sq<LifeState> lifeStateSqCreation(int lives) {
         if (lives <= 0) {
