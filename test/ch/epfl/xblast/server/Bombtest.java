@@ -32,6 +32,26 @@ public class Bombtest {
         
         
     }
+    
+    /**
+     * test if the constructor return an exception with an negative fuselength
+     */
+    @Test(expected= java.lang.IllegalArgumentException.class)
+    public void negativeFuseLengthTest() {
+        int fusel=-5;
+        Bomb a= new Bomb(PlayerID.PLAYER_1,new Cell(0,0),fusel,5);
+       
+        
+        Sq<Integer> fuseLast=a.fuseLengths();
+        int i=fusel;
+        while(!fuseLast.isEmpty()){
+           assertEquals(i,(int)fuseLast.head());
+           fuseLast =fuseLast.tail();
+           i--;
+        }
+        
+        
+    }
 
     /**
      * test if the sequence stop at 1

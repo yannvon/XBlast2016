@@ -44,11 +44,10 @@ public final class Bomb {
         this.ownerId = Objects.requireNonNull(ownerId);
         this.position = Objects.requireNonNull(position);
         this.range = ArgumentChecker.requireNonNegative(range);
-        if (fuseLengths.isEmpty()) { // FIXME shouldn't the require non null
-                                     // check come first?
+        this.fuseLengths = Objects.requireNonNull(fuseLengths);
+        if (fuseLengths.isEmpty()) { 
             throw new IllegalArgumentException("fuseLentghs sequence is empty");
         }
-        this.fuseLengths = Objects.requireNonNull(fuseLengths);
     }
 
     /**
@@ -69,13 +68,13 @@ public final class Bomb {
      */
     public Bomb(PlayerID ownerId, Cell position, int fuseLengths, int range) {
         this(ownerId, position,
-                Sq.iterate(fuseLengths, i -> i - 1).limit(fuseLengths), range); // FIXME
+                Sq.iterate(ArgumentChecker.requireNonNegative(fuseLengths), i -> i - 1).limit(fuseLengths), range); // FIXME
                                                                                 // what
                                                                                 // if
                                                                                 // fuseLengths
                                                                                 // is
                                                                                 // negative?
-                                                                                // (shouldnt
+                                                                                // (shouldn't
                                                                                 // make
                                                                                 // problems
                                                                                 // but
