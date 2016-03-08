@@ -4,7 +4,7 @@ package ch.epfl.xblast;
  * Non-instantiable class that contains methods to check validity of an
  * argument.
  * 
- * @author Loic Vandenberghe (257742)
+ * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */

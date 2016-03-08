@@ -90,7 +90,7 @@ public final class Board {
         
         // add the first and last row of Wall-Blocks
         List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
-        walledBlocks.add(0, walledRow);
+        walledBlocks.add(0,walledRow); //FIXME performance?
         walledBlocks.add(walledRow);
 
         // call ofRows method to construct Board from walledBlocks matrix
