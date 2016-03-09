@@ -26,7 +26,7 @@ public class PlayerTest {
     public void secondConstructorTest() {
         Cell position = new Cell(3,5);
         
-        LifeState ls = new LifeState(3,State.DEAD);
+        //LifeState ls = new LifeState(3,State.DEAD);
         
         //--- PLAYER ALIVE ---
         Player p1 = new Player(PlayerID.PLAYER_1, 3, position, 2, 4);
