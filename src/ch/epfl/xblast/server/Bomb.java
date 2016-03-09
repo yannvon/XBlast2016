@@ -69,18 +69,7 @@ public final class Bomb {
     public Bomb(PlayerID ownerId, Cell position, int fuseLengths, int range) {
         this(ownerId, position,
                 Sq.iterate(ArgumentChecker.requireNonNegative(fuseLengths), i -> i - 1).limit(fuseLengths), range); // FIXME
-                                                                                // what
-                                                                                // if
-                                                                                // fuseLengths
-                                                                                // is
-                                                                                // negative?
-                                                                                // (shouldn't
-                                                                                // make
-                                                                                // problems
-                                                                                // but
-                                                                                // not
-                                                                                // sure)
-                                                                                // TEST!
+                                                                              
     }
 
     /**
