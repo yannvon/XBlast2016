@@ -332,7 +332,7 @@ public final class Player {
     }
 
     /**
-     * Returns a new player that is completly identical except for the maximal
+     * Returns a new player that is completely identical except for the maximal
      * amount of bombs that he can drop.
      * 
      * @param newMaxBombs
@@ -343,12 +343,37 @@ public final class Player {
         return new Player(id, lifeStates, directedPos, newMaxBombs, bombRange);
     }
 
-    //TODO bombRange()
+    /**
+     * Returns the range of the explosions produced by this players bombs
+     * 
+     * @return range of the players bombs
+     */
+    public int bombRange(){
+        return bombRange;
+    }
     
-    //TODO withbombRange()
-    
-    //TODO newBomb()
-    
+    /**
+     * Returns a new player that is completely identical except for the range of
+     * the bombs that he can drop.
+     * 
+     * @param newBombRange
+     *            new range of the explosions produces by the bombs that the
+     *            player can drop
+     * @return almost identical player but with a new bombRange value
+     */
+    public Player withBombRange(int newBombRange){
+        return new Player(id, lifeStates, directedPos, maxBombs, newBombRange);
+    }
+
+    /**
+     * Returns a bomb, placed on the players current location. The fuseLength of
+     * the bomb is defined by the constant BOMB_FUSE_TICKS.
+     * 
+     * @return a bomb placed by the player on his current location (Cell)
+     */
+    public Bomb newBomb() {
+        return new Bomb(id, position().containingCell(), Ticks.BOMB_FUSE_TICKS, bombRange);
+    }
     
     
     

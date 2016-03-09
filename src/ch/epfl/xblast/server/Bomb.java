@@ -51,7 +51,7 @@ public final class Bomb {
     }
 
     /**
-     * Second Constructor, taking an integer to represent initial fuseLength
+     * Second Constructor, taking an integer to represent initial fuseLength.
      * 
      * @param ownerId
      *            PayerID of the bomb owner
