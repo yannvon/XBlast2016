@@ -83,8 +83,9 @@ public class Bombtest {
                 Cell cel=a.position();
                 Sq<Cell> part= arm.head();
                 while(!part.isEmpty()){
+                    
                     assertEquals(cel,part.head());
-                    System.out.println(cel);
+                   
                     cel=cel.neighbor(Direction.values()[i]);
                     part=part.tail();
                 }
