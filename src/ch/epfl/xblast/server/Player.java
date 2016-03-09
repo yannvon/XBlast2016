@@ -389,8 +389,10 @@ public final class Player {
      */
     private static Sq<LifeState> lifeStateSqCreation(int lives) {
         if (lives <= 0) {
+            // Player is dead.
             return Sq.constant(new LifeState(0, LifeState.State.DEAD));
         } else {
+            // Player has at least on life left.
             return Sq
                     .repeat(Ticks.PLAYER_INVULNERABLE_TICKS,
                             new LifeState(lives, LifeState.State.INVULNERABLE))
