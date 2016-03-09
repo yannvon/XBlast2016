@@ -11,6 +11,13 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 
+/**
+ * JUnit test for the Bomb.java class.
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ *
+ */
 public class Bombtest {
 
     /**
