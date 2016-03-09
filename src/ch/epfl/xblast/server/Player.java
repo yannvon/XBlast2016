@@ -25,7 +25,7 @@ public final class Player {
     public static final class LifeState {
 
         /**
-         * An enum of all possible states that the player can be in.
+         * An enumeration of all possible states that the player can be in.
          */
         public enum State {
             INVULNERABLE, VULNERABLE, DYING, DEAD;
@@ -47,7 +47,7 @@ public final class Player {
          * @throws NullPointerException
          *             if state is null
          */
-        public LifeState(int lives, State State) {
+        public LifeState(int lives, State state) {
             this.lives = ArgumentChecker.requireNonNegative(lives);
             this.state = Objects.requireNonNull(state);
         }
@@ -208,7 +208,8 @@ public final class Player {
     /**
      * Constructs a player from given arguments. This constructor doesn't take a
      * directed position and a sequence of LifeStates, but only the amount of
-     * lives and the Cell the player will be in.
+     * lives and the Cell the player will be in.(The newly constructed player
+     * will face south)
      * 
      * @param id
      *            id of the player
