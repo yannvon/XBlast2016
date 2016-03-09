@@ -375,10 +375,6 @@ public final class Player {
         return new Bomb(id, position().containingCell(), Ticks.BOMB_FUSE_TICKS, bombRange);
     }
     
-    
-    
-    
-    
     /**
      * SUPPLEMENTARY METHOD: given an amount of lives this method will create
      * the appropriate sequence of lifeStates. If the amount of lives is
@@ -401,5 +397,4 @@ public final class Player {
                             new LifeState(lives, LifeState.State.VULNERABLE)));
         }
     }
-
 }

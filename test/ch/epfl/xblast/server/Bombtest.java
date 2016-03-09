@@ -49,8 +49,6 @@ public class Bombtest {
            fuseLast =fuseLast.tail();
            i--;
         }
-        
-        
     }
 
     /**
