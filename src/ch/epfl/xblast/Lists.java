@@ -2,6 +2,7 @@ package ch.epfl.xblast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -48,6 +49,45 @@ public final class Lists {
         mirrored.addAll(reversed);
         
         return mirrored;
+    }
+    
+    /**
+     * Returns a list containing all possible permutations of the input list, in random order.
+     * 
+     * @param l list for which the elements will be permuted
+     * @return a list containing the lists of every permutation
+     */
+    public static <T> List<List<T>> permutations(List<T> l){
+        
+        //declare List that will then be returned plus copy the received List for safety reasons
+        List<List<T>> output = new LinkedList<>();
+        List<T> input = new LinkedList<>(l);
+
+        
+        //if list is empty, the result is an empty list
+        if(l.isEmpty()){
+            output.add(l);
+            return output;
+        }
+            
+        //if list contains one element or more, remove one and start recursive call.
+        T deleted = input.remove(0);
+        output = permutations(input);
+        
+        List<List<T>> realOutput = new LinkedList<>();
+
+        //add removed element at every position
+        int permutationLength = l.size();
+        for(List<T> list : output){
+            for(int i = 0; i < permutationLength; i++){
+                list.add(i, deleted);
+                realOutput.add(new LinkedList<>(list));
+                list.remove(i);
+            }
+        }
+        
+        return realOutput;
+        
     }
     
 }
