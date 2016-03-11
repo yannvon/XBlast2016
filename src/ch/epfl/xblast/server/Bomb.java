@@ -25,20 +25,20 @@ public final class Bomb {
     private final int range;
 
     /**
-     * First Constructor, taking a sequence of Integer as fuse length.
+     * First Constructor, taking a sequence of Integers as fuse length.
      * 
      * @param ownerId
      *            PayerID of the bomb owner
      * @param position
-     *            Cell in which the bomb is located
+     *            Cell in which the bomb will be located
      * @param fuseLengths
      *            Sequence of Integers to represent the fuse length
      * @param range
      *            Integer to represent bomb detonation range
      * @throws NullPointerException
-     *             if range is negative or fuseLength sequence empty
-     * @throws IllegalArgumentException
      *             if one of the first three parameters are null
+     * @throws IllegalArgumentException
+     *             if range is negative or fuseLength sequence empty
      */
     public Bomb(PlayerID ownerId, Cell position, Sq<Integer> fuseLengths, int range) {
         this.ownerId = Objects.requireNonNull(ownerId);
@@ -46,7 +46,7 @@ public final class Bomb {
         this.range = ArgumentChecker.requireNonNegative(range);
         this.fuseLengths = Objects.requireNonNull(fuseLengths);
         if (fuseLengths.isEmpty()) { 
-            throw new IllegalArgumentException("fuseLentghs sequence is empty");
+            throw new IllegalArgumentException("fuseLentghs sequence cannot be empty.");
         }
     }
 
@@ -62,14 +62,15 @@ public final class Bomb {
      * @param range
      *            Integer to represent bomb detonation range
      * @throws NullPointerException
-     *             if range is negative or fuseLength non-positive
-     * @throws IllegalArgumentException
      *             if one of the first two parameters are null
+     * @throws IllegalArgumentException
+     *             if range is negative or fuseLength non-positive
      */
     public Bomb(PlayerID ownerId, Cell position, int fuseLengths, int range) {
-        this(ownerId, position,
-                Sq.iterate(ArgumentChecker.requireNonNegative(fuseLengths), i -> i - 1).limit(fuseLengths), range); // FIXME
-                                                                              
+        this(ownerId, 
+                position,
+                Sq.iterate(ArgumentChecker.requireNonNegative(fuseLengths),i -> i - 1).limit(fuseLengths),
+                range);
     }
 
     /**
@@ -118,20 +119,20 @@ public final class Bomb {
     }
 
     /**
-     * Returns the explosion corresponding to the bomb. The duraction of the
-     * explosion is given through Ticks.EXPLOSIO_TICKS.
+     * Returns the explosion corresponding to the bomb. The duration of the
+     * explosion is given through Ticks.EXPLOSION_TICKS.
      * 
      * @return List<Sq<Sq<Cell>>> 4 arms that represent the explosion of the
      *         current bomb over time
      */
     public List<Sq<Sq<Cell>>> explosion() {
         List<Sq<Sq<Cell>>> explosion = new ArrayList<>();
-
+        
+        // for every direction add an explosion arm to the explosion
         for (Direction dir : Direction.values()) {
             explosion.add(explosionArmTowards(dir));
         }
         return explosion;
-
     }
 
     /**

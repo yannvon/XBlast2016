@@ -10,8 +10,8 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 
 /**
- * A player being characterized by a multitude of attributes.
- * This is an immutable class.
+ * A player being characterised by a multitude of attributes. This is an
+ * immutable class.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -55,6 +55,7 @@ public final class Player {
 
         /**
          * Returns the amount of lives the player has.
+         * 
          * @return amount of lives
          */
         public int lives() {
@@ -63,6 +64,7 @@ public final class Player {
 
         /**
          * Return current state of the player.
+         * 
          * @return state of the player
          */
         public State state() {
@@ -71,6 +73,7 @@ public final class Player {
 
         /**
          * Determines if the player can move or not.
+         * 
          * @return true if the player is allowed to move, false otherwise
          */
         public boolean canMove() {
@@ -86,7 +89,8 @@ public final class Player {
     }
 
     /**
-     *  A directed position is another attribute of a player.
+     * A directed position is another attribute of a player. It consists of a
+     * direction and a position.
      */
     public static final class DirectedPosition {
 
@@ -139,6 +143,7 @@ public final class Player {
 
         /**
          * Returns the position of the directed position.
+         * 
          * @return position
          */
         public SubCell position() {
@@ -147,6 +152,7 @@ public final class Player {
 
         /**
          * Returns the direction of the directed position.
+         * 
          * @return direction
          */
         public Direction direction() {
@@ -155,6 +161,7 @@ public final class Player {
 
         /**
          * Returns a new directed position with same direction but new position.
+         * 
          * @param newPosition
          * @return DirectedPosition with changed position but same direction
          */
@@ -163,7 +170,9 @@ public final class Player {
         }
 
         /**
-         * Returns a new directed position with same position as this but new direction.
+         * Returns a new directed position with same position as this but new
+         * direction.
+         * 
          * @param newDirection
          * @return DirectedPosition with changed direction but same position
          */
@@ -192,13 +201,14 @@ public final class Player {
      *            maximal number of bombs the player can drop
      * @param bombRange
      *            range of the players bombs
-     * @throws IllegalArgumentException
-     *             if one of the first three arguments is null.
      * @throws NullPointerException
+     *             if one of the first three arguments is null.
+     * @throws IllegalArgumentException
      *             if one of the last three arguments is negative.
      */
     public Player(PlayerID id, Sq<LifeState> lifeStates,
             Sq<DirectedPosition> directedPos, int maxBombs, int bombRange) {
+        
         this.id = Objects.requireNonNull(id);
         this.lifeStates = Objects.requireNonNull(lifeStates);
         this.directedPos = Objects.requireNonNull(directedPos);
@@ -225,7 +235,7 @@ public final class Player {
      * @throws NullPointerException
      *             if id or position is null
      * @throws IllegalArgumentException
-     *             if lives or maxBombs are negative
+     *             if lives, bombRange or maxBombs are negative
      */
     public Player(PlayerID id, int lives, Cell position, int maxBombs,
             int bombRange) {
@@ -238,6 +248,7 @@ public final class Player {
 
     /**
      * Returns the id of the player.
+     * 
      * @return id of the player
      */
     public PlayerID id() {
@@ -265,19 +276,22 @@ public final class Player {
     }
 
     /**
-     * Returns the sequence of LifeStates for the next life. (The player
-     * will go into DYING state and then either be dead forever, or he will be
-     * INVULNERABLE for a moment and then start all over again but with one life less)
+     * Returns the sequence of LifeStates for the next life. (The player will go
+     * into DYING state and then either be dead forever, or he will be
+     * INVULNERABLE for a moment and then start all over again but with one life
+     * less)
      * 
      * @return the appropriate sequence of LifeStates for the players next life
      */
     public Sq<LifeState> statesForNextLife() {
-        // 1) creating DYING sequence 
-        // 2) calling lifeStateSqCreation to add the
-        //      appropriate sequence (either DEAD or INVULNERABLE followed by
-        //      VULNERABLE with one life less)
-        return Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(), LifeState.State.DYING))
-                .concat(lifeStateSqCreation(lives() - 1));
+        // creating a sequence of LifeStates where the player is dying
+        Sq<LifeState> dying = Sq.repeat(Ticks.PLAYER_DYING_TICKS,
+                new LifeState(lives(), LifeState.State.DYING));
+
+        // calling lifeStateSqCreation to add the appropriate sequence
+        // (either DEAD or INVULNERABLE followed by VULNERABLE with one life
+        // less)
+        return dying.concat(lifeStateSqCreation(lives() - 1));
     }
 
     /**
@@ -327,6 +341,7 @@ public final class Player {
 
     /**
      * Returns the maximal amount of bombs that the player can drop.
+     * 
      * @return maximal bomb drop amount
      */
     public int maxBombs() {
@@ -350,10 +365,10 @@ public final class Player {
      * 
      * @return range of the players bombs
      */
-    public int bombRange(){
+    public int bombRange() {
         return bombRange;
     }
-    
+
     /**
      * Returns a new player that is completely identical except for the range of
      * the bombs that he can drop.
@@ -363,7 +378,7 @@ public final class Player {
      *            player can drop
      * @return almost identical player but with a new bombRange value
      */
-    public Player withBombRange(int newBombRange){
+    public Player withBombRange(int newBombRange) {
         return new Player(id, lifeStates, directedPos, maxBombs, newBombRange);
     }
 
@@ -374,9 +389,9 @@ public final class Player {
      * @return a bomb placed by the player on his current location (Cell)
      */
     public Bomb newBomb() {
-        return new Bomb(id, position().containingCell(), Ticks.BOMB_FUSE_TICKS, bombRange);
+        return new Bomb(id, position().containingCell(), Ticks.BOMB_FUSE_TICKS,bombRange);
     }
-    
+
     /**
      * SUPPLEMENTARY METHOD: given an amount of lives this method will create
      * the appropriate sequence of lifeStates. If the amount of lives is
@@ -385,7 +400,7 @@ public final class Player {
      * VULNERABLE)
      * 
      * @param lives
-     *            amount of lives
+     *            amount of lives remaining
      * @return sequence of liveStates according to input value
      */
     private static Sq<LifeState> lifeStateSqCreation(int lives) {

@@ -28,7 +28,8 @@ public final class ArgumentChecker {
      */
     public static int requireNonNegative(int value) {
         if (value < 0) {
-            throw new IllegalArgumentException("Checked argument has negative value : "+value);
+            throw new IllegalArgumentException(
+                    "Checked argument has negative value : " + value);
         }
         return value;
     }
