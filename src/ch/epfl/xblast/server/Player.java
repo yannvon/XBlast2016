@@ -11,6 +11,7 @@ import ch.epfl.xblast.SubCell;
 
 /**
  * A player being characterized by a multitude of attributes.
+ * This is an immutable class.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
