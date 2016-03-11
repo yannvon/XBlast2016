@@ -127,6 +127,7 @@ public class ListsTest {
         System.out.println(result.toString());  //FIXME delete
         
         assertTrue(result.contains(Arrays.asList("bla")));
+        assertEquals(1,result.size());
     }
 
 

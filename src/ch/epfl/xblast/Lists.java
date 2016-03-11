@@ -66,7 +66,7 @@ public final class Lists {
         
         //if list is empty, the result is an empty list
         if(l.isEmpty()){
-            output.add(l);//FIXME shouldn't be input? 
+            output.add(input);
             return output;
         }
             
