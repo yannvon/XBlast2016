@@ -130,7 +130,7 @@ public final class GameState {
     /**
      * @return
      */
-    public List<Player> getPlayers() {
+    public List<Player> players() {
         return players;
     }
 
