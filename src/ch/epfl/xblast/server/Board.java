@@ -21,7 +21,7 @@ public final class Board {
     private final List<Sq<Block>> board;
 
     /**
-     * Constructor of a board taking a list of block sequences as param.
+     * Constructor of a board taking a list of block sequences as parameter.
      * 
      * @param blocks
      *            a list of block sequences
@@ -32,8 +32,8 @@ public final class Board {
         if (blocks.size() != Cell.COUNT) {
             throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
         }
-
-        board = new ArrayList<>(blocks);
+        
+        board = Collections.unmodifiableList(new ArrayList<>(blocks));
 
     }
 
@@ -155,8 +155,6 @@ public final class Board {
         return blocksAt(c).head();
     }
     
-    
-
     /**
      * Checks if a given matrix of blocks has the desired size.
      * 

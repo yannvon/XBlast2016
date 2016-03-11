@@ -33,8 +33,8 @@ public final class Player {
         }
 
         // Attributes
-        private int lives;
-        private State state;
+        private final int lives;
+        private final State state;
 
         /**
          * Sole constructor of a LifeState.
@@ -123,8 +123,8 @@ public final class Player {
         }
 
         // Attributes
-        private SubCell position;
-        private Direction direction;
+        private final SubCell position;
+        private final Direction direction;
 
         /**
          * Constructs a directed position with given parameters.
@@ -182,11 +182,11 @@ public final class Player {
     }
 
     // Attributes
-    private PlayerID id;
-    private Sq<LifeState> lifeStates;
-    private Sq<DirectedPosition> directedPos;
-    private int maxBombs;
-    private int bombRange;
+    private final PlayerID id;
+    private final Sq<LifeState> lifeStates;
+    private final Sq<DirectedPosition> directedPos;
+    private final int maxBombs;
+    private final int bombRange;
 
     /**
      * Constructs a player from given arguments.
