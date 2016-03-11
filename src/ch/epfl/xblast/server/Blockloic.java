@@ -83,7 +83,10 @@ public enum Blockloic {
     /**
      * @return Bonus associate to the block
      */
-    public Bonus associateBonus(){
+    public Bonus associatedBonus(){
+        if(associatedBonus==null){
+            throw new NoSuchElementException("there is no Bonus associated to this block");
+        }
         return associatedBonus;
     }
 }
