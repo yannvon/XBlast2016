@@ -8,6 +8,7 @@ import com.sun.javafx.scene.traversal.Direction;
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.server.Ticks;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 public class test {
     public static void main(String[] args) {
        
-        System.out.println(Direction.values()[0]);
+        System.out.println(((double)Ticks.TOTAL_TICKS-199)/Ticks.TICKS_PER_SECOND);
         
         
     }
