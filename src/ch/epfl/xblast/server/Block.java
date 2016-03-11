@@ -23,7 +23,7 @@ public enum Block {
      * @param maybeAssociatedBonus
      *            Bonus associated to block
      */
-    private Block(Bonus maybeAssociatedBonus) { // FIXME test nonulle? lancer ereure?
+    private Block(Bonus maybeAssociatedBonus) {
         // storing the associated bonus
         this.maybeAssociatedBonus = maybeAssociatedBonus;
     }
@@ -76,7 +76,7 @@ public enum Block {
      * 
      * @return true if it is a bonus, false otherwise
      */
-    public boolean isBonus() {  //FIXME use logic expression instead of switch?
+    public boolean isBonus() {  //FIXME assistant: use logic expression instead of switch?
         switch (this) {
         case BONUS_BOMB:
         case BONUS_RANGE:
@@ -87,7 +87,7 @@ public enum Block {
     }
 
     /**
-     * Returns the bonus associated with this Block or throws an exception if
+     * Returns the bonus associated with this Block  or throws an exception if
      * there is no bonus associated.
      * 
      * @return the bonus associated to the block
