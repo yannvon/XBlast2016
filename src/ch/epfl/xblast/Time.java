@@ -9,7 +9,7 @@ package ch.epfl.xblast;
  */
 public interface Time {
     /**
-     * seconds per minute   FIXME ask assistant if comments like this are good or not.
+     * seconds per minute 
      */
     public static final int S_PER_MIN = 60;
     /**

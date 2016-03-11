@@ -28,7 +28,6 @@ public enum Block {
         this.maybeAssociatedBonus = maybeAssociatedBonus;
     }
 
-    
     /**
      * Default constructor, used by all other blocks.
      */
@@ -61,7 +60,7 @@ public enum Block {
      * @return true if the Block casts a shadow, false otherwise
      */
     public boolean castsShadow() {
-        switch (this) { //FIXME logic expression instead?
+        switch (this) {
         case INDESTRUCTIBLE_WALL:
         case DESTRUCTIBLE_WALL:
         case CRUMBLING_WALL:
@@ -76,7 +75,7 @@ public enum Block {
      * 
      * @return true if it is a bonus, false otherwise
      */
-    public boolean isBonus() {  //FIXME assistant: use logic expression instead of switch?
+    public boolean isBonus() {
         switch (this) {
         case BONUS_BOMB:
         case BONUS_RANGE:
