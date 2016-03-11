@@ -1,22 +1,25 @@
 package ch.epfl.xblast.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.PlayerID;
 
 public final class GameState {
 
     //ATRIBUTES
-    private int ticks;
-    private Board board;
-    private List<Player> players;
-    private List<Bomb> bombs;
-    private List<Sq<Sq<Cell>>> explosions;
-    private List<Sq<Cell>> blasts;
+    private final int ticks;
+    private final Board board;
+    private final List<Player> players;
+    private final List<Bomb> bombs;
+    private final List<Sq<Sq<Cell>>> explosions;
+    private final List<Sq<Cell>> blasts;
     
     
     /**
@@ -44,9 +47,15 @@ public final class GameState {
             throw new IllegalArgumentException("the Game requires 4 players instead of "+nbPlayers);
         }
         this.board= Objects.requireNonNull(board);
-        this.players=Objects.requireNonNull(players);
-        this.bombs=Objects.requireNonNull(bombs);
-        this.blasts=Objects.requireNonNull(blasts);
+       
+        this.players = Collections.unmodifiableList(
+                new ArrayList<>(Objects.requireNonNull(players)));
+        this.explosions = Collections.unmodifiableList(
+                new ArrayList<>(Objects.requireNonNull(explosion)));
+        this.bombs = Collections.unmodifiableList(
+                new ArrayList<>(Objects.requireNonNull(bombs)));
+        this.blasts = Collections.unmodifiableList(
+                new ArrayList<>(Objects.requireNonNull(blasts)));
     }
     
     /**
@@ -86,11 +95,56 @@ public final class GameState {
         if(ticks>=Ticks.TOTAL_TICKS){
             return true;
         }
-        boolean gameOver=true;
-        players.forEach(player -> {
-            gameOver &= !player.isAlive();
-        });
-        return gameOver;
+        return alivePlayers().size()==0;
+        
     }
     
+    /**
+     * @return
+     */
+    public double remainingTime(){
+        return ((double)Ticks.TOTAL_TICKS-ticks)/Ticks.TICKS_PER_SECOND;
+    }
+    
+    /**
+     * @return
+     */
+    public Optional<PlayerID> winner(){
+        List<Player> alivePlayers=alivePlayers();
+        if(alivePlayers.size()==1){
+            return Optional.of(alivePlayers.get(0).id());
+        }
+        return Optional.empty();
+    }
+    
+    
+    
+    /**
+     * @return
+     */
+    public Board board() {
+        return board;
+    }
+
+    
+    /**
+     * @return
+     */
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    
+    /**
+     * @return
+     */
+    public List<Player> alivePlayers(){
+        List<Player> alivePlayers=new ArrayList<>();
+        for(Player p : players){
+            if(p.isAlive()){
+                alivePlayers.add(p);
+            }
+        }
+        return alivePlayers;
+    }
 }
