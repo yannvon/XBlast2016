@@ -1,7 +1,7 @@
 package ch.epfl.xblast.server;
 
 /**
- * Enumeration that defines every bonus and gives the possibility to "give" the
+ * Enumeration that defines every bonus and gives the possibility to apply the
  * bonus to a player.
  * 
  * @author Loïc Vandenberghe (257742)
@@ -30,6 +30,11 @@ public enum Bonus {
             }
         }
     };
+    
+    // Constants
+    public static final int MAX_BOMBS = 9;
+    public static final int MAX_RANGE = 9;
+    
 
     abstract public Player applyTo(Player player);
 }

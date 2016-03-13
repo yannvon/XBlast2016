@@ -13,7 +13,7 @@ import ch.epfl.xblast.PlayerID;
 
 public final class GameState {
 
-    // ATRIBUTES
+    // Attributes
     private final int ticks;
     private final Board board;
     private final List<Player> players;
@@ -22,7 +22,7 @@ public final class GameState {
     private final List<Sq<Cell>> blasts;
 
     /**
-     * Principal constructor
+     * Principal constructor of a GameState.
      * 
      * @param ticks
      * @param board
@@ -32,10 +32,10 @@ public final class GameState {
      * @param blasts
      * 
      * @throws IllegalArgumentException
-     *             if the number of players is not 4 or if the ticks is
+     *             if the number of players is not 4 or if the ticks value is
      *             negative.
      * @throws NullPointerException
-     *             if one object is null.
+     *             if one of the objects is null.
      */
     public GameState(int ticks, Board board, List<Player> players,
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
@@ -60,14 +60,15 @@ public final class GameState {
     }
 
     /**
-     * Initial constructor: create a game with initials values: ticks:0 empties
-     * Lists of Bomb, explosion and blast
+     * Initial constructor, creates a game with the initial values that
+     * represent a fresh game. Ticks is set to 0 and the lists of bombs,
+     * explosion and blasts are empty.
      * 
      * @param board
      * @param players
      * 
      * @throws IllegalArgumentException
-     *             if the number of players is not 4 or if the ticks is
+     *             if the number of players is not 4 or if the value of ticks is
      *             negative.
      */
     public GameState(Board board, List<Player> players) {
@@ -77,25 +78,28 @@ public final class GameState {
     }
 
     /**
-     * Getter of ticks
+     * Returns the amount of ticks that have already been played.
      * 
-     * @return actual ticks
+     * @return the number of passed ticks
      */
     public int ticks() {
         return ticks;
     }
 
     /**
-     * Check if the game is Over: lasted 2 minutes or have 1 player left
+     * Check if the game is over: either 2 minutes are over or there is only one
+     * player left.
      * 
-     * @return true if the game is over
+     * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
         if (ticks >= Ticks.TOTAL_TICKS) {
             return true;
         }
-        return alivePlayers().size() >= 1;
-
+        return alivePlayers().size() >= 1; //FIXME! plutot <= ?! (ou ==)
+        
+        // return (ticks >= Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
+        // TODO decider qu'est ce qui es plus lisible.
     }
 
     /**
