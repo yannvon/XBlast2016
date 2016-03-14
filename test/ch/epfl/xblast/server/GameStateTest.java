@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.server.debug.GameStatePrinter;
 
 public class GameStateTest {
 
@@ -29,9 +30,9 @@ public class GameStateTest {
     
     private final List<Player> players= Arrays.asList(
             new Player(PlayerID.PLAYER_1,3,new Cell(1,1),3,3),
-            new Player(PlayerID.PLAYER_2,3,new Cell(1,1),3,3),
-            new Player(PlayerID.PLAYER_3,3,new Cell(1,1),3,3),
-            new Player(PlayerID.PLAYER_4,3,new Cell(1,1),3,3)
+            new Player(PlayerID.PLAYER_2,3,new Cell(7,6),3,3),
+            new Player(PlayerID.PLAYER_3,3,new Cell(8,9),3,3),
+            new Player(PlayerID.PLAYER_4,3,new Cell(3,4),3,3)
             );
     
     
@@ -42,6 +43,10 @@ public class GameStateTest {
         
         GameState a = new GameState(0,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
         GameState b = new GameState(board,players);
+        
+        GameStatePrinter.printGameState(a);
+        GameStatePrinter.printGameState(b);
+        
         
         assertEquals(a.ticks(),b.ticks());
         assertEquals(a.remainingTime(),b.remainingTime(),1e-9);

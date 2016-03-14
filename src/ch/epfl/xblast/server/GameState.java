@@ -25,12 +25,17 @@ public final class GameState {
      * Principal constructor of a GameState.
      * 
      * @param ticks
+     *            amount of ticks passed
      * @param board
+     *            board to play on
      * @param players
+     *            that participate
      * @param bombs
+     *            that are already placed
      * @param explosion
+     *            current explosions
      * @param blasts
-     * 
+     *            current blasts
      * @throws IllegalArgumentException
      *             if the number of players is not 4 or if the ticks value is
      *             negative.
@@ -38,17 +43,18 @@ public final class GameState {
      *             if one of the objects is null.
      */
     public GameState(int ticks, Board board, List<Player> players,
-            List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
-            List<Sq<Cell>> blasts) {
-
+            List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion, List<Sq<Cell>> blasts) {
+        
+        //1) check ticks and players requirements
         this.ticks = ArgumentChecker.requireNonNegative(ticks);
         int nbPlayers = players.size();
         if (nbPlayers != 4) {
             throw new IllegalArgumentException(
-                    "the Game requires 4 players instead of " + nbPlayers);
+                    "The Game requires 4 players instead of " + nbPlayers);
         }
         this.board = Objects.requireNonNull(board);
-
+        
+        //2) copy lists and save an unmodifiable view of them
         this.players = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(players)));
         this.explosions = Collections.unmodifiableList(
@@ -65,16 +71,18 @@ public final class GameState {
      * explosion and blasts are empty.
      * 
      * @param board
+     *            to play on
      * @param players
+     *            that participate
      * 
      * @throws IllegalArgumentException
      *             if the number of players is not 4 or if the value of ticks is
      *             negative.
      */
     public GameState(Board board, List<Player> players) {
-        this(0, board, players, new ArrayList<Bomb>(), //
-                new ArrayList<Sq<Sq<Cell>>>(), // FIXME Array or Linked
-                new ArrayList<Sq<Cell>>()); //
+        this(0, board, players, new ArrayList<Bomb>(),  //
+                new ArrayList<Sq<Sq<Cell>>>(),          // FIXME Array or Linked
+                new ArrayList<Sq<Cell>>());             //
     }
 
     /**
@@ -97,6 +105,8 @@ public final class GameState {
     }
 
     /**
+     * Returns the remaining time in seconds.
+     * 
      * @return the remaining time in seconds
      */
     public double remainingTime() {
@@ -104,10 +114,10 @@ public final class GameState {
     }
 
     /**
-     * check if the game have a winner an return it
+     * Check whether the game has a winner. If so, return it.
      * 
-     * @return an Optional containing the winner PlayerID if there is one.
-     *         Else return an empty Optional
+     * @return an Optional containing the winner PlayerID if there is one,
+     *          otherwise an empty Optional
      */
     public Optional<PlayerID> winner() {
         List<Player> alivePlayers = alivePlayers();
@@ -118,15 +128,17 @@ public final class GameState {
     }
 
     /**
-     * Getter for Board
-     * @return the actual Board 
+     * Returns the game Board.
+     * 
+     * @return the current Board 
      */
     public Board board() {
         return board;
     }
 
     /**
-     * Getter for Players
+     * Returns a List containing all players participating.
+     * 
      * @return a List containing all the players
      */
     public List<Player> players() {
@@ -134,8 +146,9 @@ public final class GameState {
     }
 
     /**
-     * Getter for alive players
-     * @return a List containing the alive players only
+     * Returns a List containing all currently alive players only.
+     * 
+     * @return a List containing the players that are alive
      */
     public List<Player> alivePlayers() {
         List<Player> alivePlayers = new ArrayList<>();
@@ -146,6 +159,7 @@ public final class GameState {
         }
         return alivePlayers;
     }
+    
     // TODO other methods (next())
 
     /*
@@ -153,11 +167,15 @@ public final class GameState {
      */
 
     /**
-     * private method to predict the List of blasts for the next Tick
+     * SUUPLEMENTARY METHOD: Calculate the List of blasts for the next Tick
+     * 
      * @param blasts0
+     *            current blasts
      * @param board0
+     *            current game board
      * @param explosions0
-     * @return the next List of Blasts
+     *            current explosions
+     * @return the List of Blasts for the next Tick
      */
     private List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0,
             List<Sq<Sq<Cell>>> explosions0) {
@@ -176,7 +194,6 @@ public final class GameState {
         for (Sq<Sq<Cell>> arm : explosions0) {
             blasts1.add(arm.head());
         }
-
         return blasts1;
     }
 }
