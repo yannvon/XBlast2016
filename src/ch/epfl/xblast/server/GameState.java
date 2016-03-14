@@ -45,7 +45,7 @@ public final class GameState {
     public GameState(int ticks, Board board, List<Player> players,
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion, List<Sq<Cell>> blasts) {
         
-        //1) check ticks and players requirements
+        //1) check ticks, players and board requirements
         this.ticks = ArgumentChecker.requireNonNegative(ticks);
         int nbPlayers = players.size();
         if (nbPlayers != 4) {
@@ -121,12 +121,14 @@ public final class GameState {
      */
     public Optional<PlayerID> winner() {
         List<Player> alivePlayers = alivePlayers();
-        if (alivePlayers.size() == 1) {
-            return Optional.of(alivePlayers.get(0).id());
+        return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
+                : Optional.empty();
+
+//        if (alivePlayers.size() == 1) {                   FIXME plus propre que ca non?
+//            return Optional.of(alivePlayers.get(0).id());
+//        }
+//        return Optional.empty();
         }
-        return Optional.empty();
-        //FIXME use ? :
-    }
 
     /**
      * Returns the game Board.
@@ -189,9 +191,7 @@ public final class GameState {
             if (board0.blockAt(blast.head()).isFree() && !newBlast.isEmpty()) {
                 blasts1.add(newBlast);
             }
-            
         }
-
         // add new blasts
         for (Sq<Sq<Cell>> arm : explosions0) {
             blasts1.add(arm.head());
