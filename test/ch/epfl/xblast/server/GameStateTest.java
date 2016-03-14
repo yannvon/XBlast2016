@@ -54,8 +54,34 @@ public class GameStateTest {
         
     }
     
+    @Test
     public void timeOutTest(){
+        GameState game = new GameState(Ticks.TOTAL_TICKS,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        assertTrue(game.isGameOver());
+        assertEquals(0,game.remainingTime(),1e-9);
+        assertEquals(Optional.empty(),game.winner());
+    }
+    @Test
+    public void OneTickToEndTest(){
+        GameState game = new GameState(Ticks.TOTAL_TICKS-1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        assertFalse(game.isGameOver());
+        assertEquals(Ticks.TICK_NANOSECOND_DURATION*1e-9,game.remainingTime(),1e-11);
+        assertEquals(Optional.empty(),game.winner());
+    }
+    
+    @Test
+    public void OnePlayerLeftTest(){
+        List<Player> pl= Arrays.asList(
+                new Player(PlayerID.PLAYER_1,3,new Cell(1,1),3,3),
+                new Player(PlayerID.PLAYER_2,0,new Cell(1,1),3,3),
+                new Player(PlayerID.PLAYER_3,0,new Cell(1,1),3,3),
+                new Player(PlayerID.PLAYER_4,0,new Cell(1,1),3,3)
+                );
         
+        GameState game = new GameState(60,board,pl,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        assertTrue(game.isGameOver());
+        assertEquals(120-3,game.remainingTime(),1e-11);
+        assertEquals(PlayerID.PLAYER_1,game.winner().get());
     }
 
 }
