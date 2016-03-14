@@ -14,8 +14,7 @@ public enum Block {
             Bonus.INC_BOMB), BONUS_RANGE(Bonus.INC_RANGE);
 
     // Attributes
-    // contains either corresponding bonus or null if there is none.
-    private Bonus maybeAssociatedBonus;
+    private Bonus maybeAssociatedBonus; // corresponding bonus or null
 
     /**
      * Primary constructor, used by the Bonus Blocks.
@@ -39,7 +38,7 @@ public enum Block {
     /**
      * Determines if the Block is free.
      * 
-     * @return true is the block is free, false otherwise
+     * @return true if the block is free, false otherwise
      */
     public boolean isFree() {
         return this == FREE;
@@ -51,7 +50,7 @@ public enum Block {
      * @return true if the block can host a player, false otherwise
      */
     public boolean canHostPlayer() {
-        return (this == FREE || isBonus());
+        return (isFree() || isBonus());
     }
 
     /**
@@ -86,7 +85,7 @@ public enum Block {
     }
 
     /**
-     * Returns the bonus associated with this Block  or throws an exception if
+     * Returns the bonus associated with this Block or throws an exception if
      * there is no bonus associated.
      * 
      * @return the bonus associated to the block

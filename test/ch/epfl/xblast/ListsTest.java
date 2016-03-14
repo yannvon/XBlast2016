@@ -8,6 +8,13 @@ import java.util.List;
 
 import org.junit.Test;
 
+/**
+ * Test class for Lists.
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen(258857)
+ *
+ */
 public class ListsTest {
 
     

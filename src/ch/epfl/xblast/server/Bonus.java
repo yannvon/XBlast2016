@@ -12,7 +12,7 @@ public enum Bonus {
     INC_BOMB {
         @Override
         public Player applyTo(Player player) {
-            if (player.maxBombs() < 9) {
+            if (player.maxBombs() < MAX_BOMBS) {
                 return player.withMaxBombs(player.maxBombs() + 1);
             } else {
                 return player;
@@ -23,7 +23,7 @@ public enum Bonus {
     INC_RANGE {
         @Override
         public Player applyTo(Player player) {
-            if (player.bombRange() < 9) {
+            if (player.bombRange() < MAX_RANGE) {
                 return player.withBombRange(player.bombRange() + 1);
             } else {
                 return player;
