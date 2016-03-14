@@ -87,6 +87,45 @@ public class GameStateTest {
         assertTrue(game.isGameOver());
         assertEquals(120-3,game.remainingTime(),1e-11);
         assertEquals(PlayerID.PLAYER_1,game.winner().get());
+        assertEquals(1,game.alivePlayers().size());
     }
 
+    @Test(expected= java.lang.IllegalArgumentException.class)
+    public void ticksException(){
+        GameState game = new GameState(-1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+
+    }
+    
+    @Test(expected= java.lang.NullPointerException.class)
+    public void BoardException(){
+        GameState game = new GameState(0,null,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+
+    }
+    @Test(expected= java.lang.NullPointerException.class)
+    public void playerException(){
+        GameState game = new GameState(1,board,null,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+
+    }
+    @Test(expected= java.lang.IllegalArgumentException.class)
+    public void nbPlayerException(){
+        List<Player> pl= Arrays.asList();
+        GameState game = new GameState(0,board,pl,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+
+    }
+    @Test(expected= java.lang.NullPointerException.class)
+    public void bombException(){
+        GameState game = new GameState(1,board,players,null,new ArrayList<>(),new ArrayList<>());
+
+    }
+    @Test(expected= java.lang.NullPointerException.class)
+    public void explosionException(){
+        GameState game = new GameState(1,board,players,new ArrayList<>(),null,new ArrayList<>());
+
+    }
+    @Test(expected= java.lang.NullPointerException.class)
+    public void blastException(){
+        GameState game = new GameState(1,board,players,new ArrayList<>(),new ArrayList<>(),null);
+
+    }
+    
 }
