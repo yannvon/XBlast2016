@@ -184,10 +184,11 @@ public final class GameState {
         // add existing blasts
         for (Sq<Cell> blast : blasts0) {
             Sq<Cell> newBlast = blast.tail();
-
+            
             if (board0.blockAt(blast.head()).isFree() && !newBlast.isEmpty()) {
                 blasts1.add(newBlast);
             }
+            
         }
 
         // add new blasts
