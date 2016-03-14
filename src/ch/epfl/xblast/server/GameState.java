@@ -93,13 +93,7 @@ public final class GameState {
      * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
-        if (ticks >= Ticks.TOTAL_TICKS) {
-            return true;
-        }
-        return alivePlayers().size() >= 1; //FIXME! plutot <= ?! (ou ==)
-        
-        // return (ticks >= Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
-        // TODO decider qu'est ce qui es plus lisible.
+        return (ticks >= Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
     }
 
     /**
