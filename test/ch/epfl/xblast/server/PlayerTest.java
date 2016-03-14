@@ -2,6 +2,9 @@ package ch.epfl.xblast.server;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import ch.epfl.cs108.Sq;
@@ -157,5 +160,33 @@ public class PlayerTest {
             lsToTestD = lsToTestD.tail();
         }
     }
+    
+    //Test the error handling of Player constructor
+    
+    @Test(expected = java.lang.NullPointerException.class)
+    public void ConstructorId() {
+        Cell position = new Cell(3,5);
+        Player p = new Player(null, 3, position, 2, 4);
+    }
+    @Test(expected = java.lang.IllegalArgumentException.class)
+    public void ConstructorLives() {
+        Cell position = new Cell(3,5);
+        Player p = new Player(PlayerID.PLAYER_1, -3, position, 2, 4);
+    }
+    @Test(expected = java.lang.NullPointerException.class)
+    public void ConstructorPosition() {
+        Player p = new Player(PlayerID.PLAYER_1, 3, null, 2, 4);
+    }
+    @Test(expected = java.lang.IllegalArgumentException.class)
+    public void ConstructorMaxBombs() {
+        Cell position = new Cell(3,5);
+        Player p = new Player(PlayerID.PLAYER_1, 3, position, -3, 4);
+    }
+    @Test(expected = java.lang.IllegalArgumentException.class)
+    public void ConstructorRange() {
+        Cell position = new Cell(3,5);
+        Player p = new Player(PlayerID.PLAYER_1, 3, position, 2, -3);
+    }
+    
 
 }
