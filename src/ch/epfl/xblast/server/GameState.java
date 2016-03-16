@@ -1,19 +1,35 @@
 package ch.epfl.xblast.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Direction;
+import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
 
 public final class GameState {
 
-    // Attributes
+    // Static attributes
+    private final static List<List<PlayerID>> playerPermutation = Collections
+            .unmodifiableList(Lists
+                    .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
+        //FIXME ArrayList or LinkedList?
+    private static final Random RANDOM = new Random(2016);
+    
+    
+    // Instance attributes
     private final int ticks;
     private final Board board;
     private final List<Player> players;
@@ -43,9 +59,10 @@ public final class GameState {
      *             if one of the objects is null.
      */
     public GameState(int ticks, Board board, List<Player> players,
-            List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion, List<Sq<Cell>> blasts) {
-        
-        //1) check ticks, players and board requirements
+            List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
+            List<Sq<Cell>> blasts) {
+
+        // 1) check ticks, players and board requirements
         this.ticks = ArgumentChecker.requireNonNegative(ticks);
         int nbPlayers = players.size();
         if (nbPlayers != 4) {
@@ -53,8 +70,8 @@ public final class GameState {
                     "The Game requires 4 players instead of " + nbPlayers);
         }
         this.board = Objects.requireNonNull(board);
-        
-        //2) copy lists and save an unmodifiable view of them
+
+        // 2) copy lists and save an unmodifiable view of them
         this.players = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(players)));
         this.explosions = Collections.unmodifiableList(
@@ -80,9 +97,9 @@ public final class GameState {
      *             negative.
      */
     public GameState(Board board, List<Player> players) {
-        this(0, board, players, new ArrayList<Bomb>(),  //
-                new ArrayList<Sq<Sq<Cell>>>(),          // FIXME Array or Linked
-                new ArrayList<Sq<Cell>>());             //
+        this(0, board, players, new ArrayList<Bomb>(), //
+                new ArrayList<Sq<Sq<Cell>>>(), // FIXME Array or Linked
+                new ArrayList<Sq<Cell>>()); //
     }
 
     /**
@@ -117,23 +134,18 @@ public final class GameState {
      * Check whether the game has a winner. If so, return it.
      * 
      * @return an Optional containing the winner PlayerID if there is one,
-     *          otherwise an empty Optional
+     *         otherwise an empty Optional
      */
     public Optional<PlayerID> winner() {
         List<Player> alivePlayers = alivePlayers();
         return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
                 : Optional.empty();
-
-//        if (alivePlayers.size() == 1) {                   FIXME plus propre que ca non?
-//            return Optional.of(alivePlayers.get(0).id());
-//        }
-//        return Optional.empty();
-        }
+    }
 
     /**
      * Returns the game Board.
      * 
-     * @return the current Board 
+     * @return the current Board
      */
     public Board board() {
         return board;
@@ -162,8 +174,36 @@ public final class GameState {
         }
         return alivePlayers;
     }
-    
+
+    /**
+     * @return
+     */
+    public Map<Cell, Bomb> bombedCells() {
+        Map<Cell, Bomb> bombedCells = new HashMap<>();
+        for (Bomb bomb : bombs) {
+            bombedCells.put(bomb.position(), bomb);
+        }
+        return bombedCells;
+    }
+
+    /**
+     * @return
+     */
+    public Set<Cell> blastedCells() {
+        Set<Cell> blastedCells = new HashSet<>();
+        for (Sq<Cell> blast : blasts) {
+            blastedCells.add(blast.head());
+        }
+        return blastedCells;
+    }
+
     // TODO other methods (next())
+
+    public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents,
+            Set<PlayerID> bombDrpEvents) {
+
+        return null;
+    }
 
     /*
      * private methods
@@ -187,7 +227,7 @@ public final class GameState {
         // add existing blasts
         for (Sq<Cell> blast : blasts0) {
             Sq<Cell> newBlast = blast.tail();
-            
+
             if (board0.blockAt(blast.head()).isFree() && !newBlast.isEmpty()) {
                 blasts1.add(newBlast);
             }

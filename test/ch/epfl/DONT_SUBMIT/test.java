@@ -1,16 +1,7 @@
 
 package ch.epfl.DONT_SUBMIT;
 
-import java.util.List;
-
-import com.sun.javafx.scene.traversal.Direction;
-
-import ch.epfl.cs108.Sq;
-import ch.epfl.xblast.Cell;
-import ch.epfl.xblast.SubCell;
-import ch.epfl.xblast.server.Ticks;
-
-import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * @author LoicVandenberghe (257742)
@@ -22,8 +13,10 @@ import java.util.ArrayList;
  */
 public class test {
     public static void main(String[] args) {
-       
-        System.out.println(((double)Ticks.TOTAL_TICKS-199)/Ticks.TICKS_PER_SECOND);
+        Random RANDOM = new Random(2016);
+
+        for(int i=0;i<10;i++)
+        System.out.println(RANDOM.nextInt(3));
         
         
     }
