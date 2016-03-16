@@ -159,5 +159,8 @@ public final class Cell {
         return spiral;
     }
     
-    //TODO add method hashCode()
+    @Override
+    public int hashCode(){
+       return rowMajorIndex(); 
+    }
 }
