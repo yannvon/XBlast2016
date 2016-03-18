@@ -253,6 +253,12 @@ public final class GameState {
     
     
 
+    /**
+     * @param board0
+     * @param consumedBonuses
+     * @param blastedCells1
+     * @return
+     */
     private static Board nextBoard(Board board0, Set<Cell> consumedBonuses,
             Set<Cell> blastedCells1) {
         List<Sq<Block>> board1 = new ArrayList<>();
