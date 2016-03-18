@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,8 +26,9 @@ public final class GameState {
     private final static List<List<PlayerID>> playerPermutation = Collections
             .unmodifiableList(Lists
                     .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
-        //FIXME ArrayList or LinkedList?
+    // FIXME ArrayList or LinkedList?
     private static final Random RANDOM = new Random(2016);
+    private static final Block[] BONUS_GENERATOR = {Block.BONUS_BOMB,Block.BONUS_RANGE,Block.FREE};
     
     
     // Instance attributes
@@ -197,10 +199,20 @@ public final class GameState {
         return blastedCells;
     }
 
-    // TODO other methods (next())
-
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents,
             Set<PlayerID> bombDrpEvents) {
+
+        Set<Cell> consumedBonuses = new HashSet<>();
+        Map<PlayerID, Bonus> playerBonuses = new HashMap<>();
+        
+        for (Player pl : players) {
+            Cell plPosition = pl.position().containingCell();
+            Block blockAtPosition = board.blockAt(plPosition);
+            if (blockAtPosition.isBonus() && pl.position().isCentral()) {
+                consumedBonuses.add(plPosition);
+                playerBonuses.put(pl.id(), blockAtPosition.associatedBonus());
+            }
+        }
 
         return null;
     }
@@ -220,7 +232,7 @@ public final class GameState {
      *            current explosions
      * @return the List of Blasts for the next Tick
      */
-    private List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0,
+    private static List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0,
             List<Sq<Sq<Cell>>> explosions0) {
         List<Sq<Cell>> blasts1 = new ArrayList<>(); // FIXME right choice?
 
@@ -228,7 +240,7 @@ public final class GameState {
         for (Sq<Cell> blast : blasts0) {
             Sq<Cell> newBlast = blast.tail();
 
-            if (board0.blockAt(blast.head()).isFree() && !newBlast.isEmpty()) {
+            if (board0.blockAt(blast.head()).isFree() && !newBlast.isEmpty()){ 
                 blasts1.add(newBlast);
             }
         }
@@ -237,5 +249,60 @@ public final class GameState {
             blasts1.add(arm.head());
         }
         return blasts1;
+    }
+    
+    
+
+    private static Board nextBoard(Board board0, Set<Cell> consumedBonuses,
+            Set<Cell> blastedCells1) {
+        List<Sq<Block>> board1 = new ArrayList<>();
+        for (int y = 0; y < Cell.ROWS; y++) {
+            for (int x = 0; x < Cell.COLUMNS; x++) {
+                Cell currentCell = new Cell(x, y);
+                Sq<Block> blocks = board0.blocksAt(currentCell);
+                Block head = blocks.head();
+
+                if (consumedBonuses.contains(currentCell)) {
+                    board1.add(Sq.constant(Block.FREE));
+                } else if (head.isBonus() && blastedCells1.contains(currentCell)) {
+
+                    Sq<Block> newBonusSq = blocks.tail().limit(Ticks.BONUS_DISAPPEARING_TICKS);
+                    newBonusSq = newBonusSq.concat(Sq.constant(Block.FREE));
+                    board1.add(newBonusSq);
+                
+                } else if (head == Block.DESTRUCTIBLE_WALL
+                        || blastedCells1.contains(currentCell)) {
+
+                    Sq<Block> newCrumblingWallSq = Sq
+                            .repeat(Ticks.WALL_CRUMBLING_TICKS,Block.DESTRUCTIBLE_WALL);
+                    
+                    Block randomBonus = BONUS_GENERATOR[RANDOM.nextInt(BONUS_GENERATOR.length)];
+                    newCrumblingWallSq = newCrumblingWallSq.concat(Sq.constant(randomBonus));//FIXME
+                    board1.add(newCrumblingWallSq);
+                
+                }else{
+                    board1.add(blocks.tail());
+                }
+
+            }
+        }
+        return new Board(board1);
+    }
+    
+    /**
+     * @param players0
+     * @param playerBonuses
+     * @param bombedCells1
+     * @param board1
+     * @param blastedCells1
+     * @param speedChangeEvents
+     * @return
+     */
+    private static List<Player> nextPlayers(List<Player> players0,
+            Map<PlayerID, Bonus> playerBonuses, Set<Cell> bombedCells1,
+            Board board1, Set<Cell> blastedCells1,
+            Map<PlayerID, Optional<Direction>> speedChangeEvents) {
+        //TODO
+        return players0;
     }
 }
