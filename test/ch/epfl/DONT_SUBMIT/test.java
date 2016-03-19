@@ -15,9 +15,12 @@ public class test {
     public static void main(String[] args) {
         Random RANDOM = new Random(2016);
 
-        for(int i=0;i<10;i++)
-        System.out.println(RANDOM.nextInt(3));
+        for(int i=0;i<100000;i++){
+            System.out.println();
         
+            for(int y=0;y<100;y++)
+                System.out.print(RANDOM.nextInt(2));
         
+        }
     }
 }
