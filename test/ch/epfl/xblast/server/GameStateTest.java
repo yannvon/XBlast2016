@@ -146,7 +146,6 @@ public class GameStateTest {
         GameStatePrinter.printGameState(a);
         GameStatePrinter.printGameState(b);
         for(Cell c: allCells){
-            //assertEquals(a.board().blocksAt(c).head(),b.board().blocksAt(c).head());
             assertTrue(ClassComparator.compareSq(a.board().blocksAt(c).tail(),b.board().blocksAt(c)));
         }
         

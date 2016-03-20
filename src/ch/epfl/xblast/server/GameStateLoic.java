@@ -325,7 +325,7 @@ public final class GameStateLoic {
                 board1.add(newBonusSq);
 
             } else if (head == Block.DESTRUCTIBLE_WALL
-                    || blastedCells1.contains(currentCell)) {
+                    && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newCrumblingWallSq = Sq.repeat(
                         Ticks.WALL_CRUMBLING_TICKS, Block.DESTRUCTIBLE_WALL);

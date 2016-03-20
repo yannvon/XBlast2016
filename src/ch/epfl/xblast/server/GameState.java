@@ -299,15 +299,17 @@ public final class GameState {
 
             if (consumedBonuses.contains(currentCell)) {
                 board1.add(Sq.constant(Block.FREE));
-            } else if (head.isBonus() && blastedCells1.contains(currentCell)) {
+            } 
+            else if (head.isBonus() && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newBonusSq = blocks.tail()
                         .limit(Ticks.BONUS_DISAPPEARING_TICKS);
                 newBonusSq = newBonusSq.concat(Sq.constant(Block.FREE));
                 board1.add(newBonusSq);
 
-            } else if (head == Block.DESTRUCTIBLE_WALL
-                    || blastedCells1.contains(currentCell)) {
+            } 
+            else if (head == Block.DESTRUCTIBLE_WALL
+                    || blastedCells1.contains(currentCell)) {//FIXME should be &&
 
                 Sq<Block> newCrumblingWallSq = Sq.repeat(
                         Ticks.WALL_CRUMBLING_TICKS, Block.DESTRUCTIBLE_WALL);
