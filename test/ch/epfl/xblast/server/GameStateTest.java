@@ -4,13 +4,18 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
 
 import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.server.debug.ClassComparator;
 import ch.epfl.xblast.server.debug.GameStatePrinter;
 
 public class GameStateTest {
@@ -44,8 +49,6 @@ public class GameStateTest {
         GameState a = new GameState(0,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
         GameState b = new GameState(board,players);
         
-        GameStatePrinter.printGameState(a);
-        GameStatePrinter.printGameState(b);
         
         
         assertEquals(a.ticks(),b.ticks());
@@ -127,5 +130,29 @@ public class GameStateTest {
         GameState game = new GameState(1,board,players,new ArrayList<>(),new ArrayList<>(),null);
 
     }
+    //   ---Next Tests---
+         
+    private final Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
+    
+    @Test
+    public void normalNextTest(){
+        GameStateLoic a = new GameStateLoic(board,players);
+        GameStateLoic b=a.next(speedChangeEvents, new HashSet<>());
+        
+        assertEquals(a.blastedCells(),b.blastedCells());
+        assertEquals(a.alivePlayers(),b.alivePlayers());
+        assertEquals(a.bombedCells(),b.bombedCells());
+        List<Cell> allCells=Cell.ROW_MAJOR_ORDER;
+        GameStatePrinter.printGameState(a);
+        GameStatePrinter.printGameState(b);
+        for(Cell c: allCells){
+            //assertEquals(a.board().blocksAt(c).head(),b.board().blocksAt(c).head());
+            assertTrue(ClassComparator.compareSq(a.board().blocksAt(c).tail(),b.board().blocksAt(c)));
+        }
+        
+    }
+    
+    
+    
     
 }

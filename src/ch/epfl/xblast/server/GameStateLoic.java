@@ -261,7 +261,7 @@ public final class GameStateLoic {
         List<Player> players1 = nextPlayers(players, playerBonuses,bombedCells1, board1, blastedCells1, speedChangeEvents);
 
         //6)construct the new GameStates
-        return new GameStateLoic(ticks-1,board1,players1,bombs1,explosions1,blasts1);
+        return new GameStateLoic(ticks+1,board1,players1,bombs1,explosions1,blasts1);
     }
 
     /*
