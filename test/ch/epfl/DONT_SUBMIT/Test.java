@@ -3,6 +3,8 @@ package ch.epfl.DONT_SUBMIT;
 
 import java.util.Random;
 
+import ch.epfl.xblast.server.GameStateTest;
+
 /**
  * @author LoicVandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -11,16 +13,8 @@ import java.util.Random;
  * this class is a "sandbox" everything can be erase and replace by another code if we want to test something else
  *
  */
-public class test {
+public class Test {
     public static void main(String[] args) {
-        Random RANDOM = new Random(2016);
-
-        for(int i=0;i<100000;i++){
-            System.out.println();
-        
-            for(int y=0;y<100;y++)
-                System.out.print(RANDOM.nextInt(2));
-        
-        }
+       
     }
 }

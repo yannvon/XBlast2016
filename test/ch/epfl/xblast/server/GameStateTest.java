@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -143,14 +145,11 @@ public class GameStateTest {
         assertEquals(a.alivePlayers(),b.alivePlayers());
         assertEquals(a.bombedCells(),b.bombedCells());
         List<Cell> allCells=Cell.ROW_MAJOR_ORDER;
-        GameStatePrinter.printGameState(a);
-        GameStatePrinter.printGameState(b);
         for(Cell c: allCells){
             assertTrue(ClassComparator.compareSq(a.board().blocksAt(c).tail(),b.board().blocksAt(c)));
         }
         
     }
-    
     
     
     
