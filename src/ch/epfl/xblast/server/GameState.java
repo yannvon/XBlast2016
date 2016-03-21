@@ -204,22 +204,6 @@ public final class GameState {
     }
 
     /**
-     * OVERLOAD: returns a set with all cells on which there is a blast. The list
-     * of blasts is given as parameter.
-     * 
-     * @param blasts
-     *            list of all blasts
-     * @return set with all blasted Cells
-     */
-    public Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
-        Set<Cell> blastedCells = new HashSet<>();
-        for (Sq<Cell> blast : blasts) {
-            blastedCells.add(blast.head());
-        }
-        return blastedCells;
-    }
-
-    /**
      * Returns the GameState at the following Tick, according to the current
      * GameState and the events that happened.
      * 
@@ -232,12 +216,7 @@ public final class GameState {
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents,
             Set<PlayerID> bombDrpEvents) {
         
-        //--- EVOLUTION ORDER ---
-        // 1) blasts
-        List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
-        
-        
-        //prepare consumed bonuses and player bonuses
+        //Declare and fill consumedBonuses and playerBonuses (used later)
         Set<Cell> consumedBonuses = new HashSet<>();
         Map<PlayerID, Bonus> playerBonuses = new HashMap<>();
         
@@ -250,10 +229,18 @@ public final class GameState {
             }
         }
         
-        Set<Cell> blastedCells1= blastedCells(blasts1);//FIXME assistant told me that.. (?)
-        // 2) board
-        Board board1 = nextBoard(board, consumedBonuses,blastedCells1 );   
-        // 3) explosion
+        
+        //--- EVOLUTION ORDER ---
+        // 1) evolve blasts
+        List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
+        // 1.1) using the evolved blast we call our custom private method that
+        //      returns a set of all blasted cells.
+        Set<Cell> blastedCells1= blastedCells(blasts1);
+
+        // 2) evolve board
+        Board board1 = nextBoard(board, consumedBonuses, blastedCells1);
+        
+        // 3) evolve explosion
         List<Sq<Sq<Cell>>> explosions1 = nextExplosions(explosions);
         // 4) bombs
         List<Bomb> bombs0=new ArrayList<>(bombs);
@@ -351,7 +338,6 @@ public final class GameState {
             if (consumedBonuses.contains(currentCell)) {
                 board1.add(Sq.constant(Block.FREE));
             }
-            
             // 2.2) if current Cell is a bonus and was blasted,
             //      make it disappear.
             else if (head.isBonus() && blastedCells1.contains(currentCell)) {
@@ -362,7 +348,6 @@ public final class GameState {
                 board1.add(newBonusSq);
 
             }
-            
             // 2.3) if current Cell was a destructible wall and got blasted,
             //      generate a sequence that will let a bonus appear (or not)
             else if (head == Block.DESTRUCTIBLE_WALL && blastedCells1.contains(currentCell)) {
@@ -376,7 +361,6 @@ public final class GameState {
                 board1.add(newCrumblingWallSq);
 
             } 
-            
             // 2.4) if none of the above was the case for current cell, simply take its tail.
             else {
                 board1.add(blocks.tail());
@@ -479,5 +463,21 @@ public final class GameState {
         }
         return newlyDroppedBombs;
         
+    }
+
+    /**
+     * OVERLOAD: returns a set with all cells on which there is a blast. The list
+     * of blasts is given as parameter.
+     * 
+     * @param blasts
+     *            list of all blasts
+     * @return set with all blasted Cells
+     */
+    private Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
+        Set<Cell> blastedCells = new HashSet<>();
+        for (Sq<Cell> blast : blasts) {
+            blastedCells.add(blast.head());
+        }
+        return blastedCells;
     }
 }
