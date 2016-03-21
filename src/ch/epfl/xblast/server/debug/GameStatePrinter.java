@@ -6,38 +6,13 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.GameState;
-import ch.epfl.xblast.server.GameStateLoic;
+import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 
 public final class GameStatePrinter {
     private GameStatePrinter() {}
 
     public static void printGameState(GameState s) {
-        List<Player> ps = s.alivePlayers();
-        Board board = s.board();
-
-        for (int y = 0; y < Cell.ROWS; ++y) {
-            xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
-                Cell c = new Cell(x, y);
-                for (Player p: ps) {
-                    if (p.position().containingCell().equals(c)) {
-                        System.out.print(stringForPlayer(p));
-                        continue xLoop;
-                    }
-                }
-                Block b = board.blockAt(c);
-                System.out.print(stringForBlock(b));
-            }
-            System.out.println();
-        }
-    }
-    
-    /**
-     * using for the class GameStateLoic
-     * delete it when useless
-     * @param s
-     */
-    public static void printGameState(GameStateLoic s) {
         List<Player> ps = s.alivePlayers();
         Board board = s.board();
 

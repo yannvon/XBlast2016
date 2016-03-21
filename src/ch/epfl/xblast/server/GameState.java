@@ -229,21 +229,41 @@ public final class GameState {
             }
         }
         
-        
+        Set<Cell> blastedCells1= blastedCells(blasts1);//FIXME assistant told me that.. (?)
         // 2) board
-        Board board1 = nextBoard(board, consumedBonuses, blastedCells(blasts1));   //FIXME assistant told me that.. (?)
+        Board board1 = nextBoard(board, consumedBonuses,blastedCells1 );   
         // 3) explosion
         List<Sq<Sq<Cell>>> explosions1 = nextExplosions(explosions);
         // 4) bombs
-        // 4.1) a new bomb appears
-        List<Bomb> newlyDroppedBombs = newlyDroppedBombs(, bombDropEvents, bombs0) //sort player list!!
+        List<Bomb> bombs0=new ArrayList<>(bombs);
+        List<Bomb> bombs1=new ArrayList<>();
+        // 4.1) a new bombs appears
+        bombs0.addAll(newlyDroppedBombs(players, bombDrpEvents, bombs)); //sort player list!!
+                                                                         //FIXME do bomb explode now if blasted? and what about fuse length?
         
-        // 4.2) bombs explode (disappear) and create 4 new explosions
-        // 4.3) bombs that are blasted explode immediately
+        Set<Cell> bombedCells1=new HashSet<>();
+        
+        for(Bomb b: bombs0){
+         
+            Sq<Integer> newFuse = b.fuseLengths().tail();
+            // 4.2) if fuse end or bomb is blasted then bombs explode (disappear) and create 4 new explosions 
+            if (newFuse.isEmpty() || blastedCells1.contains(b.position())){ 
+                explosions1.addAll(b.explosion());
+            }
+            //else fuse grow down dangerously!!!!!!!!!!!!!!!!
+            else{
+                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
+                bombedCells1.add(b.position());//FIXME use bombedCells()?
+            }
+            
+           
+        }
+        
         // 5) players
-        List<Player> players1 = nextPlayers(players, playerBonuses, bombedCells1, board1, blastedCells1, speedChangeEvents);
+        List<Player> players1 = nextPlayers(players, playerBonuses,bombedCells1, board1, blastedCells1, speedChangeEvents);
 
-        return null;
+        //6)construct the new GameStates
+        return new GameState(ticks+1,board1,players1,bombs1,explosions1,blasts1);
     }
 
     /*
@@ -251,7 +271,7 @@ public final class GameState {
      */
 
     /**
-     * SUUPLEMENTARY METHOD: Calculate the List of blasts for the next Tick
+     * SUPPLEMENTARY METHOD: Calculate the List of blasts for the next Tick
      * 
      * @param blasts0
      *            current blasts
@@ -299,17 +319,15 @@ public final class GameState {
 
             if (consumedBonuses.contains(currentCell)) {
                 board1.add(Sq.constant(Block.FREE));
-            } 
-            else if (head.isBonus() && blastedCells1.contains(currentCell)) {
+            } else if (head.isBonus() && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newBonusSq = blocks.tail()
                         .limit(Ticks.BONUS_DISAPPEARING_TICKS);
                 newBonusSq = newBonusSq.concat(Sq.constant(Block.FREE));
                 board1.add(newBonusSq);
 
-            } 
-            else if (head == Block.DESTRUCTIBLE_WALL
-                    || blastedCells1.contains(currentCell)) {//FIXME should be &&
+            } else if (head == Block.DESTRUCTIBLE_WALL
+                    && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newCrumblingWallSq = Sq.repeat(
                         Ticks.WALL_CRUMBLING_TICKS, Block.DESTRUCTIBLE_WALL);

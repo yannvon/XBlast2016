@@ -138,8 +138,8 @@ public class GameStateTest {
     
     @Test
     public void normalNextTest(){
-        GameStateLoic a = new GameStateLoic(board,players);
-        GameStateLoic b=a.next(speedChangeEvents, new HashSet<>());
+        GameState a = new GameState(board,players);
+        GameState b = a.next(speedChangeEvents, new HashSet<>());
         
         assertEquals(a.blastedCells(),b.blastedCells());
         assertEquals(a.alivePlayers(),b.alivePlayers());
@@ -151,6 +151,43 @@ public class GameStateTest {
         
     }
     
+    @Test
+    public void oneBombNextTest(){
+        GameState a = new GameState(board,players);
+        Set<PlayerID> bombdrp= new HashSet<>();
+        bombdrp.add(PlayerID.PLAYER_1);
+        GameState game = a.next(speedChangeEvents,bombdrp);
+        Cell bombPosition = new Cell(1,1);
+        
+        assertEquals(a.blastedCells(),game.blastedCells());
+        assertEquals(a.alivePlayers(),game.alivePlayers());
+        assertTrue(game.bombedCells().containsKey(bombPosition));
+       
+        //the bomb didn't explode yet
+        for(int i=0; i<Ticks.BOMB_FUSE_TICKS-1;i++){
+            game=game.next(speedChangeEvents, new HashSet<>());
+            assertTrue(game.bombedCells().containsKey(bombPosition));
+            assertEquals(a.blastedCells(),game.blastedCells());
+            assertEquals(Ticks.BOMB_FUSE_TICKS-i-1,game.bombedCells().get(bombPosition).fuseLength());
+        }
+        
+        //---the bomb explode---
+        Set<Cell> supposedBlastedCells = new HashSet<>();
+        
+        //first ticks after the explosion
+        supposedBlastedCells.add(bombPosition);
+        game=game.next(speedChangeEvents, new HashSet<>());
+        assertTrue(game.bombedCells().isEmpty());
+        assertEquals(a.blastedCells(),game.blastedCells());
+        
+        //second ticks
+        supposedBlastedCells.add(bombPosition.neighbor(Direction.N));
+        supposedBlastedCells.add(bombPosition.neighbor(Direction.E));
+        supposedBlastedCells.add(bombPosition.neighbor(Direction.S));
+        supposedBlastedCells.add(bombPosition.neighbor(Direction.W));
+        game=game.next(speedChangeEvents, new HashSet<>());
+        assertEquals(supposedBlastedCells,game.blastedCells());
+    }
     
     
 }
