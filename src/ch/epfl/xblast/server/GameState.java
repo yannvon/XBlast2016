@@ -47,9 +47,9 @@ public final class GameState {
      * @param board
      *            board to play on
      * @param players
-     *            that participate
+     *            players that participate
      * @param bombs
-     *            that are already placed
+     *            bombs that are already placed
      * @param explosion
      *            current explosions
      * @param blasts
@@ -178,7 +178,9 @@ public final class GameState {
     }
 
     /**
-     * @return
+     * Returns a map that associates the bombs to the Cells they occupy.
+     * 
+     * @return a map associating the bombs to their cell
      */
     public Map<Cell, Bomb> bombedCells() {
         Map<Cell, Bomb> bombedCells = new HashMap<>();
@@ -189,7 +191,9 @@ public final class GameState {
     }
 
     /**
-     * @return
+     * Returns a set with all Cells on which there is at least one blast
+     * 
+     * @return set with all blasted Cells
      */
     public Set<Cell> blastedCells() {
         Set<Cell> blastedCells = new HashSet<>();
@@ -198,8 +202,15 @@ public final class GameState {
         }
         return blastedCells;
     }
-    
-    //Overload 
+
+    /**
+     * OVERLOAD: returns a set with all cells on which there is a blast. The list
+     * of blasts is given as parameter.
+     * 
+     * @param blasts
+     *            list of all blasts
+     * @return set with all blasted Cells
+     */
     public Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
         Set<Cell> blastedCells = new HashSet<>();
         for (Sq<Cell> blast : blasts) {
@@ -208,6 +219,16 @@ public final class GameState {
         return blastedCells;
     }
 
+    /**
+     * Returns the GameState at the following Tick, according to the current
+     * GameState and the events that happened.
+     * 
+     * @param speedChangeEvents
+     *            TODO
+     * @param bombDrpEvents
+     *            new bombs that the players added
+     * @return GameState of the next tick
+     */
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents,
             Set<PlayerID> bombDrpEvents) {
         
@@ -255,8 +276,6 @@ public final class GameState {
                 bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
                 bombedCells1.add(b.position());//FIXME use bombedCells()?
             }
-            
-           
         }
         
         // 5) players
@@ -303,42 +322,60 @@ public final class GameState {
     
 
     /**
+     * Calculates the state of the next Board according to the current Board,
+     * the consumed bonuses and the new blasts.
+     * 
      * @param board0
+     *            current Board
      * @param consumedBonuses
+     *            bonus that were consumed by the players
      * @param blastedCells1
-     * @return
+     *            Cells that got hit by a blast
+     * @return Board at the next Tick
      */
     private static Board nextBoard(Board board0, Set<Cell> consumedBonuses,
             Set<Cell> blastedCells1) {
+        
+        // 1) create list of block sq that will be used to create new board 
         List<Sq<Block>> board1 = new ArrayList<>();
+        
+        // 2) go through every cell
         List<Cell> allCells = Cell.ROW_MAJOR_ORDER;
         
         for (Cell currentCell : allCells) {
             Sq<Block> blocks = board0.blocksAt(currentCell);
             Block head = blocks.head();
-
+            
+            // 2.1) if current Cell contained a bonus that was consumed, 
+            //      the Block becomes free.
             if (consumedBonuses.contains(currentCell)) {
                 board1.add(Sq.constant(Block.FREE));
-            } else if (head.isBonus() && blastedCells1.contains(currentCell)) {
+            }
+            // 2.2) if current Cell is a bonus and was blasted,
+            //      make it disappear.
+            else if (head.isBonus() && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newBonusSq = blocks.tail()
                         .limit(Ticks.BONUS_DISAPPEARING_TICKS);
                 newBonusSq = newBonusSq.concat(Sq.constant(Block.FREE));
                 board1.add(newBonusSq);
 
-            } else if (head == Block.DESTRUCTIBLE_WALL
-                    && blastedCells1.contains(currentCell)) {
+            }
+            // 2.3) if current Cell was a destructible wall and got blasted,
+            //      generate a sequence that will let a bonus appear (or not)
+            else if (head == Block.DESTRUCTIBLE_WALL && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newCrumblingWallSq = Sq.repeat(
                         Ticks.WALL_CRUMBLING_TICKS, Block.DESTRUCTIBLE_WALL);
-
-                Block randomBonus = BONUS_GENERATOR[RANDOM
-                        .nextInt(BONUS_GENERATOR.length)];
-                newCrumblingWallSq = newCrumblingWallSq
-                        .concat(Sq.constant(randomBonus));
+                
+                // use the bonus generator array to get a random bonus.
+                Block randomBonus = BONUS_GENERATOR[RANDOM.nextInt(BONUS_GENERATOR.length)];
+                newCrumblingWallSq = newCrumblingWallSq.concat(Sq.constant(randomBonus));
                 board1.add(newCrumblingWallSq);
 
-            } else {
+            } 
+            // 2.4) if none of the above was the case for current cell, simply take its tail.
+            else {
                 board1.add(blocks.tail());
             }
 
@@ -347,6 +384,7 @@ public final class GameState {
     }
     
     /**
+     * TODO
      * @param players0
      * @param playerBonuses
      * @param bombedCells1
@@ -364,13 +402,18 @@ public final class GameState {
     }
     
     /**
-     * Calculates the explosions for the next GameState according to the current one.
+     * Calculates the explosions for the next GameState according to the current
+     * one.
      * 
      * @param explosions0
-     * @return
+     *            current explosions
+     * @return list of all explosions at the next Tick
      */
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
+        // Declare List that we will return.
         List<Sq<Sq<Cell>>> explosions1 = new ArrayList<>();  //FIXME choice?
+        
+        // We evolve (take the tail) of every explosion, and add it as long as it isn't empty.
         for(Sq<Sq<Cell>> explosionArm : explosions0){
             Sq<Sq<Cell>> newExplosionArm = explosionArm.tail();
             
@@ -380,29 +423,34 @@ public final class GameState {
         }
         return explosions1;
     }
-    
+
     /**
      * Returns the list of newly dropped bombs, given the current players, the
      * events of dropping bombs and the currently dropped bombs.
      * 
-     * @param players0 the list players, in the correct order! (respect playerPermutation!)
+     * @param players0
+     *            the list players, in the correct order! (respect
+     *            playerPermutation!)
      * @param bombDropEvents
+     *            events of players wanting to drop bombs
      * @param bombs0
-     * @return
+     *            bombs that are currently placed
+     * @return a list of all the newly dropped bombs
      */
     private static List<Bomb> newlyDroppedBombs(List<Player> players0,
             Set<PlayerID> bombDropEvents, List<Bomb> bombs0) {
         
+        // Create a set containing all currently placed bombs
         Set<Cell> placedBombs = new HashSet<>();
         for(Bomb b : bombs0){
             placedBombs.add(b.position());
         }
         
+        // Declare list of the newly dropped bombs (output)
         List<Bomb> newlyDroppedBombs = new ArrayList<>();
         
-        // for every player, check if he wants to drop a bomb, if so check all other conditions
+        // For every player, check if he wants to drop a bomb, if so check all other conditions:
         for(Player p : players0){
-            
             Cell position = p.position().containingCell();
             
             // 1) 
@@ -420,6 +468,7 @@ public final class GameState {
             }
             boolean canAddBomb = placedBombsNb < p.maxBombs();
             
+            // if every condition is satisfied the player drops a bomb
             if(wantsToDrop && isAlive && locationFree && canAddBomb){
                 placedBombs.add(position);
                 newlyDroppedBombs.add(p.newBomb());
