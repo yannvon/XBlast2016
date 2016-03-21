@@ -156,38 +156,113 @@ public class GameStateTest {
         GameState a = new GameState(board,players);
         Set<PlayerID> bombdrp= new HashSet<>();
         bombdrp.add(PlayerID.PLAYER_1);
+        
         GameState game = a.next(speedChangeEvents,bombdrp);
-        Cell bombPosition = new Cell(1,1);
+        Cell bombPosition = a.players().get(0).position().containingCell();
         
         assertEquals(a.blastedCells(),game.blastedCells());
         assertEquals(a.alivePlayers(),game.alivePlayers());
         assertTrue(game.bombedCells().containsKey(bombPosition));
        
         //the bomb didn't explode yet
-        for(int i=0; i<Ticks.BOMB_FUSE_TICKS-1;i++){
+        for(int i=0; i<Ticks.BOMB_FUSE_TICKS-2;i++){
             game=game.next(speedChangeEvents, new HashSet<>());
             assertTrue(game.bombedCells().containsKey(bombPosition));
             assertEquals(a.blastedCells(),game.blastedCells());
-            assertEquals(Ticks.BOMB_FUSE_TICKS-i-1,game.bombedCells().get(bombPosition).fuseLength());
+            assertEquals(Ticks.BOMB_FUSE_TICKS-i-2,game.bombedCells().get(bombPosition).fuseLength());
         }
         
         //---the bomb explode---
         Set<Cell> supposedBlastedCells = new HashSet<>();
-        
-        //first ticks after the explosion
-        supposedBlastedCells.add(bombPosition);
+      
+        //First Tick after the explosion
         game=game.next(speedChangeEvents, new HashSet<>());
         assertTrue(game.bombedCells().isEmpty());
-        assertEquals(a.blastedCells(),game.blastedCells());
         
-        //second ticks
+        
+        //Second Tick
+        supposedBlastedCells.add(bombPosition);
+        game=game.next(speedChangeEvents, new HashSet<>());
+        assertEquals(supposedBlastedCells,game.blastedCells());
+        
+        //Third Tick
         supposedBlastedCells.add(bombPosition.neighbor(Direction.N));
         supposedBlastedCells.add(bombPosition.neighbor(Direction.E));
         supposedBlastedCells.add(bombPosition.neighbor(Direction.S));
         supposedBlastedCells.add(bombPosition.neighbor(Direction.W));
         game=game.next(speedChangeEvents, new HashSet<>());
         assertEquals(supposedBlastedCells,game.blastedCells());
+        
+        //Fourth Tick
+        supposedBlastedCells.add(bombPosition.neighbor(Direction.S).neighbor(Direction.S));
+        supposedBlastedCells.add(bombPosition.neighbor(Direction.E).neighbor(Direction.E));
+        game=game.next(speedChangeEvents, new HashSet<>());
+        assertEquals(supposedBlastedCells,game.blastedCells());
+        
+        for(int i=3; i<Ticks.EXPLOSION_TICKS;i++){
+            game=game.next(speedChangeEvents, new HashSet<>());
+            assertEquals(supposedBlastedCells,game.blastedCells());
+        }
+        
+        //last ticks
+        supposedBlastedCells.remove(bombPosition);
+        game=game.next(speedChangeEvents, new HashSet<>());
+        assertEquals(supposedBlastedCells,game.blastedCells());
+        
+        supposedBlastedCells.remove(bombPosition.neighbor(Direction.N));
+        supposedBlastedCells.remove(bombPosition.neighbor(Direction.E));
+        supposedBlastedCells.remove(bombPosition.neighbor(Direction.S));
+        supposedBlastedCells.remove(bombPosition.neighbor(Direction.W));
+        game=game.next(speedChangeEvents, new HashSet<>());
+        assertEquals(supposedBlastedCells,game.blastedCells());
+        
+        supposedBlastedCells.remove(bombPosition.neighbor(Direction.S).neighbor(Direction.S));
+        supposedBlastedCells.remove(bombPosition.neighbor(Direction.E).neighbor(Direction.E));
+        
+        game=game.next(speedChangeEvents, new HashSet<>());
+        assertEquals(supposedBlastedCells,game.blastedCells());
+        assertTrue(game.blastedCells().isEmpty());
     }
+    
+    @Test
+    public void visualNextTest(){
+        Scanner scan =new Scanner(System.in);
+        List<Player> gPlayers =new ArrayList<>();
+        for(int i=0; i<4;i++){
+            System.out.println("player " + (i+1)+ " position :");
+            gPlayers.add(new Player(PlayerID.values()[i],1,new Cell(scan.nextInt(),scan.nextInt()),3,i+1));
+        }
+        
+        GameState game= new GameState(board,gPlayers);
+        boolean inGame=true;
+        while( inGame){
+            String s= scan.nextLine();
+            Set<PlayerID> bombdrp= new HashSet<>();
+            switch(s){
+            case "1":
+                bombdrp.add(PlayerID.PLAYER_1);
+                break;
+            case "2":
+                bombdrp.add(PlayerID.PLAYER_2);
+                break;
+            case "3":
+                bombdrp.add(PlayerID.PLAYER_3);
+                break;
+            case "4":
+                bombdrp.add(PlayerID.PLAYER_4);
+                break;
+            case "0":
+                inGame=false;
+                
+            }
+            game=game.next(speedChangeEvents, bombdrp);
+            GameStatePrinter.printGameState(game);
+            
+            
+        }
+        
+    }
+    
     
     
 }
