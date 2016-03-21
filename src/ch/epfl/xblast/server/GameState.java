@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
@@ -412,11 +413,10 @@ public final class GameState {
 
     /**
      * Returns the list of newly dropped bombs, given the current players, the
-     * events of dropping bombs and the currently dropped bombs.
+     * events of players that want to drop bombs and the currently placed bombs.
      * 
      * @param players0
-     *            the list players, in the correct order! (respect
-     *            playerPermutation!)
+     *            the list of players, in the correct order (using sortedPlayers())
      * @param bombDropEvents
      *            events of players wanting to drop bombs
      * @param bombs0
@@ -426,7 +426,7 @@ public final class GameState {
     private static List<Bomb> newlyDroppedBombs(List<Player> players0,
             Set<PlayerID> bombDropEvents, List<Bomb> bombs0) {
         
-        // Create a set containing all currently placed bombs
+        // Create a set containing all currently placed bombs        
         Set<Cell> placedBombs = new HashSet<>();
         for(Bomb b : bombs0){
             placedBombs.add(b.position());
@@ -434,18 +434,18 @@ public final class GameState {
         
         // Declare list of the newly dropped bombs (output)
         List<Bomb> newlyDroppedBombs = new ArrayList<>();
-        
-        // For every player, check if he wants to drop a bomb, if so check all other conditions:
-        for(Player p : players0){
+
+        // For every player (in priority order), check if he wants to drop a bomb, 
+        for (Player p : players0) {
             Cell position = p.position().containingCell();
             
-            // 1) 
+            // 1) Player wants to drop a bomb
             boolean wantsToDrop = bombDropEvents.contains(p.id());
-            // 2) 
+            // 2) Player is alive
             boolean isAlive = p.isAlive();
-            // 3) 
+            // 3) The current location is free
             boolean locationFree = !placedBombs.contains(position);
-            // 4)
+            // 4) The player hasn't used all his bombs
             int placedBombsNb = 0;
             for(Bomb b : bombs0){
                 if(b.ownerId() == p.id()){
