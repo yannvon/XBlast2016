@@ -333,7 +333,7 @@ public final class GameState {
             Sq<Block> blocks = board0.blocksAt(currentCell);
             Block head = blocks.head();
             
-            // 2.1) if current Cell contained a bonus that was consumed, 
+            // 2.1) if current Cell contains a bonus that was consumed, 
             //      the Block becomes free.
             if (consumedBonuses.contains(currentCell)) {
                 board1.add(Sq.constant(Block.FREE));
