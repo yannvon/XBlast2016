@@ -351,6 +351,7 @@ public final class GameState {
             if (consumedBonuses.contains(currentCell)) {
                 board1.add(Sq.constant(Block.FREE));
             }
+            
             // 2.2) if current Cell is a bonus and was blasted,
             //      make it disappear.
             else if (head.isBonus() && blastedCells1.contains(currentCell)) {
@@ -361,6 +362,7 @@ public final class GameState {
                 board1.add(newBonusSq);
 
             }
+            
             // 2.3) if current Cell was a destructible wall and got blasted,
             //      generate a sequence that will let a bonus appear (or not)
             else if (head == Block.DESTRUCTIBLE_WALL && blastedCells1.contains(currentCell)) {
@@ -374,6 +376,7 @@ public final class GameState {
                 board1.add(newCrumblingWallSq);
 
             } 
+            
             // 2.4) if none of the above was the case for current cell, simply take its tail.
             else {
                 board1.add(blocks.tail());
