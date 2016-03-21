@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,10 +22,9 @@ import ch.epfl.xblast.PlayerID;
 public final class GameState {
 
     // Static attributes
-    private static final List<List<PlayerID>> playerPermutation = Collections
+    private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
             .unmodifiableList(Lists
                     .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
-    // FIXME ArrayList or LinkedList?
     private static final Random RANDOM = new Random(2016);
     private static final Block[] BONUS_GENERATOR = {Block.BONUS_BOMB,Block.BONUS_RANGE,Block.FREE};
     
@@ -90,18 +88,16 @@ public final class GameState {
      * explosion and blasts are empty.
      * 
      * @param board
-     *            to play on
+     *            board on which the game is played on
      * @param players
-     *            that participate
+     *            players that participate
      * 
      * @throws IllegalArgumentException
-     *             if the number of players is not 4 or if the value of ticks is
-     *             negative.
+     *             if the number of players is not 4 or if the value of ticks is negative.
      */
     public GameState(Board board, List<Player> players) {
-        this(0, board, players, new ArrayList<Bomb>(), //
-                new ArrayList<Sq<Sq<Cell>>>(), // FIXME Array or Linked
-                new ArrayList<Sq<Cell>>()); //
+        this(0, board, players, new ArrayList<Bomb>(),
+                new ArrayList<Sq<Sq<Cell>>>(), new ArrayList<Sq<Cell>>());
     }
 
     /**
@@ -229,8 +225,8 @@ public final class GameState {
             }
         }
         
-        
         //--- EVOLUTION ORDER ---
+        
         // 1) evolve blasts
         List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
         // 1.1) using the evolved blast we call our custom private method that
@@ -242,34 +238,37 @@ public final class GameState {
         
         // 3) evolve explosion
         List<Sq<Sq<Cell>>> explosions1 = nextExplosions(explosions);
-        // 4) bombs
-        List<Bomb> bombs0=new ArrayList<>(bombs);
-        List<Bomb> bombs1=new ArrayList<>();
-        // 4.1) a new bombs appears
-        bombs0.addAll(newlyDroppedBombs(players, bombDrpEvents, bombs)); //sort player list!!
-                                                                         //FIXME do bomb explode now if blasted? and what about fuse length?
         
-        Set<Cell> bombedCells1=new HashSet<>();
+        // 4) evolve bombs
+        List<Bomb> bombs0 = new ArrayList<>(bombs);
+        List<Bomb> bombs1 = new ArrayList<>();
+        Set<Cell> bombedCells1 = new HashSet<>();   //used for nextPlayers()
         
+        // 4.1) add all newly dropped bombs (using sortedPlayers() method to resolve conflicts)
+        bombs0.addAll(newlyDroppedBombs(sortedPlayers(), bombDrpEvents, bombs));
+                
+        // 4.2) every bomb either explodes (and disappears) or evolves (fuse-1).
         for(Bomb b: bombs0){
          
             Sq<Integer> newFuse = b.fuseLengths().tail();
-            // 4.2) if fuse end or bomb is blasted then bombs explode (disappear) and create 4 new explosions 
-            if (newFuse.isEmpty() || blastedCells1.contains(b.position())){ 
+            // if the fuse has burned out or the bomb was hit by a blast it
+            // explodes and disappears
+            if (newFuse.isEmpty() || blastedCells1.contains(b.position())) {
                 explosions1.addAll(b.explosion());
             }
-            //else fuse grow down dangerously!!!!!!!!!!!!!!!!
+            // otherwise only the fuse gets shorter
             else{
                 bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
-                bombedCells1.add(b.position());//FIXME use bombedCells()?
+                bombedCells1.add(b.position());
             }
         }
-        
-        // 5) players
-        List<Player> players1 = nextPlayers(players, playerBonuses,bombedCells1, board1, blastedCells1, speedChangeEvents);
 
-        //6)construct the new GameStates
-        return new GameState(ticks+1,board1,players1,bombs1,explosions1,blasts1);
+        // 5) players
+        List<Player> players1 = nextPlayers(players, playerBonuses,
+                bombedCells1, board1, blastedCells1, speedChangeEvents);
+
+        // 6) construct and return the new GameStates
+        return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
     }
 
     /*
@@ -277,7 +276,7 @@ public final class GameState {
      */
 
     /**
-     * SUPPLEMENTARY METHOD: Calculate the List of blasts for the next Tick
+     * SUPPLEMENTARY METHOD: Calculate the List of blasts for the next Tick.
      * 
      * @param blasts0
      *            current blasts
@@ -289,7 +288,7 @@ public final class GameState {
      */
     private static List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0,
             List<Sq<Sq<Cell>>> explosions0) {
-        List<Sq<Cell>> blasts1 = new ArrayList<>(); // FIXME right choice?
+        List<Sq<Cell>> blasts1 = new ArrayList<>();
 
         // add existing blasts
         for (Sq<Cell> blast : blasts0) {
@@ -398,7 +397,7 @@ public final class GameState {
      */
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
         // Declare List that we will return.
-        List<Sq<Sq<Cell>>> explosions1 = new ArrayList<>();  //FIXME choice?
+        List<Sq<Sq<Cell>>> explosions1 = new ArrayList<>();
         
         // We evolve (take the tail) of every explosion, and add it as long as it isn't empty.
         for(Sq<Sq<Cell>> explosionArm : explosions0){
@@ -479,5 +478,30 @@ public final class GameState {
             blastedCells.add(blast.head());
         }
         return blastedCells;
+    }
+    
+    /**
+     * Returns a sorted version of the list of players according to current
+     * permutation that defines who has the priority in case of a conflict.
+     * 
+     * @return a list of players ordered by priority
+     */
+    private List<Player> sortedPlayers(){
+        List<Player> sortedPlayers = new ArrayList<>();
+        
+        // get permutation that is currently valid
+        List<PlayerID> idSorted = PLAYER_PERMUTATION.get(ticks % players.size());
+        
+        // create a map that associates the playerID to every player
+        Map<PlayerID, Player> pMap = new HashMap<>();
+        for(Player p : players){
+            pMap.put(p.id(), p);
+        }
+        
+        // sort players according to current permutation
+        for(PlayerID id : idSorted){
+            sortedPlayers.add(pMap.get(id));
+        }
+        return sortedPlayers;
     }
 }
