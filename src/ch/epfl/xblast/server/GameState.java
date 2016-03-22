@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
@@ -243,7 +242,7 @@ public final class GameState {
         // 4) evolve bombs
         List<Bomb> bombs0 = new ArrayList<>(bombs);
         List<Bomb> bombs1 = new ArrayList<>();
-        Set<Cell> bombedCells1 = new HashSet<>();   //used for nextPlayers()
+        //Set<Cell> bombedCells1 = new HashSet<>();   //used for nextPlayers() FIXME not used anymore
         
         // 4.1) add all newly dropped bombs (using sortedPlayers() method to resolve conflicts)
         bombs0.addAll(newlyDroppedBombs(sortedPlayers(), bombDrpEvents, bombs));
@@ -260,13 +259,13 @@ public final class GameState {
             // otherwise only the fuse gets shorter
             else{
                 bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
-                bombedCells1.add(b.position());
+                // bombedCells1.add(b.position()); FIXME not used anymore
             }
         }
 
         // 5) players
         List<Player> players1 = nextPlayers(players, playerBonuses,
-                bombedCells1, board1, blastedCells1, speedChangeEvents);
+                bombedCells(bombs1).keySet(), board1, blastedCells1, speedChangeEvents);    //FIXME changes done quickly.. correct?
 
         // 6) construct and return the new GameStates
         return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
@@ -472,12 +471,32 @@ public final class GameState {
      *            list of all blasts
      * @return set with all blasted Cells
      */
-    private Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
-        Set<Cell> blastedCells = new HashSet<>();
-        for (Sq<Cell> blast : blasts) {
-            blastedCells.add(blast.head());
-        }
-        return blastedCells;
+    private Set<Cell> blastedCells(List<Sq<Cell>> blasts) { //FIXME should be static
+        
+        // create temporary GameState with given list of blasts
+        GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
+        return temp.blastedCells();
+        
+        //FIXME qu'est ce que t'en pense?
+        
+//        Set<Cell> blastedCells = new HashSet<>();
+//        for (Sq<Cell> blast : blasts) {
+//            blastedCells.add(blast.head());
+//        }
+//        return blastedCells;
+    }
+
+    /**
+     * OVERLOAD: returns a map that associates the bombs to the Cells they
+     * occupy. The list of bombs is gigen as parameter.
+     * 
+     * @param bombs
+     *            list of bombs that will be converted to a map
+     * @return a map associating the bombs to their cell
+     */
+    private Map<Cell, Bomb> bombedCells(List<Bomb> bombs) { //FIXME should be static
+        GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
+        return temp.bombedCells();
     }
     
     /**
