@@ -116,7 +116,7 @@ public final class GameState {
      * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
-        return (ticks >= Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);//FIXME strictement sup?
+        return (ticks > Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);//FIXME strictement sup?
     }
 
     /**
@@ -234,7 +234,6 @@ public final class GameState {
         // 4) evolve bombs
         List<Bomb> bombs0 = new ArrayList<>(bombs);
         List<Bomb> bombs1 = new ArrayList<>();
-        //Set<Cell> bombedCells1 = new HashSet<>();   //used for nextPlayers() FIXME not used anymore
         
         // 4.1) add all newly dropped bombs (using sortedPlayers() method to resolve conflicts)
         bombs0.addAll(newlyDroppedBombs(sortedPlayers(), bombDrpEvents, bombs));
@@ -251,14 +250,13 @@ public final class GameState {
             // otherwise only the fuse gets shorter
             else{
                 bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
-                // bombedCells1.add(b.position()); FIXME not used anymore
             }
         }
 
         // 5) players
         List<Player> players1 = nextPlayers(players, playerBonuses,
-                bombedCells(bombs1).keySet(), board1, blastedCells1, speedChangeEvents);    //FIXME changes done quickly.. correct?
-
+                bombedCells(bombs1).keySet(), board1, blastedCells1, speedChangeEvents);
+        
         // 6) construct and return the new GameStates
         return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
     }
