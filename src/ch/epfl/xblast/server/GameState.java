@@ -426,10 +426,7 @@ public final class GameState {
             Set<PlayerID> bombDropEvents, List<Bomb> bombs0) {
         
         // Create a set containing all currently placed bombs        
-        Set<Cell> placedBombs = new HashSet<>();
-        for(Bomb b : bombs0){
-            placedBombs.add(b.position());
-        }
+        Set<Cell> placedBombs = bombedCells(bombs0).keySet();
         
         // Declare list of the newly dropped bombs (output)
         List<Bomb> newlyDroppedBombs = new ArrayList<>();
@@ -471,19 +468,21 @@ public final class GameState {
      *            list of all blasts
      * @return set with all blasted Cells
      */
-    private Set<Cell> blastedCells(List<Sq<Cell>> blasts) { //FIXME should be static
+    private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
+        
+        
+
+        Set<Cell> blastedCells = new HashSet<>();
+        for (Sq<Cell> blast : blasts) {
+            blastedCells.add(blast.head());
+        }
+        return blastedCells;
+        
+        // FIXME copie de code?
         
         // create temporary GameState with given list of blasts
-        GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
-        return temp.blastedCells();
-        
-        //FIXME qu'est ce que t'en pense?
-        
-//        Set<Cell> blastedCells = new HashSet<>();
-//        for (Sq<Cell> blast : blasts) {
-//            blastedCells.add(blast.head());
-//        }
-//        return blastedCells;
+        // GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
+        // return temp.blastedCells();
     }
 
     /**
@@ -494,9 +493,18 @@ public final class GameState {
      *            list of bombs that will be converted to a map
      * @return a map associating the bombs to their cell
      */
-    private Map<Cell, Bomb> bombedCells(List<Bomb> bombs) { //FIXME should be static
-        GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
-        return temp.bombedCells();
+    private static Map<Cell, Bomb> bombedCells(List<Bomb> bombs) {
+        
+        Map<Cell, Bomb> bombedCells = new HashMap<>();
+        for (Bomb bomb : bombs) {
+            bombedCells.put(bomb.position(), bomb);
+        }
+        return bombedCells;
+        
+        //FIXME copie de code?
+        
+        // GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
+        // return temp.bombedCells();
     }
     
     /**
