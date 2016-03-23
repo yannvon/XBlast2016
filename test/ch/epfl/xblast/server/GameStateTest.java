@@ -42,11 +42,7 @@ public class GameStateTest {
             new Player(PlayerID.PLAYER_4,3,new Cell(3,4),3,3)
             );
     
-    
-    
-    
-    
-    
+
     @Test
     public void initialGameTest() {
         
