@@ -4,10 +4,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
-
+import static org.mutabilitydetector.unittesting.MutabilityAssert.assertImmutable;
+import static org.mutabilitydetector.unittesting.MutabilityAssert.assertInstancesOf;
+import static org.mutabilitydetector.unittesting.MutabilityMatchers.areImmutable;
 
 
 public class CellTest {
+
+    @Test public void checkMyClassIsImmutable() {
+        assertImmutable(Cell.class); 
+    }
+    
     @Test
     public void rowMajorIndexCorrespondsToOrder() {
         int i = 0;
