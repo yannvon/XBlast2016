@@ -116,7 +116,7 @@ public final class GameState {
      * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
-        return (ticks >= Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
+        return (ticks >= Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);//FIXME strictement sup?
     }
 
     /**
@@ -418,7 +418,7 @@ public final class GameState {
             Set<PlayerID> bombDropEvents, List<Bomb> bombs0) {
         
         // Create a set containing all currently placed bombs        
-        Set<Cell> placedBombs = bombedCells(bombs0).keySet();
+        Set<Cell> placedBombs = new HashSet<>(bombedCells(bombs0).keySet());
         
         // Declare list of the newly dropped bombs (output)
         List<Bomb> newlyDroppedBombs = new ArrayList<>();
