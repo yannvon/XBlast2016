@@ -179,11 +179,7 @@ public final class GameState {
      * @return a map associating the bombs to their cell
      */
     public Map<Cell, Bomb> bombedCells() {
-        Map<Cell, Bomb> bombedCells = new HashMap<>();
-        for (Bomb bomb : bombs) {
-            bombedCells.put(bomb.position(), bomb);
-        }
-        return bombedCells;
+        return bombedCells(bombs);
     }
 
     /**
@@ -192,11 +188,7 @@ public final class GameState {
      * @return set with all blasted Cells
      */
     public Set<Cell> blastedCells() {
-        Set<Cell> blastedCells = new HashSet<>();
-        for (Sq<Cell> blast : blasts) {
-            blastedCells.add(blast.head());
-        }
-        return blastedCells;
+        return blastedCells(blasts);
     }
 
     /**
@@ -457,7 +449,6 @@ public final class GameState {
             }
         }
         return newlyDroppedBombs;
-        
     }
 
     /**
@@ -469,20 +460,12 @@ public final class GameState {
      * @return set with all blasted Cells
      */
     private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
-        
-        
 
         Set<Cell> blastedCells = new HashSet<>();
         for (Sq<Cell> blast : blasts) {
             blastedCells.add(blast.head());
         }
         return blastedCells;
-        
-        // FIXME copie de code?
-        
-        // create temporary GameState with given list of blasts
-        // GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
-        // return temp.blastedCells();
     }
 
     /**
@@ -500,11 +483,6 @@ public final class GameState {
             bombedCells.put(bomb.position(), bomb);
         }
         return bombedCells;
-        
-        //FIXME copie de code?
-        
-        // GameState temp = new GameState(ticks, board, players, bombs, explosions, blasts);
-        // return temp.bombedCells();
     }
     
     /**
