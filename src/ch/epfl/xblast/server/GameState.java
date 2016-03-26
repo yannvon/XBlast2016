@@ -462,7 +462,7 @@ public final class GameState {
             Board board1, Set<Cell> blastedCells1,
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
 
-        List<Player> movedPlayers = nextMovedPlayers(players0, bombedCells1,
+        List<Player> movedPlayers = nextMovedPlayers(players0,board1, bombedCells1,
                 speedChangeEvents);
 
         return players0;
@@ -472,13 +472,14 @@ public final class GameState {
      * @param speedChangeEvents
      * @param bombedCells1
      * @param players0
+     * @param board1 
      * @return
      */
     private static List<Player> nextMovedPlayers(List<Player> players0,
-            Set<Cell> bombedCells1,
+            Board board1, Set<Cell> bombedCells1,
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
 
-        List<Player> player1=new ArrayList<>();
+        List<Player> players1=new ArrayList<>();
         for(Player p: players0){
             Sq<DirectedPosition> directedPos = p.directedPositions();
             
@@ -514,11 +515,43 @@ public final class GameState {
                 }
             }
             
+            //----evolve the DirectedPosition if the player is allowed to move---- 
+           
+            //--1)determine if the player is allowed to move--
+            //can move if the player is invulnerable or vulnerable
+            boolean canMove = p.lifeState().canMove();
+            
+            // if the position is a central SubCell can move only if the
+            // neighbor Cell is not a Wall
+            if(p.position().isCentral()){
+                Cell futurCell= p.position().containingCell().neighbor(p.direction());
+                canMove &= !board1.blockAt(futurCell).castsShadow();//FIXME
+            }
+
+            // if the player position have a distance to the central SubCell of 6
+            // and that the player is going to the central SubCell then the
+            // player can move only if there is no Bomb on the Cell
+            if(p.position().distanceToCentral()==6){
+                Direction newdir = directedPos.head().direction();
+                if(p.position().neighbor(newdir).distanceToCentral() < 6){
+                    Cell position= p.position().containingCell();
+                    canMove &= !bombedCells1.contains(position);
+                }
+            }
+            
+            //--2)evolve the DirectedPosition--
+            if(canMove){
+                directedPos = directedPos.tail();
+            }
+            
+            //----add the new player to the list----
+            players1.add(new Player(p.id(),p.lifeStates(),directedPos,p.maxBombs(),p.bombRange()));
+            
         }
         
         
         
-        return null;
+        return players1;
     }
 
     /**
