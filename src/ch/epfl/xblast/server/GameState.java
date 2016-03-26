@@ -553,6 +553,7 @@ public final class GameState {
         
         return players1;
     }
+    
 
     /**
      * OVERLOAD: returns a set with all cells on which there is a blast. The
