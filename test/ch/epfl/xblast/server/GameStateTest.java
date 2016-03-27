@@ -271,7 +271,7 @@ public class GameStateTest {
                 inGame=false;
                 
             }
-            game=game.next(speedChangeEvents, bombdrp);
+            game=game.next(speedChange, bombdrp);
             GameStatePrinter.printGameState(game);
             
             

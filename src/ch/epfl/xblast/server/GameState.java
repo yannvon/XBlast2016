@@ -510,10 +510,10 @@ public final class GameState {
                             p.position(), wantedDir.get()));
                 }
                 
-                else {
+                else {          //FIXME what if the player is stopped
                     //find the first SubCell where the player can turn
                     SubCell turn =directedPos.findFirst(u -> {
-                        return ! u.position().isCentral();
+                        return  u.position().isCentral();
                     }).position();
                     
                     //continue ahead while the player can't turn
@@ -534,8 +534,8 @@ public final class GameState {
             // if the position is a central SubCell can move only if the
             // neighbor Cell is not a Wall
             if(p.position().isCentral()){
-                Cell futurCell= p.position().containingCell().neighbor(p.direction());
-                canMove &= !board1.blockAt(futurCell).canHostPlayer();
+                Cell futurCell= p.position().containingCell().neighbor(directedPos.head().direction());
+                canMove &= board1.blockAt(futurCell).canHostPlayer();
             }
 
             // if the player position have a distance to the central SubCell of 6
