@@ -449,7 +449,7 @@ public final class GameState {
     }
 
     /**
-     * TODO
+     * Calculate the new players of the next GameState according to the current events
      * 
      * @param players0
      * @param playerBonuses
@@ -457,7 +457,8 @@ public final class GameState {
      * @param board1
      * @param blastedCells1
      * @param speedChangeEvents
-     * @return
+     * 
+     * @return the list of players for the next step
      */
     private static List<Player> nextPlayers(List<Player> players0,
             Map<PlayerID, Bonus> playerBonuses, Set<Cell> bombedCells1,
@@ -478,12 +479,14 @@ public final class GameState {
     }
 
     /**
-     * TODO
+     * change the direction of the players and move them according to the conditions 
+     * 
      * @param speedChangeEvents
      * @param bombedCells1
      * @param players0
-     * @param board1 
-     * @return
+     * @param board1
+     *  
+     * @return a list of the moved players for the next step
      */
     private static List<Player> nextMovedPlayers(List<Player> players0,
             Board board1, Set<Cell> bombedCells1,
@@ -566,10 +569,12 @@ public final class GameState {
     
 
     /**
-     * TODO
+     * determine the new sequence of LifeState for each players
+     * 
      * @param movedPlayers
      * @param blastedCells1
-     * @return
+     *
+     * @return the list of players with the new LifeState for the next tep
      */
     private static List<Player> nextStatePlayers(List<Player> movedPlayers,
             Set<Cell> blastedCells1) {
@@ -591,10 +596,12 @@ public final class GameState {
 
     
     /**
-     * TODO
+     * determine the players upgraded by the respective bonus
+     * 
      * @param newStatePlayers
      * @param playerBonuses
-     * @return
+     * 
+     * @return the list of the players upgraded by the bonus 
      */
     private static List<Player> nextUpgradedPlayers(
             List<Player> newStatePlayers, Map<PlayerID, Bonus> playerBonuses) {
