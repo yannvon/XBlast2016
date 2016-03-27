@@ -20,6 +20,8 @@ import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.DirectedPosition;
+import ch.epfl.xblast.server.Player.LifeState;
+import ch.epfl.xblast.server.Player.LifeState.State;
 
 public final class GameState {
 
@@ -462,13 +464,21 @@ public final class GameState {
             Board board1, Set<Cell> blastedCells1,
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
 
+        //1)move the players
         List<Player> movedPlayers = nextMovedPlayers(players0,board1, bombedCells1,
                 speedChangeEvents);
-
-        return players0;
+        
+        //2)change the state of the players. lose life if blasted
+        List<Player> newStatePlayers = nextStatePlayers(movedPlayers,blastedCells1);
+        
+        //3)add the upgrade to the player(s)
+        List<Player> players1 = nextUpgradedPlayers(newStatePlayers,playerBonuses);
+        
+        return players1;
     }
 
     /**
+     * TODO
      * @param speedChangeEvents
      * @param bombedCells1
      * @param players0
@@ -525,7 +535,7 @@ public final class GameState {
             // neighbor Cell is not a Wall
             if(p.position().isCentral()){
                 Cell futurCell= p.position().containingCell().neighbor(p.direction());
-                canMove &= !board1.blockAt(futurCell).castsShadow();//FIXME
+                canMove &= !board1.blockAt(futurCell).canHostPlayer();
             }
 
             // if the player position have a distance to the central SubCell of 6
@@ -554,6 +564,53 @@ public final class GameState {
         return players1;
     }
     
+
+    /**
+     * TODO
+     * @param movedPlayers
+     * @param blastedCells1
+     * @return
+     */
+    private static List<Player> nextStatePlayers(List<Player> movedPlayers,
+            Set<Cell> blastedCells1) {
+        
+        List<Player> newStatePlayer = new ArrayList<>();
+        for(Player p: movedPlayers){
+            Sq<LifeState> states = p.lifeStates();
+            if(blastedCells1.contains(p.position().containingCell()) && p.lifeState().state() == State.VULNERABLE){
+                states= p.statesForNextLife();
+            }
+            else{
+                states= states.tail();
+            }
+            newStatePlayer.add(new Player(p.id(),states,p.directedPositions(),p.maxBombs(),p.bombRange()));
+        }
+        
+        return newStatePlayer;
+    }
+
+    
+    /**
+     * TODO
+     * @param newStatePlayers
+     * @param playerBonuses
+     * @return
+     */
+    private static List<Player> nextUpgradedPlayers(
+            List<Player> newStatePlayers, Map<PlayerID, Bonus> playerBonuses) {
+        
+        List<Player> players1=new ArrayList<>();
+        for(Player p: newStatePlayers){
+            if(playerBonuses.containsKey(p.id())){
+                players1.add(playerBonuses.get(p.id()).applyTo(p));
+            }
+            else{
+                players1.add(p);
+            }
+        }
+        
+        return players1;
+    }
 
     /**
      * OVERLOAD: returns a set with all cells on which there is a blast. The
