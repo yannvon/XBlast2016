@@ -222,6 +222,17 @@ public class GameStateTest {
         assertTrue(game.blastedCells().isEmpty());
     }
     
+    /**
+     * VISUAL TEST:
+     * 
+     * ---initialization---
+     *  enter the coordinates of the starting Cell for each player
+     *   
+     * ---Control---
+     *   - "1","2","3","4" : select the player you control
+     *   - "w","a","s","d" : change the direction of the controlled player
+     *   - "e"             : the controlled player drop a bomb
+     */
     @Test
     public void visualNextTest(){
         Scanner scan =new Scanner(System.in);
@@ -252,7 +263,6 @@ public class GameStateTest {
                 control=PlayerID.PLAYER_4;
                 break;
             case "e":
-            case "E":
                 bombdrp.add(control);
                 break;
             case "w":
