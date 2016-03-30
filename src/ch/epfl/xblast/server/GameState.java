@@ -360,22 +360,55 @@ public final class GameState {
     }
     
     /**
-     * TODO
+     * Method in charge of evolving the Players according to what happens around
+     * them and what the commands they give.
+     * 
      * @param players0
+     *            (unordered) list of all players
      * @param playerBonuses
+     *            mapping playerID's to consumed bonuses
      * @param bombedCells1
+     *            set of all cells containing a bomb
      * @param board1
+     *            board on which the game is played on
      * @param blastedCells1
+     *            cell that contain a blast
      * @param speedChangeEvents
-     * @return
+     *            events of players wanting to change their speed (direction)
+     * @return list containing all players of the following tick
      */
     private static List<Player> nextPlayers(List<Player> players0,
             Map<PlayerID, Bonus> playerBonuses, Set<Cell> bombedCells1,
             Board board1, Set<Cell> blastedCells1,
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
-        //TODO
+        // --- EVOLUTION ORDER ---
+        
+        // 1) a new Directed Position sequence is computed if the player wants
+        //      to move
+        
+        for(Player p : players0){
+            PlayerID id = p.id();
+            boolean wantsToMove = speedChangeEvents.containsKey(id);
+            Optional<Direction> dir = speedChangeEvents.get(id);
+
+            // a player can immediately go back (using the concept of
+            // "evaluation paresseuse")
+            if (dir.isPresent() && dir.get() == p.direction().opposite()){
+                
+            }
+        }
+        
+        // 2) the new Directed Position sequence evolves, depending on whether
+        //      the player can move or not.
+        
+        
+        // 3) depending on its new position the players LifeState evolves.
+        
+        // 4) changes in abilities (in case the player found a bonus)
+
         return players0;
     }
+    
     
     /**
      * Calculates the explosions for the next GameState according to the current
