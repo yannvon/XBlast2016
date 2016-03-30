@@ -121,9 +121,7 @@ public final class GameState {
      * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
-        return (ticks > Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);// FIXME
-                                                                         // strictement
-                                                                         // sup?
+        return (ticks > Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
     }
 
     /**
@@ -203,7 +201,8 @@ public final class GameState {
      * GameState and the events that happened.
      * 
      * @param speedChangeEvents
-     *            TODO
+     *            map that associate the players who want to change theirs direction
+     *            and the direction wanted
      * @param bombDrpEvents
      *            new bombs that the players added
      * @return GameState of the next tick
@@ -514,7 +513,7 @@ public final class GameState {
                             p.position(), wantedDir.get()));
                 }
                 
-                else {          //FIXME what if the player is stopped
+                else {          //FIXME what if the player is stopped (https://piazza.com/class/ijcofbu3ba45kj?cid=73)
                     //find the first SubCell where the player can turn
                     SubCell turn =directedPos.findFirst(u -> {
                         return  u.position().isCentral();
