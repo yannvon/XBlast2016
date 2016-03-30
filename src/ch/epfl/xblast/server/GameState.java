@@ -479,6 +479,7 @@ public final class GameState {
     }
 
     /**
+     * ADDITIONAL FUNCTION:
      * change the direction of the players and move them according to the conditions 
      * 
      * @param speedChangeEvents
@@ -569,6 +570,7 @@ public final class GameState {
     
 
     /**
+     * ADDITIONAL FUNCTION:
      * determine the new sequence of LifeState for each players
      * 
      * @param movedPlayers
@@ -596,6 +598,7 @@ public final class GameState {
 
     
     /**
+     * ADDITIONAL FUNCTION:
      * determine the players upgraded by the respective bonus
      * 
      * @param newStatePlayers
