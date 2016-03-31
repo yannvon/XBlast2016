@@ -1,5 +1,6 @@
 package ch.epfl.xblast.server.debug;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class RandomGame {
     private RandomGame() {
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         
         //1) create new game
         GameState game = new GameState(board, players);
@@ -55,7 +56,7 @@ public class RandomGame {
             GameStatePrinter.printGameState(game);
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
             Thread.sleep(50);
-            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         }
         
         

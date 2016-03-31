@@ -427,8 +427,17 @@ public final class GameState {
 
                     // compute first part of sequence
                     Sq<DirectedPosition> dp1 = sq.takeWhile(pred);
+                    
+                    // compute direction the player is looking to FIXME
+                    Direction d;
+                    if(newDir.isPresent()){
+                        d = newDir.get();
+                    }else{
+                        d = p.direction();
+                    }
+                    
                     Sq<DirectedPosition> dp2 = DirectedPosition.moving(
-                            new DirectedPosition(nextCentral, newDir.get()));
+                            new DirectedPosition(nextCentral, d));
 
                     // save concatenated sequence
                     dpSq = dp1.concat(dp2);
