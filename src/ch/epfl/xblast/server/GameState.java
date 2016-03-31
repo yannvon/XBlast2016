@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
@@ -18,10 +19,14 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.server.Player.DirectedPosition;
+import ch.epfl.xblast.server.Player.LifeState;
 
 public final class GameState {
 
     // Static attributes
+    private static final int ALLOWED_DISTANCE_TO_BOMB = 6;
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
             .unmodifiableList(Lists
                     .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
@@ -381,34 +386,106 @@ public final class GameState {
             Map<PlayerID, Bonus> playerBonuses, Set<Cell> bombedCells1,
             Board board1, Set<Cell> blastedCells1,
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
-        // --- EVOLUTION ORDER ---
         
-        // 1) a new Directed Position sequence is computed if the player wants
-        //      to move
-        
-        for(Player p : players0){
-            PlayerID id = p.id();
-            boolean wantsToMove = speedChangeEvents.containsKey(id);
-            Optional<Direction> dir = speedChangeEvents.get(id);
+        List<Player> players1 = new ArrayList<>();
 
-            // a player can immediately go back (using the concept of
-            // "evaluation paresseuse")
-            if (dir.isPresent() && dir.get() == p.direction().opposite()){
-                
+        // --- EVOLUTION ORDER ---
+
+        
+        for (Player p : players0) {
+            PlayerID id = p.id();
+            
+            
+            // 1) a new Directed Position sequence is computed if the player wants
+            // to move
+            
+            Sq<DirectedPosition> dpSq;
+
+            if (speedChangeEvents.containsKey(id)) {
+
+                Optional<Direction> newDir = speedChangeEvents.get(id);
+                Direction currentDir = p.direction();
+                boolean moving = newDir.isPresent();
+
+                // a player can immediately go back (using the concept of
+                // "evaluation paresseuse")
+                if (moving && newDir.get() == currentDir.opposite()) {
+                    DirectedPosition dir = new DirectedPosition(p.position(),
+                            newDir.get());
+                    dpSq = DirectedPosition.moving(dir);
+                }
+
+                // a player wants to do fancy stuff wait until next central cell
+                else {
+                    Sq<DirectedPosition> sq = p.directedPositions();
+
+                    Predicate<DirectedPosition> pred = d -> d.position()
+                            .isCentral();
+
+                    // find nearest central SubCell
+                    SubCell nextCentral = sq.findFirst(pred).position();
+
+                    // compute first part of sequence
+                    Sq<DirectedPosition> dp1 = sq.takeWhile(pred);
+                    Sq<DirectedPosition> dp2 = DirectedPosition.moving(
+                            new DirectedPosition(nextCentral, newDir.get()));
+
+                    // save concatenated sequence
+                    dpSq = dp1.concat(dp2);
+
+                }
+            } else {
+                dpSq = p.directedPositions();
             }
+
+            // 2) the new Directed Position sequence evolves, depending on
+            // whether
+            // the player can move or not.
+
+
+            // find nearest central SubCell
+            Cell headingToCell = dpSq.findFirst(d -> d.position().isCentral())
+                    .position().containingCell();
+
+            boolean canMove = p.lifeState().canMove();
+            Block nextBlock = board1.blockAt(headingToCell);
+            boolean canHostPlayer = nextBlock.canHostPlayer();
+
+            boolean noBombInWay = !bombedCells1.contains(headingToCell) || p
+                    .position().distanceToCentral() > ALLOWED_DISTANCE_TO_BOMB; // FIXME
+
+            // if all criteria is met the player can move
+            if (canMove && canHostPlayer && noBombInWay) {
+                dpSq = dpSq.tail();
+            }
+
+            // 3) depending on its new position the players LifeState evolves.
+            Sq<LifeState> lsSq;
+            
+            SubCell newPlayerPos = dpSq.head().position();
+            boolean blasted = blastedCells1.contains(newPlayerPos);
+            boolean vulnerable = p.lifeState()
+                    .state() == Player.LifeState.State.VULNERABLE;
+
+            if (blasted && vulnerable) {
+                lsSq = p.statesForNextLife();
+            } else {
+                lsSq = p.lifeStates();
+            }
+
+            // 4) changes in abilities (in case the player found a bonus)
+            Player p1 = new Player(id, lsSq, dpSq, p.maxBombs(), p.bombRange());
+            
+            if (playerBonuses.containsKey(id)) {
+                p1 = playerBonuses.get(id).applyTo(p1);
+            }
+            
+            // 5) add new player to list
+            players1.add(p1);
         }
         
-        // 2) the new Directed Position sequence evolves, depending on whether
-        //      the player can move or not.
-        
-        
-        // 3) depending on its new position the players LifeState evolves.
-        
-        // 4) changes in abilities (in case the player found a bonus)
-
-        return players0;
-    }
-    
+        return players1;
+    }    
     
     /**
      * Calculates the explosions for the next GameState according to the current
