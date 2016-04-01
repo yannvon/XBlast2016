@@ -413,7 +413,7 @@ public final class GameState {
             boolean blockedByWall = pos.isCentral()
                     && !nextBlock.canHostPlayer();
             boolean blockedByBomb = bombedCells1.contains(pos.containingCell())
-                    && pos.distanceToCentral() < ALLOWED_DISTANCE_TO_BOMB && movingTowardsCentral;
+                    && pos.distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB && movingTowardsCentral;
                     
             // if all criteria is met the player can move
             if (canMove && !blockedByWall && !blockedByBomb) {
