@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
@@ -495,36 +496,46 @@ public final class GameState {
         List<Player> players1=new ArrayList<>();
         for(Player p: players0){
             Sq<DirectedPosition> directedPos = p.directedPositions();
-            
+            PlayerID id=p.id();
             //----Set the new DirectedPosition of the player----
             
             //if the player want to change his direction
-            if(speedChangeEvents.containsKey(p.id())){
-                Optional<Direction> wantedDir= speedChangeEvents.get(p.id());
+            if(speedChangeEvents.containsKey(id)){
+                Optional<Direction> wantedDir= speedChangeEvents.get(id);
                 
-                // stop the directedPosition if the Optional is empty
-                if(!wantedDir.isPresent()){
-                    directedPos = DirectedPosition.stopped(directedPos.head());
-                }
+                
                 // if the wanted direction is parallel to the previous direction
                 // change the direction instantly
-                else if(p.direction().isParallelTo(wantedDir.get())){
+                if(wantedDir.isPresent() && p.direction().isParallelTo(wantedDir.get())){
                     directedPos = DirectedPosition.moving(new DirectedPosition(
                             p.position(), wantedDir.get()));
                 }
                 
-                else {          //FIXME what if the player is stopped (https://piazza.com/class/ijcofbu3ba45kj?cid=73)
-                    //find the first SubCell where the player can turn
-                    SubCell turn =directedPos.findFirst(u -> {
+                else {          
+                    Predicate<DirectedPosition> central= u -> {
                         return  u.position().isCentral();
-                    }).position();
+                    };
+                    
+                    //find the first SubCell where the player can turn
+                    SubCell turn =directedPos.findFirst(central).position();
                     
                     //continue ahead while the player can't turn
-                    directedPos= directedPos.takeWhile(u -> {
-                        return ! u.position().isCentral();
-                    });
-                    //turn at the first central SubCell
-                    directedPos=directedPos.concat(DirectedPosition.moving(new DirectedPosition(turn,wantedDir.get())));
+                    directedPos= directedPos.takeWhile(central);
+                    
+                    //set the DirectedPosition after the central SubCell
+                    Sq<DirectedPosition> changedDirectedPos;
+                    
+                    // stop the directedPosition if the Optional is empty
+                    if(!wantedDir.isPresent()){
+                        changedDirectedPos = DirectedPosition.stopped(directedPos.head());
+                    }
+                    // turn at the first central SubCell to the given direction
+                    else{
+                        changedDirectedPos = DirectedPosition.moving(new DirectedPosition(turn,wantedDir.get()));
+                    }
+                    
+                    //add the sequence of directedposition after the central Subcell to the sequence before.
+                    directedPos=directedPos.concat(changedDirectedPos);
                 }
             }
             
