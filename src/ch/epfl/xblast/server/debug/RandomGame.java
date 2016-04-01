@@ -44,8 +44,7 @@ public class RandomGame {
             new Player(PlayerID.PLAYER_4,3,new Cell(1,11),3,3)
             );
 
-    private RandomGame() {
-    }
+    private RandomGame() {}
 
     public static void main(String[] args) throws InterruptedException, IOException {
         

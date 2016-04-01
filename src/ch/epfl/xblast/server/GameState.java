@@ -403,8 +403,7 @@ public final class GameState {
             //      whether the player can move or not.
 
             SubCell pos = p.position();
-            Direction dir = directedPositions.head().direction();
-            
+            //FIXME readability
             Cell nextCell = directedPositions.tail().findFirst(d -> d.position().isCentral())
                     .position().containingCell();
             Block nextBlock = board1.blockAt(nextCell);
@@ -429,7 +428,7 @@ public final class GameState {
                     .state() == Player.LifeState.State.VULNERABLE;
 
             Sq<LifeState> lifeStates = (blasted && vulnerable) ? p.statesForNextLife()
-                    : p.lifeStates();
+                    : p.lifeStates().tail();
 
             // 4) changes in abilities (in case the player found a bonus)
             Player p1 = new Player(id, lifeStates, directedPositions, p.maxBombs(), p.bombRange());

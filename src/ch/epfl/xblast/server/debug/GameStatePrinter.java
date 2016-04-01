@@ -15,14 +15,13 @@ import ch.epfl.xblast.server.Player;
 public final class GameStatePrinter {
     // constants
     private static final String red = "\u001b[31m";
-    private static final String yellow = "\u001b[33m";
+    private static final String yellow = "\u001b[31m";
     private static final String green = "\u001b[32m";
     private static final String blue = "\u001b[34m";
     private static final String black = "\u001b[30m";
     private static final String magenta = "\u001b[35m";
     private static final String cyan = "\u001b[36m";
     private static final String white = "\u001b[37m";
-    
     private static final String std = "\u001b[m";
     
     private GameStatePrinter() {}
@@ -34,6 +33,7 @@ public final class GameStatePrinter {
         Set<Cell> blasts= s.blastedCells();
 
         for (int y = 0; y < Cell.ROWS; ++y) {
+            // 1) print game board
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                 Cell c = new Cell(x, y);
                 
@@ -55,8 +55,18 @@ public final class GameStatePrinter {
                 Block b = board.blockAt(c);
                 System.out.print(stringForBlock(b));
             }
+        
             System.out.println();
         }
+        // 2) print additional player and game info
+        for(Player p : ps){
+            System.out.println("P" + p.id().ordinal() + " : " +red+ p.lives() + std + " lives " + p.lifeState().state());
+            System.out.println("    max bombs: " + green+ p.maxBombs()+std + " range: " +cyan + p.bombRange()+ std);
+            System.out.println("    position: " + p.position().containingCell());
+            
+        }
+        System.out.println();
+        System.out.println("Remaining Time: " + Math.round(s.remainingTime()));
     }
 
     private static String stringForPlayer(Player p) {
