@@ -27,6 +27,7 @@ import ch.epfl.xblast.server.Player.LifeState.State;
 public final class GameState {
 
     // Static attributes
+    private static final int ALLOWED_DISTANCE_TO_BOMB = 6;
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
             .unmodifiableList(Lists
                     .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
@@ -542,6 +543,7 @@ public final class GameState {
             //----evolve the DirectedPosition if the player is allowed to move---- 
            
             //--1)determine if the player is allowed to move--
+            
             //can move if the player is invulnerable or vulnerable
             boolean canMove = p.lifeState().canMove();
             
@@ -553,15 +555,18 @@ public final class GameState {
             }
 
             // if the player position have a distance to the central SubCell of 6
-            // and that the player is going to the central SubCell then the
+            // and that the player is going toward the central SubCell then the
             // player can move only if there is no Bomb on the Cell
-            if(p.position().distanceToCentral()==6){
-                Direction newdir = directedPos.head().direction();
-                if(p.position().neighbor(newdir).distanceToCentral() < 6){
+            if(p.position().distanceToCentral()==ALLOWED_DISTANCE_TO_BOMB){
+                //the futur position
+                SubCell futurpos = directedPos.tail().head().position();
+                //if the player is moving toward the central SubCell
+                if(futurpos.distanceToCentral() < ALLOWED_DISTANCE_TO_BOMB){
                     Cell position= p.position().containingCell();
                     canMove &= !bombedCells1.contains(position);
                 }
             }
+            
             
             //--2)evolve the DirectedPosition--
             if(canMove){
