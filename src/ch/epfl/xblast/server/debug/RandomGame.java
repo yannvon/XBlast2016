@@ -21,23 +21,27 @@ import ch.epfl.xblast.server.Player;
 public class RandomGame {
     
     //Constants used for convenience
+    private final static String ESC = "\033[";
+
     private static final Block __ = Block.FREE;
     private static final Block XX = Block.INDESTRUCTIBLE_WALL;
     private static final Block xx = Block.DESTRUCTIBLE_WALL;
     
     private static final Board board = Board.ofQuadrantNWBlocksWalled(
-            Arrays.asList(Arrays.asList(__, __, __, __, __, xx, __),
+            Arrays.asList(
+                    Arrays.asList(__, __, __, __, __, xx, __),
                     Arrays.asList(__, XX, xx, XX, xx, XX, xx),
                     Arrays.asList(__, xx, __, __, __, xx, __),
                     Arrays.asList(xx, XX, __, XX, XX, XX, XX),
                     Arrays.asList(__, xx, __, xx, __, __, __),
                     Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
     
+    
     private static final List<Player> players= Arrays.asList(
             new Player(PlayerID.PLAYER_1,3,new Cell(1,1),3,3),
-            new Player(PlayerID.PLAYER_2,3,new Cell(7,6),3,3),
-            new Player(PlayerID.PLAYER_3,3,new Cell(8,9),3,3),
-            new Player(PlayerID.PLAYER_4,3,new Cell(3,4),3,3)
+            new Player(PlayerID.PLAYER_2,3,new Cell(13,1),3,3),
+            new Player(PlayerID.PLAYER_3,3,new Cell(1,11),3,3),
+            new Player(PlayerID.PLAYER_4,3,new Cell(13,11),3,3)
             );
 
     private RandomGame() {
@@ -56,7 +60,11 @@ public class RandomGame {
             GameStatePrinter.printGameState(game);
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
             Thread.sleep(50);
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            //--- POWER SHELL ---
+            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            
+            //--- BASH ---
+            System.out.print(ESC + "2J"); 
         }
         
         

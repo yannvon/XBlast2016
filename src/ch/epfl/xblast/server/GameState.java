@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
@@ -366,7 +365,7 @@ public final class GameState {
     
     /**
      * Method in charge of evolving the Players according to what happens around
-     * them and what the commands they give.
+     * them and what commands they give.
      * 
      * @param players0
      *            (unordered) list of all players
@@ -391,69 +390,20 @@ public final class GameState {
 
         // --- EVOLUTION ORDER ---
 
-        
         for (Player p : players0) {
             PlayerID id = p.id();
             
-            
             // 1) a new Directed Position sequence is computed if the player wants
-            // to move
-            
-            Sq<DirectedPosition> dpSq;
-
-            if (speedChangeEvents.containsKey(id)) {
-
-                Optional<Direction> newDir = speedChangeEvents.get(id);
-                Direction currentDir = p.direction();
-                boolean moving = newDir.isPresent();
-
-                // a player can immediately go back (using the concept of
-                // "evaluation paresseuse")
-                if (moving && newDir.get() == currentDir.opposite()) {
-                    DirectedPosition dir = new DirectedPosition(p.position(),
-                            newDir.get());
-                    dpSq = DirectedPosition.moving(dir);
-                }
-
-                // a player wants to do fancy stuff wait until next central cell
-                else {
-                    Sq<DirectedPosition> sq = p.directedPositions();
-
-                    Predicate<DirectedPosition> pred = d -> d.position()
-                            .isCentral();
-
-                    // find nearest central SubCell
-                    SubCell nextCentral = sq.findFirst(pred).position();
-
-                    // compute first part of sequence
-                    Sq<DirectedPosition> dp1 = sq.takeWhile(pred);
-                    
-                    // compute direction the player is looking to FIXME
-                    Direction d;
-                    if(newDir.isPresent()){
-                        d = newDir.get();
-                    }else{
-                        d = p.direction();
-                    }
-                    
-                    Sq<DirectedPosition> dp2 = DirectedPosition.moving(
-                            new DirectedPosition(nextCentral, d));
-
-                    // save concatenated sequence
-                    dpSq = dp1.concat(dp2);
-
-                }
-            } else {
-                dpSq = p.directedPositions();
-            }
+            //      to move, otherwise nothing is changed here.
+            Sq<DirectedPosition> directedPositions = speedChangeEvents.containsKey(id)
+                    ? constructDPSq(p, speedChangeEvents.get(id))
+                    : p.directedPositions();
 
             // 2) the new Directed Position sequence evolves, depending on
-            // whether
-            // the player can move or not.
-
+            //      whether the player can move or not.
 
             // find nearest central SubCell
-            Cell headingToCell = dpSq.findFirst(d -> d.position().isCentral())
+            Cell headingToCell = directedPositions.findFirst(d -> d.position().isCentral())
                     .position().containingCell();
 
             boolean canMove = p.lifeState().canMove();
@@ -465,25 +415,21 @@ public final class GameState {
 
             // if all criteria is met the player can move
             if (canMove && canHostPlayer && noBombInWay) {
-                dpSq = dpSq.tail();
+                directedPositions = directedPositions.tail();
             }
 
             // 3) depending on its new position the players LifeState evolves.
-            Sq<LifeState> lsSq;
             
-            SubCell newPlayerPos = dpSq.head().position();
-            boolean blasted = blastedCells1.contains(newPlayerPos);
+            SubCell newPlayerPos = directedPositions.head().position();
+            boolean blasted = blastedCells1.contains(newPlayerPos.containingCell());
             boolean vulnerable = p.lifeState()
                     .state() == Player.LifeState.State.VULNERABLE;
 
-            if (blasted && vulnerable) {
-                lsSq = p.statesForNextLife();
-            } else {
-                lsSq = p.lifeStates();
-            }
+            Sq<LifeState> lifeStates = (blasted && vulnerable) ? p.statesForNextLife()
+                    : p.lifeStates();
 
             // 4) changes in abilities (in case the player found a bonus)
-            Player p1 = new Player(id, lsSq, dpSq, p.maxBombs(), p.bombRange());
+            Player p1 = new Player(id, lifeStates, directedPositions, p.maxBombs(), p.bombRange());
             
             if (playerBonuses.containsKey(id)) {
                 p1 = playerBonuses.get(id).applyTo(p1);
@@ -626,4 +572,42 @@ public final class GameState {
         }
         return sortedPlayers;
     }
+
+    /**
+     * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
+     * according to where the player wants to go.
+     * 
+     * @param p
+     *            player that wants to move
+     * @param speedChangeEvent
+     *            Direction where the player wants to go, empty if he wants to
+     *            stop
+     * @return a sequence of DirectedPosition that describes the players path
+     */
+    private static Sq<DirectedPosition> constructDPSq(Player p,
+            Optional<Direction> speedChange) {
+
+        // compute direction the player is looking to
+        Direction d = speedChange.isPresent()? speedChange.get() : p.direction();
+        
+        // a player can immediately go back
+        if (d == p.direction().opposite()) {
+            return DirectedPosition.moving(new DirectedPosition(p.position(),d));
+        }
+
+        // a player wants to do fancy stuff wait until next central cell
+        else {
+            Sq<DirectedPosition> sq = p.directedPositions();
+            // find nearest central SubCell
+            SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
+
+            // compute first part of sequence
+            Sq<DirectedPosition> dp1 = sq.takeWhile(t -> !t.position().isCentral());
+            Sq<DirectedPosition> dp2 = DirectedPosition
+                    .moving(new DirectedPosition(nextCentral, d));
+
+            return dp1.concat(dp2);
+        }
+    }
+
 }
