@@ -402,19 +402,22 @@ public final class GameState {
             // 2) the new Directed Position sequence evolves, depending on
             //      whether the player can move or not.
 
-            // find nearest central SubCell
-            Cell headingToCell = directedPositions.findFirst(d -> d.position().isCentral())
+            SubCell pos = p.position();
+            Direction dir = directedPositions.head().direction();
+            
+            Cell nextCell = directedPositions.tail().findFirst(d -> d.position().isCentral())
                     .position().containingCell();
-
-            boolean canMove = p.lifeState().canMove();
-            Block nextBlock = board1.blockAt(headingToCell);
-            boolean canHostPlayer = nextBlock.canHostPlayer();
-
-            boolean noBombInWay = !bombedCells1.contains(headingToCell) || p
-                    .position().distanceToCentral() > ALLOWED_DISTANCE_TO_BOMB; // FIXME
-
+            Block nextBlock = board1.blockAt(nextCell);
+            SubCell nextSubCell = directedPositions.tail().head().position();
+            boolean movingTowardsCentral = pos.distanceToCentral() > nextSubCell.distanceToCentral();
+            boolean canMove = p.lifeState().canMove();           
+            boolean blockedByWall = pos.isCentral()
+                    && !nextBlock.canHostPlayer();
+            boolean blockedByBomb = bombedCells1.contains(pos.containingCell())
+                    && pos.distanceToCentral() < ALLOWED_DISTANCE_TO_BOMB && movingTowardsCentral;
+                    
             // if all criteria is met the player can move
-            if (canMove && canHostPlayer && noBombInWay) {
+            if (canMove && !blockedByWall && !blockedByBomb) {
                 directedPositions = directedPositions.tail();
             }
 
@@ -590,8 +593,8 @@ public final class GameState {
         // compute direction the player is looking to
         Direction d = speedChange.isPresent()? speedChange.get() : p.direction();
         
-        // a player can immediately go back
-        if (d == p.direction().opposite()) {
+        // a player can immediately go back or continue in same direction
+        if (d.isParallelTo(p.direction())) {
             return DirectedPosition.moving(new DirectedPosition(p.position(),d));
         }
 
@@ -609,5 +612,4 @@ public final class GameState {
             return dp1.concat(dp2);
         }
     }
-
 }

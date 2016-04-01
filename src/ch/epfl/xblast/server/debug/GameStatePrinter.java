@@ -13,6 +13,18 @@ import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 
 public final class GameStatePrinter {
+    // constants
+    private static final String red = "\u001b[31m";
+    private static final String yellow = "\u001b[33m";
+    private static final String green = "\u001b[32m";
+    private static final String blue = "\u001b[34m";
+    private static final String black = "\u001b[30m";
+    private static final String magenta = "\u001b[35m";
+    private static final String cyan = "\u001b[36m";
+    private static final String white = "\u001b[37m";
+    
+    private static final String std = "\u001b[m";
+    
     private GameStatePrinter() {}
 
     public static void printGameState(GameState s) {
@@ -26,11 +38,11 @@ public final class GameStatePrinter {
                 Cell c = new Cell(x, y);
                 
                 if (bombs.containsKey(c)){
-                    System.out.print("@@");
+                    System.out.print(red + "@@" + std);
                     continue xLoop;
                 }
                 if (blasts.contains(c)){
-                    System.out.print("~~");
+                    System.out.print(yellow + "~~" + std);
                     continue xLoop;
                 }
                 for (Player p: ps) {
@@ -56,17 +68,17 @@ public final class GameStatePrinter {
         case S: b.append('v'); break;
         case W: b.append('<'); break;
         }
-        return b.toString();
+        return white + b.toString() + std;
     }
 
     private static String stringForBlock(Block b) {
         switch (b) {
         case FREE: return "  ";
-        case INDESTRUCTIBLE_WALL: return "##";
-        case DESTRUCTIBLE_WALL: return "??";
-        case CRUMBLING_WALL: return "¿¿";
-        case BONUS_BOMB: return "+b";
-        case BONUS_RANGE: return "+r";
+        case INDESTRUCTIBLE_WALL: return black + "##" + std;
+        case DESTRUCTIBLE_WALL: return black + "??" + std;
+        case CRUMBLING_WALL: return white + "¿¿" + std;
+        case BONUS_BOMB: return green + "+b" + std;
+        case BONUS_RANGE: return cyan + "+r" + std;
         default: throw new Error();
         }
     }
