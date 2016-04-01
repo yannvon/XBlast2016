@@ -227,19 +227,27 @@ public class GameStateTest {
      * 
      * ---initialization---
      *  enter the coordinates of the starting Cell for each player
+     *  enter the maximums bombs for the players
+     *  enter the range of the players
+     *  each players have only 1 life
      *   
      * ---Control---
      *   - "1","2","3","4" : select the player you control
      *   - "w","a","s","d" : change the direction of the controlled player
+     *   - "x"             : stop the player at the next central SubCell 
      *   - "e"             : the controlled player drop a bomb
      */
     @Test
     public void visualNextTest(){
         Scanner scan =new Scanner(System.in);
         List<Player> gPlayers =new ArrayList<>();
+        System.out.println("maxBombs?");
+        int maxBombs= scan.nextInt();
+        System.out.println("range?");
+        int range= scan.nextInt();
         for(int i=0; i<4;i++){
             System.out.println("player " + (i+1)+ " position :");
-            gPlayers.add(new Player(PlayerID.values()[i],1,new Cell(scan.nextInt(),scan.nextInt()),3,i+1));
+            gPlayers.add(new Player(PlayerID.values()[i],1,new Cell(scan.nextInt(),scan.nextInt()),maxBombs,range));
         }
         
         GameState game= new GameState(board,gPlayers);
@@ -277,6 +285,9 @@ public class GameStateTest {
             case "d":
                 speedChange.put(control,Optional.of(Direction.E));
                 break;
+            case "x":
+                speedChange.put(control,Optional.empty());
+                break;
             case "0":
                 inGame=false;
                 
@@ -286,6 +297,7 @@ public class GameStateTest {
             
             
         }
+        scan.close();
         
     }
     

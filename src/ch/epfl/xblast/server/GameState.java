@@ -516,19 +516,22 @@ public final class GameState {
                     Predicate<DirectedPosition> central= u -> {
                         return  u.position().isCentral();
                     };
+                    Predicate<DirectedPosition> notCentral= u -> {
+                        return  !u.position().isCentral();
+                    };
                     
                     //find the first SubCell where the player can turn
                     SubCell turn =directedPos.findFirst(central).position();
                     
                     //continue ahead while the player can't turn
-                    directedPos= directedPos.takeWhile(central);
+                    directedPos= directedPos.takeWhile(notCentral);
                     
                     //set the DirectedPosition after the central SubCell
                     Sq<DirectedPosition> changedDirectedPos;
                     
                     // stop the directedPosition if the Optional is empty
                     if(!wantedDir.isPresent()){
-                        changedDirectedPos = DirectedPosition.stopped(directedPos.head());
+                        changedDirectedPos = DirectedPosition.stopped(new DirectedPosition(turn,p.direction()));
                     }
                     // turn at the first central SubCell to the given direction
                     else{
