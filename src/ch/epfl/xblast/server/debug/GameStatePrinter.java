@@ -37,14 +37,8 @@ public final class GameStatePrinter {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                 Cell c = new Cell(x, y);
                 
-                if (bombs.containsKey(c)){
-                    System.out.print(red + "@@" + std);
-                    continue xLoop;
-                }
-                if (blasts.contains(c)){
-                    System.out.print(yellow + "~~" + std);
-                    continue xLoop;
-                }
+                // --- PRIORITY ORDER ---
+                // players
                 for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
                         System.out.print(stringForPlayer(p));
@@ -52,10 +46,25 @@ public final class GameStatePrinter {
                     }
                 }
                 
+                // bombs
+                if (bombs.containsKey(c)){
+                    System.out.print(red + "@@" + std);
+                    continue xLoop;
+                }
+                
+
                 Block b = board.blockAt(c);
+                
+                // blasts
+                if (blasts.contains(c) && b.isFree()){
+                    System.out.print(yellow + "~~" + std);
+                    continue xLoop;
+                }
+                // blocks
                 System.out.print(stringForBlock(b));
+                
             }
-        
+
             System.out.println();
         }
         // 2) print additional player and game info
