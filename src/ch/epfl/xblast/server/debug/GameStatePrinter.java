@@ -15,14 +15,22 @@ import ch.epfl.xblast.server.Player;
 public final class GameStatePrinter {
     // constants
     private static final String red = "\u001b[31m";
-    private static final String yellow = "\u001b[31m";
+    private static final String yellow = "\u001b[33m";
     private static final String green = "\u001b[32m";
     private static final String blue = "\u001b[34m";
     private static final String black = "\u001b[30m";
     private static final String magenta = "\u001b[35m";
     private static final String cyan = "\u001b[36m";
     private static final String white = "\u001b[37m";
-    private static final String std = "\u001b[m";
+    private static final String framed = "\u001b[51m";
+    private static final String std = "\u001b[0m";
+    private static final String bBlack = "\u001b[40m";
+    private static final String bGreen = "\u001b[42m";
+    private static final String bCyan = "\u001b[46m";
+    private static final String bWhite = "\u001b[47m";
+    private static final String bBlue = "\u001b[44m";
+    private static final String bRed = "\u001b[41m";;
+    private static final String nl = "\n";
     
     private GameStatePrinter() {}
 
@@ -31,6 +39,7 @@ public final class GameStatePrinter {
         Board board = s.board();
         Map<Cell,Bomb> bombs= s.bombedCells();
         Set<Cell> blasts= s.blastedCells();
+        StringBuilder toPrint = new StringBuilder();
 
         for (int y = 0; y < Cell.ROWS; ++y) {
             // 1) print game board
@@ -41,14 +50,14 @@ public final class GameStatePrinter {
                 // players
                 for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
-                        System.out.print(stringForPlayer(p));
+                        toPrint.append(stringForPlayer(p));
                         continue xLoop;
                     }
                 }
                 
                 // bombs
                 if (bombs.containsKey(c)){
-                    System.out.print(red + "@@" + std);
+                    toPrint.append(red + "@@" + std);
                     continue xLoop;
                 }
                 
@@ -57,25 +66,26 @@ public final class GameStatePrinter {
                 
                 // blasts
                 if (blasts.contains(c) && b.isFree()){
-                    System.out.print(yellow + "~~" + std);
+                    toPrint.append(bRed + "~~" + std);
                     continue xLoop;
                 }
                 // blocks
-                System.out.print(stringForBlock(b));
+                toPrint.append(stringForBlock(b));
                 
             }
 
-            System.out.println();
+            toPrint.append(nl);
         }
         // 2) print additional player and game info
         for(Player p : ps){
-            System.out.println("P" + p.id().ordinal() + " : " +red+ p.lives() + std + " lives " + p.lifeState().state());
-            System.out.println("    max bombs: " + green+ p.maxBombs()+std + " range: " +cyan + p.bombRange()+ std);
-            System.out.println("    position: " + p.position().containingCell());
+            toPrint.append("P" + p.id().ordinal() + " : " +red+ p.lives() + std + " lives " + p.lifeState().state() + nl);
+            toPrint.append("    max bombs: " + green+ p.maxBombs()+std + " range: " +cyan + p.bombRange()+ std + nl);
+            toPrint.append("    position: " + p.position().containingCell() + nl);
             
         }
-        System.out.println();
-        System.out.println("Remaining Time: " + Math.round(s.remainingTime()));
+        toPrint.append(nl);
+        toPrint.append("Remaining Time: " + Math.round(s.remainingTime())+ nl);
+        System.out.println(toPrint.toString());
     }
 
     private static String stringForPlayer(Player p) {
@@ -87,17 +97,17 @@ public final class GameStatePrinter {
         case S: b.append('v'); break;
         case W: b.append('<'); break;
         }
-        return white + b.toString() + std;
+        return bCyan + white + b.toString() + std;
     }
 
     private static String stringForBlock(Block b) {
         switch (b) {
         case FREE: return "  ";
-        case INDESTRUCTIBLE_WALL: return black + "##" + std;
-        case DESTRUCTIBLE_WALL: return black + "??" + std;
-        case CRUMBLING_WALL: return white + "¿¿" + std;
-        case BONUS_BOMB: return green + "+b" + std;
-        case BONUS_RANGE: return cyan + "+r" + std;
+        case INDESTRUCTIBLE_WALL: return bBlack + "##" + std;
+        case DESTRUCTIBLE_WALL: return bBlack + "??" + std;
+        case CRUMBLING_WALL: return bBlack + "¿¿" + std;
+        case BONUS_BOMB: return bGreen + "+b" + std;
+        case BONUS_RANGE: return bGreen + "+r" + std;
         default: throw new Error();
         }
     }

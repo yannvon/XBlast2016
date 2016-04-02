@@ -22,6 +22,11 @@ public class RandomGame {
     
     //Constants used for convenience
     private final static String ESC = "\033[";
+    private static final String background = "\u001b[41m";
+    
+    private static final RandomEventGenerator RANDOM = new RandomEventGenerator(2016, 30, 100);
+
+
 
     private static final Block __ = Block.FREE;
     private static final Block XX = Block.INDESTRUCTIBLE_WALL;
@@ -51,18 +56,17 @@ public class RandomGame {
         //1) create new game
         GameState game = new GameState(board, players);
         
-        //2) prepare randomly generated stuff
-        RandomEventGenerator RANDOM = new RandomEventGenerator(2016, 30, 100);
         
-        //3) make the game evolve and display it (new tick all 50ms)
+        //2) make the game evolve and display it (new tick all 50ms)
         while(!game.isGameOver()){
+            
             GameStatePrinter.printGameState(game);
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
             Thread.sleep(50);
             //--- POWER SHELL ---
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             
-            //--- BASH ---
+            //--- ConEmu ---
             //System.out.print(ESC + "2J"); 
         }
         
