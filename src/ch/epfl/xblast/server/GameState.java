@@ -342,7 +342,7 @@ public final class GameState {
 
             }
             // 2.3) if current Cell was a destructible wall and got blasted,
-            //      generate a sequence that will let a bonus appear (or not)
+            //      generate a sequence that will maybe let a bonus appear
             else if (head == Block.DESTRUCTIBLE_WALL && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newCrumblingWallSq = Sq.repeat(
@@ -551,6 +551,49 @@ public final class GameState {
     }
     
     /**
+     * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
+     * according to where the player wants to go.
+     * 
+     * @param p
+     *            player that wants to move
+     * @param speedChangeEvent
+     *            Direction where the player wants to go, empty if he wants to
+     *            stop
+     * @return a sequence of DirectedPosition that describes the players path
+     */
+    private static Sq<DirectedPosition> constructDPSq(Player p,
+            Optional<Direction> speedChange) {
+    
+        // compute direction the player is looking to
+        Direction d = speedChange.isPresent()? speedChange.get() : p.direction();
+        
+        // a player can immediately go back or continue in same direction
+        if (d.isParallelTo(p.direction())) {
+            return DirectedPosition.moving(new DirectedPosition(p.position(),d));
+        }
+    
+        // a player wants to do fancy stuff wait until next central cell
+        else {
+            Sq<DirectedPosition> sq = p.directedPositions();
+            // find nearest central SubCell
+            SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
+    
+            // compute first part of sequence
+            Sq<DirectedPosition> dp1 = sq
+                    .takeWhile(t -> !t.position().isCentral());
+            // compute second part: the player either stays at the central
+            // SubCell or takes a turn.
+            Sq<DirectedPosition> dp2 = speedChange.isPresent()
+                    ? DirectedPosition
+                            .moving(new DirectedPosition(nextCentral, d))
+                    : DirectedPosition
+                            .stopped(new DirectedPosition(nextCentral, d));
+
+            return dp1.concat(dp2);
+        }
+    }
+
+    /**
      * Returns a sorted version of the list of players according to current
      * permutation that defines who has the priority in case of a conflict.
      * 
@@ -573,42 +616,5 @@ public final class GameState {
             sortedPlayers.add(pMap.get(id));
         }
         return sortedPlayers;
-    }
-
-    /**
-     * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
-     * according to where the player wants to go.
-     * 
-     * @param p
-     *            player that wants to move
-     * @param speedChangeEvent
-     *            Direction where the player wants to go, empty if he wants to
-     *            stop
-     * @return a sequence of DirectedPosition that describes the players path
-     */
-    private static Sq<DirectedPosition> constructDPSq(Player p,
-            Optional<Direction> speedChange) {
-
-        // compute direction the player is looking to
-        Direction d = speedChange.isPresent()? speedChange.get() : p.direction();
-        
-        // a player can immediately go back or continue in same direction
-        if (d.isParallelTo(p.direction())) {
-            return DirectedPosition.moving(new DirectedPosition(p.position(),d));
-        }
-
-        // a player wants to do fancy stuff wait until next central cell
-        else {
-            Sq<DirectedPosition> sq = p.directedPositions();
-            // find nearest central SubCell
-            SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
-
-            // compute first part of sequence
-            Sq<DirectedPosition> dp1 = sq.takeWhile(t -> !t.position().isCentral());
-            Sq<DirectedPosition> dp2 = DirectedPosition
-                    .moving(new DirectedPosition(nextCentral, d));
-
-            return dp1.concat(dp2);
-        }
     }
 }
