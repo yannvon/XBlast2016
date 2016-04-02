@@ -353,7 +353,7 @@ public final class GameState {
                     && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newCrumblingWallSq = Sq.repeat(
-                        Ticks.WALL_CRUMBLING_TICKS, Block.DESTRUCTIBLE_WALL);
+                        Ticks.WALL_CRUMBLING_TICKS, Block.CRUMBLING_WALL);
 
                 // use the bonus generator array to get a random bonus.
                 Block randomBonus = BONUS_GENERATOR[RANDOM
