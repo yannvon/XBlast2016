@@ -496,7 +496,7 @@ public final class GameState {
 
         List<Player> players1=new ArrayList<>();
         for(Player p: players0){
-            Sq<DirectedPosition> directedPos = p.directedPositions();
+            Sq<DirectedPosition> directedPos1 = p.directedPositions();
             PlayerID id=p.id();
             //----Set the new DirectedPosition of the player----
             
@@ -508,7 +508,7 @@ public final class GameState {
                 // if the wanted direction is parallel to the previous direction
                 // change the direction instantly
                 if(wantedDir.isPresent() && p.direction().isParallelTo(wantedDir.get())){
-                    directedPos = DirectedPosition.moving(new DirectedPosition(
+                    directedPos1 = DirectedPosition.moving(new DirectedPosition(
                             p.position(), wantedDir.get()));
                 }
                 
@@ -521,10 +521,10 @@ public final class GameState {
                     };
                     
                     //find the first SubCell where the player can turn
-                    SubCell turn =directedPos.findFirst(central).position();
+                    SubCell turn =directedPos1.findFirst(central).position();
                     
                     //continue ahead while the player can't turn
-                    directedPos= directedPos.takeWhile(notCentral);
+                    directedPos1= directedPos1.takeWhile(notCentral);
                     
                     //set the DirectedPosition after the central SubCell
                     Sq<DirectedPosition> changedDirectedPos;
@@ -539,7 +539,7 @@ public final class GameState {
                     }
                     
                     //add the sequence of directedposition after the central Subcell to the sequence before.
-                    directedPos=directedPos.concat(changedDirectedPos);
+                    directedPos1=directedPos1.concat(changedDirectedPos);
                 }
             }
             
@@ -553,7 +553,7 @@ public final class GameState {
             // if the position is a central SubCell can move only if the
             // neighbor Cell is not a Wall
             if(p.position().isCentral()){
-                Cell futurCell= p.position().containingCell().neighbor(directedPos.head().direction());
+                Cell futurCell= p.position().containingCell().neighbor(directedPos1.head().direction());
                 canMove &= board1.blockAt(futurCell).canHostPlayer();
             }
 
@@ -561,8 +561,8 @@ public final class GameState {
             // and that the player is going toward the central SubCell then the
             // player can move only if there is no Bomb on the Cell
             if(p.position().distanceToCentral()==ALLOWED_DISTANCE_TO_BOMB){
-                //the futur position
-                SubCell futurpos = directedPos.tail().head().position();
+                //the future position
+                SubCell futurpos = directedPos1.tail().head().position();
                 //if the player is moving toward the central SubCell
                 if(futurpos.distanceToCentral() < ALLOWED_DISTANCE_TO_BOMB){
                     Cell position= p.position().containingCell();
@@ -573,11 +573,11 @@ public final class GameState {
             
             //--2)evolve the DirectedPosition--
             if(canMove){
-                directedPos = directedPos.tail();
+                directedPos1 = directedPos1.tail();
             }
             
             //----add the new player to the list----
-            players1.add(new Player(p.id(),p.lifeStates(),directedPos,p.maxBombs(),p.bombRange()));
+            players1.add(new Player(p.id(),p.lifeStates(),directedPos1,p.maxBombs(),p.bombRange()));
             
         }
         
