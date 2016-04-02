@@ -603,7 +603,7 @@ public final class GameState {
         List<Player> sortedPlayers = new ArrayList<>();
         
         // get permutation that is currently valid
-        List<PlayerID> idSorted = PLAYER_PERMUTATION.get(ticks % players.size());
+        List<PlayerID> idSorted = PLAYER_PERMUTATION.get(ticks % PLAYER_PERMUTATION.size());
         
         // create a map that associates the playerID to every player
         Map<PlayerID, Player> pMap = new HashMap<>();
