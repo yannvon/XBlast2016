@@ -1,7 +1,7 @@
 package ch.epfl.xblast;
 
 /**
- * An immutable sub cell.
+ * An immutable subdivision of Cell.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -19,20 +19,6 @@ public final class SubCell {
     private final int x, y;
 
     /**
-     * Retrieves the central SubCell of any given Cell.
-     * 
-     * @param cell
-     *            for which the SubCell has to be found
-     * @return the SubCell that lays in the center of given Cell
-     */
-    public static SubCell centralSubCellOf(Cell cell) {
-        // define the coordinates of the SubCell using the defined constants
-        int x = cell.x() * SUBDIVISION + CENTRAL;
-        int y = cell.y() * SUBDIVISION + CENTRAL;
-        return new SubCell(x, y);
-    }
-
-    /**
      * Sole SubCell constructor. Accepts every integer as parameter, but the
      * coordinates are then normalized to fit inside the Game Board.
      * 
@@ -44,6 +30,20 @@ public final class SubCell {
     public SubCell(int x, int y) {
         this.x = Math.floorMod(x, COLUMNS);
         this.y = Math.floorMod(y, ROWS);
+    }
+
+    /**
+     * Retrieves the central SubCell of any given Cell.
+     * 
+     * @param cell
+     *            for which the SubCell has to be found
+     * @return the SubCell that lays in the center of given Cell
+     */
+    public static SubCell centralSubCellOf(Cell cell) {
+        // define the coordinates of the SubCell using the defined constants
+        int x = cell.x() * SUBDIVISION + CENTRAL;
+        int y = cell.y() * SUBDIVISION + CENTRAL;
+        return new SubCell(x, y);
     }
 
     /**
@@ -96,20 +96,6 @@ public final class SubCell {
         return new Cell(x / SUBDIVISION, y / SUBDIVISION);
     }
 
-    @Override
-    public boolean equals(Object that) {
-        if (that == null) {
-            return false;
-        }
-        if (this == that){
-            return true;
-        }
-        if (this.getClass().equals(that.getClass())) {
-            return this.x == ((SubCell) that).x() && this.y() == ((SubCell) that).y();
-        }
-        return false;
-    }
-
     /**
      * Getter for the x-coordinate of the SubCell.
      * @return the x-coordinate
@@ -124,6 +110,20 @@ public final class SubCell {
      */
     public int y() {
         return y;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        if (that == null) {
+            return false;
+        }
+        if (this == that){
+            return true;
+        }
+        if (this.getClass().equals(that.getClass())) {
+            return this.x == ((SubCell) that).x() && this.y() == ((SubCell) that).y();
+        }
+        return false;
     }
 
     @Override

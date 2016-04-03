@@ -64,12 +64,12 @@ public final class Cell {
     }
     
     /**
-     * Returns the neighbouring cell in given Direction. Since the Game Board is
+     * Returns the neighboring cell in given Direction. Since the Game Board is
      * considered a torus, this Cell always exists.
      * 
      * @param dir
-     *            direction of the neighbour
-     * @return the neighbouring Cell in given Direction
+     *            direction of the neighbor
+     * @return the neighboring Cell in given Direction
      */
     public Cell neighbor(Direction dir) {
         switch (dir) {
@@ -105,6 +105,11 @@ public final class Cell {
         return "(" + x + "," + y + ")";
     }
     
+    @Override
+    public int hashCode(){
+       return rowMajorIndex(); 
+    }
+
     /**
      * Constructs an array containing all Cells of the Game Board following the
      * reading order.
@@ -157,10 +162,5 @@ public final class Cell {
             horizontal = !horizontal;
         }
         return spiral;
-    }
-    
-    @Override
-    public int hashCode(){
-       return rowMajorIndex(); 
     }
 }

@@ -11,7 +11,7 @@ import ch.epfl.xblast.Lists;
 /**
  * The immutable class Board represents the Game Board of the xblast game.
  * 
- * @author Loic Vandenberghe (257742)
+ * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */
@@ -49,19 +49,19 @@ public final class Board {
     public static Board ofRows(List<List<Block>> rows) {
         // check matrix
         checkBlockMatrix(rows, Cell.ROWS, Cell.COLUMNS);
-
+    
         // add a constant sequence of given block to a temporary ArrayList
         ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
-
+    
         for (int i = 0; i < Cell.ROWS; i++) {
             for (int j = 0; j < Cell.COLUMNS; j++) {
                 tempBoard.add(Sq.constant(rows.get(i).get(j)));
             }
         }
-
+    
         // return the new Board
         return new Board(tempBoard);
-
+    
     }
 
     /**
@@ -77,7 +77,7 @@ public final class Board {
     public static Board ofInnerBlocksWalled(List<List<Block>> innerBlocks) {
         // check matrix
         checkBlockMatrix(innerBlocks, Cell.ROWS - 2, Cell.COLUMNS - 2);
-
+    
         List<List<Block>> walledBlocks = new ArrayList<>();
         
         // add walls and copy the blocks of given matrix into new walled matrix
@@ -92,7 +92,7 @@ public final class Board {
         List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
         walledBlocks.add(0, walledRow); //costly operation, chosen for the sake of readability
         walledBlocks.add(walledRow);
-
+    
         // call ofRows method to construct Board from walledBlocks matrix
         return ofRows(walledBlocks);
         
@@ -116,7 +116,7 @@ public final class Board {
         
         // check matrix
         checkBlockMatrix(quadrantNWBlocks, rows, cols);
-       
+    
         // temporary block matrix
         List<List<Block>> finalMatrix = new ArrayList<>();
         
@@ -127,12 +127,11 @@ public final class Board {
         
         // mirror the upper half board to get entire inner Board
         finalMatrix = Lists.mirrored(finalMatrix);
-
+    
         // call ofInnerBlocksWalled to add walls and construct board
         return ofInnerBlocksWalled(finalMatrix);
     }
-    
-    
+
     /**
      * Returns the block sequence of a given cell
      * 
@@ -154,7 +153,7 @@ public final class Board {
     public Block blockAt(Cell c){
         return blocksAt(c).head();
     }
-    
+
     /**
      * Checks if a given matrix of blocks has the desired size.
      * 
@@ -167,11 +166,11 @@ public final class Board {
      * @throws IllegalArgumentException
      *             if the matrix doesn't have the right size
      */
-    public static final void checkBlockMatrix(List<List<Block>> matrix,
+    private static final void checkBlockMatrix(List<List<Block>> matrix,
             int rows, int columns) {
-
+    
         int matrixRows = matrix.size();
-
+    
         // 1) check if the amount of rows is correct
         if (matrixRows != rows) {
             throw new IllegalArgumentException(

@@ -36,5 +36,10 @@ public enum Bonus {
     public static final int MAX_RANGE = 9;
     
 
+    /**
+     * apply the bonus to a player
+     * @param player
+     * @return a upgraded player with the bonus
+     */
     abstract public Player applyTo(Player player);
 }
