@@ -80,11 +80,11 @@ public final class GameStatePrinter {
         for(Player p : ps){
             toPrint.append("P" + p.id().ordinal() + " : " +red+ p.lives() + std + " lives " + p.lifeState().state() + nl);
             toPrint.append("    max bombs: " + green+ p.maxBombs()+std + " range: " +cyan + p.bombRange()+ std + nl);
-            toPrint.append("    position: " + p.position().containingCell() + nl);
+            toPrint.append("    position: " + p.position().containingCell() + stringForDistToCentral(p) + nl);
             
         }
         toPrint.append(nl);
-        toPrint.append("Remaining Time: " + Math.round(s.remainingTime())+ nl);
+        toPrint.append("Remaining Time: " + String.format("%.1f", s.remainingTime()) + nl);
         System.out.println(toPrint.toString());
     }
 
@@ -110,5 +110,40 @@ public final class GameStatePrinter {
         case BONUS_RANGE: return bGreen + "+r" + std;
         default: throw new Error();
         }
+    }
+    
+    private static String stringForDistToCentral(Player p){
+        StringBuilder str = new StringBuilder();
+        str.append("centralDist: ");
+        switch (p.position().distanceToCentral()) {
+        case 0:
+            str.append(0);
+            break;
+        case 1:
+            str.append(1);
+            break;
+        case 2:
+            str.append(12);
+            break;
+        case 3:
+            str.append(123);
+            break;
+        case 4:
+            str.append(1234);
+            break;
+        case 5:
+            str.append(12345);
+            break;
+        case 6:
+            str.append(123456);
+            break;
+        case 7:
+            str.append(1234567);
+            break;
+        case 8:
+            str.append(12345678);
+            break;
+        }
+        return str.toString();
     }
 }

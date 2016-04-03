@@ -43,10 +43,10 @@ public class RandomGame {
     
     
     private static final List<Player> players= Arrays.asList(
-            new Player(PlayerID.PLAYER_1,3,new Cell(1,1),3,3),
-            new Player(PlayerID.PLAYER_2,3,new Cell(13,1),3,3),
-            new Player(PlayerID.PLAYER_3,3,new Cell(13,11),3,3),
-            new Player(PlayerID.PLAYER_4,3,new Cell(1,11),3,3)
+            new Player(PlayerID.PLAYER_1,3,new Cell(1,1),2,3),
+            new Player(PlayerID.PLAYER_2,3,new Cell(13,1),2,3),
+            new Player(PlayerID.PLAYER_3,3,new Cell(13,11),2,3),
+            new Player(PlayerID.PLAYER_4,3,new Cell(1,11),2,3)
             );
 
     private RandomGame() {}
@@ -64,7 +64,7 @@ public class RandomGame {
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
             Thread.sleep(50);
             //--- POWER SHELL ---
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             
             //--- ConEmu ---
             //System.out.print(ESC + "2J"); 
