@@ -628,6 +628,7 @@ public final class GameState {
             List<Player> newStatePlayers, Map<PlayerID, Bonus> playerBonuses) {
         
         List<Player> players1=new ArrayList<>();
+        
         for(Player p: newStatePlayers){
             if(playerBonuses.containsKey(p.id())){
                 players1.add(playerBonuses.get(p.id()).applyTo(p));
@@ -685,7 +686,7 @@ public final class GameState {
 
         // get permutation that is currently valid
         List<PlayerID> idSorted = PLAYER_PERMUTATION
-                .get(ticks % players.size());
+                .get(ticks % PLAYER_PERMUTATION.size());
 
         // create a map that associates the playerID to every player
         Map<PlayerID, Player> pMap = new HashMap<>();
