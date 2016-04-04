@@ -676,6 +676,76 @@ public final class GameState {
     }
 
     /**
+     * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
+     * according to where the player wants to go.
+     * 
+     * @param p
+     *            player that wants to move
+     * @param speedChangeEvent
+     *            Direction where the player wants to go, empty if he wants to
+     *            stop
+     * @return a sequence of DirectedPosition that describes the players path
+     */
+    private static Sq<DirectedPosition> constructDPSq(Player p,
+            Optional<Direction> speedChange) {
+    
+        // compute direction where player where player wants to go
+        Direction d = speedChange.isPresent()? speedChange.get() : p.direction();
+        
+        // a player can immediately go back or continue in same direction
+        if (d.isParallelTo(p.direction()) && speedChange.isPresent()) {
+            return DirectedPosition.moving(new DirectedPosition(p.position(),d));
+        }
+    
+        // a player wants to do fancy stuff wait until next central cell
+        else {
+            Sq<DirectedPosition> sq = p.directedPositions();
+            // find nearest central SubCell
+            SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
+    
+            // compute first part of sequence
+            Sq<DirectedPosition> dp1 = sq
+                    .takeWhile(t -> !t.position().isCentral());
+            // compute second part: the player either stays at the central
+            // SubCell or takes a turn.
+            Sq<DirectedPosition> dp2 = speedChange.isPresent()
+                    ? DirectedPosition
+                            .moving(new DirectedPosition(nextCentral, d))
+                    : DirectedPosition
+                            .stopped(new DirectedPosition(nextCentral, d));
+
+            return dp1.concat(dp2);
+        }
+    }
+    
+    /**
+     * @param p
+     * @param directedPositions
+     * @param board1
+     * @return
+     */
+    private static boolean allowedToMove(Player p, Sq<DirectedPosition> directedPositions, Board board1, Set<Cell> bombedCells1){
+        // defining some useful variables
+        SubCell pos = p.position();            
+        Cell nextCell = directedPositions.tail().findFirst(d -> d.position().isCentral())
+                .position().containingCell();
+        Block nextBlock = board1.blockAt(nextCell);
+        SubCell nextSubCell = directedPositions.tail().head().position();
+        
+        // evaluation of the different logic expressions
+        boolean movingTowardsCentral = pos.distanceToCentral() > nextSubCell.distanceToCentral();
+        boolean canMove = p.lifeState().canMove();           
+        boolean blockedByWall = pos.isCentral()
+                && !nextBlock.canHostPlayer();
+        boolean blockedByBomb = bombedCells1.contains(pos.containingCell())
+                && pos.distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB && movingTowardsCentral;
+        
+        // if all criteria is met the player can move
+        return canMove && !blockedByWall && !blockedByBomb;
+         
+    }
+
+    /**
      * Returns a sorted version of the list of players according to current
      * permutation that defines who has the priority in case of a conflict.
      * 

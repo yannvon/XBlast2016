@@ -19,6 +19,7 @@ import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.server.debug.ClassComparator;
 import ch.epfl.xblast.server.debug.GameStatePrinter;
+import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
 public class GameStateTest {
 
@@ -26,6 +27,9 @@ public class GameStateTest {
     private final Block __ = Block.FREE;
     private final Block XX = Block.INDESTRUCTIBLE_WALL;
     private final Block xx = Block.DESTRUCTIBLE_WALL;
+    
+    private static final RandomEventGenerator RANDOM = new RandomEventGenerator(2016, 30, 100);
+
     
     private final Board board = Board.ofQuadrantNWBlocksWalled(
             Arrays.asList(Arrays.asList(__, __, __, __, __, xx, __),
@@ -302,6 +306,35 @@ public class GameStateTest {
         scan.close();
         
     }
+    
+//    @Test
+//    public void priorityCheck(){
+//        GameState game = new GameState(board, players);
+//        int count = 0;
+//        
+//        // only works if sortedPlayer() is changed to public (bad but i am too lazy)
+//        for(List<PlayerID> l : GameState.PLAYER_PERMUTATION){
+//            for(PlayerID i : l){
+//                System.out.print(i.ordinal());
+//            }
+//            System.out.println();
+//            count++;
+//
+//        }
+//        
+//        System.out.println("count : " + count);
+//
+//        
+//        for (int i = 0; i < 50; i++) {
+//            for (Player p : game.sortedPlayers()) {
+//                System.out.print(p.id().ordinal());
+//            }
+//            System.out.println();
+//            game = game.next(RANDOM.randomSpeedChangeEvents(),
+//                    RANDOM.randomBombDropEvents());
+//        }
+//
+//    }
     
     
     
