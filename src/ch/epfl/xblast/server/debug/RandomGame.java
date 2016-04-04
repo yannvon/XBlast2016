@@ -15,7 +15,7 @@ import ch.epfl.xblast.server.Player;
  * Executable class that displays a random game.
  * 
  * @author Loïc Vandenberghe (257742)
- * @author Yann Vonlanthen(258857)
+ * @author Yann Vonlanthen (258857)
  *
  */
 public class RandomGame {
@@ -67,8 +67,10 @@ public class RandomGame {
             //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             
             //--- ConEmu ---
-            //System.out.print(ESC + "2J"); 
+            System.out.print(ESC + "2J"); 
         }
+        System.out.println(game.winner().get());
+        System.out.println(game.winner().get().ordinal());
         
         
         
