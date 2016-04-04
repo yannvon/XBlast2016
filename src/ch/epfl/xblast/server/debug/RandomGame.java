@@ -64,10 +64,10 @@ public class RandomGame {
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
             Thread.sleep(50);
             //--- POWER SHELL ---
-            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             
             //--- ConEmu ---
-            System.out.print(ESC + "2J"); 
+            //System.out.print(ESC + "2J"); 
         }
         System.out.println(game.winner().get());
         System.out.println(game.winner().get().ordinal());
