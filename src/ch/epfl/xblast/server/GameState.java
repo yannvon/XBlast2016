@@ -478,34 +478,21 @@ public final class GameState {
         for (Player p : players0) {
             PlayerID id = p.id();
             
-            // 1) a new Directed Position sequence is computed if the player wants
-            //      to move, otherwise nothing is changed here.
+            // 1) Computation of the new Directed Position sequence
+            //      - if the player does not want to move nothing is changed here.
             Sq<DirectedPosition> directedPositions = speedChangeEvents.containsKey(id)
                     ? constructDPSq(p, speedChangeEvents.get(id))
                     : p.directedPositions();
 
-            // 2) the new Directed Position sequence evolves, depending on
-            //      whether the player can move or not.
+            // 2) Evolution of Directed Position sequence
+            //      - multiple criteria have to be met:
 
-            SubCell pos = p.position();
-            //FIXME readability
-            Cell nextCell = directedPositions.tail().findFirst(d -> d.position().isCentral())
-                    .position().containingCell();
-            Block nextBlock = board1.blockAt(nextCell);
-            SubCell nextSubCell = directedPositions.tail().head().position();
-            boolean movingTowardsCentral = pos.distanceToCentral() > nextSubCell.distanceToCentral();
-            boolean canMove = p.lifeState().canMove();           
-            boolean blockedByWall = pos.isCentral()
-                    && !nextBlock.canHostPlayer();
-            boolean blockedByBomb = bombedCells1.contains(pos.containingCell())
-                    && pos.distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB && movingTowardsCentral;
-                    
-            // if all criteria is met the player can move
-            if (canMove && !blockedByWall && !blockedByBomb) {
+            // FIXME really do a method for that?
+            if (allowedToMove(p, directedPositions, board1, bombedCells1)) {
                 directedPositions = directedPositions.tail();
             }
 
-            // 3) depending on its new position the players LifeState evolves.
+            // 3) Evolution of LifeState sequence
             
             SubCell newPlayerPos = directedPositions.head().position();
             boolean blasted = blastedCells1.contains(newPlayerPos.containingCell());
@@ -527,7 +514,9 @@ public final class GameState {
         }
         
         return players1;
-    }
+    }    
+    
+    
     /**
      * Calculate the new players of the next GameState according to the current events
      * 
