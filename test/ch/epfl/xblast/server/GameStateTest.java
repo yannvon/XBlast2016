@@ -245,9 +245,11 @@ public class GameStateTest {
         int maxBombs= scan.nextInt();
         System.out.println("range?");
         int range= scan.nextInt();
+        System.out.println("life?");
+        int life= scan.nextInt();
         for(int i=0; i<4;i++){
             System.out.println("player " + (i+1)+ " position :");
-            gPlayers.add(new Player(PlayerID.values()[i],1,new Cell(scan.nextInt(),scan.nextInt()),maxBombs,range));
+            gPlayers.add(new Player(PlayerID.values()[i],life,new Cell(scan.nextInt(),scan.nextInt()),maxBombs,range));
         }
         
         GameState game= new GameState(board,gPlayers);
