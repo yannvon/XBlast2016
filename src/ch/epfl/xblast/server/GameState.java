@@ -448,7 +448,86 @@ public final class GameState {
         }
         return newlyDroppedBombs;
     }
+    /**
+     * Method in charge of evolving the Players according to what happens around
+     * them and what commands they give.
+     * 
+     * @param players0
+     *            (unordered) list of all players
+     * @param playerBonuses
+     *            mapping playerID's to consumed bonuses
+     * @param bombedCells1
+     *            set of all cells containing a bomb
+     * @param board1
+     *            board on which the game is played on
+     * @param blastedCells1
+     *            cell that contain a blast
+     * @param speedChangeEvents
+     *            events of players wanting to change their speed (direction)
+     * @return list containing all players of the following tick
+     */
+    private static List<Player> nextPlayersYann(List<Player> players0,
+            Map<PlayerID, Bonus> playerBonuses, Set<Cell> bombedCells1,
+            Board board1, Set<Cell> blastedCells1,
+            Map<PlayerID, Optional<Direction>> speedChangeEvents) {
+        
+        List<Player> players1 = new ArrayList<>();
 
+        // --- EVOLUTION ORDER ---
+
+        for (Player p : players0) {
+            PlayerID id = p.id();
+            
+            // 1) a new Directed Position sequence is computed if the player wants
+            //      to move, otherwise nothing is changed here.
+            Sq<DirectedPosition> directedPositions = speedChangeEvents.containsKey(id)
+                    ? constructDPSq(p, speedChangeEvents.get(id))
+                    : p.directedPositions();
+
+            // 2) the new Directed Position sequence evolves, depending on
+            //      whether the player can move or not.
+
+            SubCell pos = p.position();
+            //FIXME readability
+            Cell nextCell = directedPositions.tail().findFirst(d -> d.position().isCentral())
+                    .position().containingCell();
+            Block nextBlock = board1.blockAt(nextCell);
+            SubCell nextSubCell = directedPositions.tail().head().position();
+            boolean movingTowardsCentral = pos.distanceToCentral() > nextSubCell.distanceToCentral();
+            boolean canMove = p.lifeState().canMove();           
+            boolean blockedByWall = pos.isCentral()
+                    && !nextBlock.canHostPlayer();
+            boolean blockedByBomb = bombedCells1.contains(pos.containingCell())
+                    && pos.distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB && movingTowardsCentral;
+                    
+            // if all criteria is met the player can move
+            if (canMove && !blockedByWall && !blockedByBomb) {
+                directedPositions = directedPositions.tail();
+            }
+
+            // 3) depending on its new position the players LifeState evolves.
+            
+            SubCell newPlayerPos = directedPositions.head().position();
+            boolean blasted = blastedCells1.contains(newPlayerPos.containingCell());
+            boolean vulnerable = p.lifeState()
+                    .state() == Player.LifeState.State.VULNERABLE;
+
+            Sq<LifeState> lifeStates = (blasted && vulnerable) ? p.statesForNextLife()
+                    : p.lifeStates().tail();
+
+            // 4) changes in abilities (in case the player found a bonus)
+            Player p1 = new Player(id, lifeStates, directedPositions, p.maxBombs(), p.bombRange());
+            
+            if (playerBonuses.containsKey(id)) {
+                p1 = playerBonuses.get(id).applyTo(p1);
+            }
+            
+            // 5) add new player to list
+            players1.add(p1);
+        }
+        
+        return players1;
+    }
     /**
      * Calculate the new players of the next GameState according to the current events
      * 
