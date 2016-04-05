@@ -29,8 +29,7 @@ public final class GameState {
     // Static attributes
     private static final int ALLOWED_DISTANCE_TO_BOMB = 6;
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
-            .unmodifiableList(Lists
-                    .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
+            .unmodifiableList(Lists.<PlayerID>permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
     private static final Block[] BONUS_GENERATOR = { Block.BONUS_BOMB,
             Block.BONUS_RANGE, Block.FREE };
@@ -103,8 +102,12 @@ public final class GameState {
      *             negative.
      */
     public GameState(Board board, List<Player> players) {
-        this(0, board, players, new ArrayList<Bomb>(),
-                new ArrayList<Sq<Sq<Cell>>>(), new ArrayList<Sq<Cell>>());
+        this(0, 
+             board, 
+             players, 
+             new ArrayList<Bomb>(),     //FIXME
+             new ArrayList<Sq<Sq<Cell>>>(), 
+             new ArrayList<Sq<Cell>>());
     }
 
     /**
