@@ -1,9 +1,11 @@
 
 package ch.epfl.DONT_SUBMIT;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
 
-import ch.epfl.xblast.server.GameStateTest;
+import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Lists;
 
 /**
  * @author LoicVandenberghe (257742)
@@ -15,6 +17,9 @@ import ch.epfl.xblast.server.GameStateTest;
  */
 public class Test {
     public static void main(String[] args) {
+       List<Integer> l = Arrays.asList(1,2,3,4,5);
+       l.set(2,5);
+       System.out.println(l);
        
     }
 }

@@ -13,6 +13,25 @@ import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 
 public final class GameStatePrinter {
+    // constants
+    private static final String red = "\u001b[31m";
+    private static final String yellow = "\u001b[33m";
+    private static final String green = "\u001b[32m";
+    private static final String blue = "\u001b[34m";
+    private static final String black = "\u001b[30m";
+    private static final String magenta = "\u001b[35m";
+    private static final String cyan = "\u001b[36m";
+    private static final String white = "\u001b[37m";
+    private static final String framed = "\u001b[51m";
+    private static final String std = "\u001b[0m";
+    private static final String bBlack = "\u001b[40m";
+    private static final String bGreen = "\u001b[42m";
+    private static final String bCyan = "\u001b[46m";
+    private static final String bWhite = "\u001b[47m";
+    private static final String bBlue = "\u001b[44m";
+    private static final String bRed = "\u001b[41m";;
+    private static final String nl = "\n";
+    
     private GameStatePrinter() {}
 
     public static void printGameState(GameState s) {
@@ -20,31 +39,53 @@ public final class GameStatePrinter {
         Board board = s.board();
         Map<Cell,Bomb> bombs= s.bombedCells();
         Set<Cell> blasts= s.blastedCells();
+        StringBuilder toPrint = new StringBuilder();
 
         for (int y = 0; y < Cell.ROWS; ++y) {
+            // 1) print game board
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                 Cell c = new Cell(x, y);
                 
-                if (bombs.containsKey(c)){
-                    System.out.print("@@");
-                    continue xLoop;
-                }
-                if (blasts.contains(c)){
-                    System.out.print("~~");
-                    continue xLoop;
-                }
+                // --- PRIORITY ORDER ---
+                // players
                 for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
-                        System.out.print(stringForPlayer(p));
+                        toPrint.append(stringForPlayer(p));
                         continue xLoop;
                     }
                 }
                 
+                // bombs
+                if (bombs.containsKey(c)){
+                    toPrint.append(red + "@@" + std);
+                    continue xLoop;
+                }
+                
+
                 Block b = board.blockAt(c);
-                System.out.print(stringForBlock(b));
+                
+                // blasts
+                if (blasts.contains(c) && b.isFree()){
+                    toPrint.append(bRed + "~~" + std);
+                    continue xLoop;
+                }
+                // blocks
+                toPrint.append(stringForBlock(b));
+                
             }
-            System.out.println();
+
+            toPrint.append(nl);
         }
+        // 2) print additional player and game info
+        for(Player p : ps){
+            toPrint.append("P" + p.id().ordinal() + " : " +red+ p.lives() + std + " lives " + p.lifeState().state() + nl);
+            toPrint.append("    max bombs: " + green+ p.maxBombs()+std + " range: " +cyan + p.bombRange()+ std + nl);
+            toPrint.append("    position: " + p.position().containingCell() + stringForDistToCentral(p) + nl);
+            
+        }
+        toPrint.append(nl);
+        toPrint.append("Remaining Time: " + String.format("%.1f", s.remainingTime()) + nl);
+        System.out.println(toPrint.toString());
     }
 
     private static String stringForPlayer(Player p) {
@@ -56,18 +97,53 @@ public final class GameStatePrinter {
         case S: b.append('v'); break;
         case W: b.append('<'); break;
         }
-        return b.toString();
+        return bCyan + white + b.toString() + std;
     }
 
     private static String stringForBlock(Block b) {
         switch (b) {
         case FREE: return "  ";
-        case INDESTRUCTIBLE_WALL: return "##";
-        case DESTRUCTIBLE_WALL: return "??";
-        case CRUMBLING_WALL: return "¿¿";
-        case BONUS_BOMB: return "+b";
-        case BONUS_RANGE: return "+r";
+        case INDESTRUCTIBLE_WALL: return bBlack + "##" + std;
+        case DESTRUCTIBLE_WALL: return bBlack + "??" + std;
+        case CRUMBLING_WALL: return bBlack + "¿¿" + std;
+        case BONUS_BOMB: return bGreen + "+b" + std;
+        case BONUS_RANGE: return bGreen + "+r" + std;
         default: throw new Error();
         }
+    }
+    
+    private static String stringForDistToCentral(Player p){
+        StringBuilder str = new StringBuilder();
+        str.append("centralDist: ");
+        switch (p.position().distanceToCentral()) {
+        case 0:
+            str.append(0);
+            break;
+        case 1:
+            str.append(1);
+            break;
+        case 2:
+            str.append(12);
+            break;
+        case 3:
+            str.append(123);
+            break;
+        case 4:
+            str.append(1234);
+            break;
+        case 5:
+            str.append(12345);
+            break;
+        case 6:
+            str.append(123456);
+            break;
+        case 7:
+            str.append(1234567);
+            break;
+        case 8:
+            str.append(12345678);
+            break;
+        }
+        return str.toString();
     }
 }

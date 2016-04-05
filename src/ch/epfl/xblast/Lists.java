@@ -61,7 +61,7 @@ public final class Lists {
         
         //declare List that will then be returned plus copy the received List for safety reasons
         List<List<T>> output = new LinkedList<>();
-        List<T> input = new LinkedList<>(l);    //FIXME what if T immuable?
+        List<T> input = new LinkedList<>(l);    //FIXME what if T not-immutable?
 
         
         //if list is empty, the result is an empty list
@@ -71,7 +71,7 @@ public final class Lists {
         }
             
         //if list contains one element or more, remove one and start recursive call.
-        T deleted = input.remove(0);    //FIXME use sublist like asked?
+        T deleted = input.remove(0);    
         List<List<T>> permuted = permutations(input);
 
         //add removed element at every position and save the new list in the output list

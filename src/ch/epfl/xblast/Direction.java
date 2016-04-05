@@ -1,9 +1,9 @@
 package ch.epfl.xblast;
 
 /**
- * Enum of Directions.
+ * Enumeration of Directions.
  * 
- * @author Loic Vandenberghe (257742)
+ * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  */
 public enum Direction {

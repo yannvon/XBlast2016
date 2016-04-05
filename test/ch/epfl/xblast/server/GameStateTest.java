@@ -19,6 +19,7 @@ import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.server.debug.ClassComparator;
 import ch.epfl.xblast.server.debug.GameStatePrinter;
+import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
 public class GameStateTest {
 
@@ -26,6 +27,9 @@ public class GameStateTest {
     private final Block __ = Block.FREE;
     private final Block XX = Block.INDESTRUCTIBLE_WALL;
     private final Block xx = Block.DESTRUCTIBLE_WALL;
+    
+    private static final RandomEventGenerator RANDOM = new RandomEventGenerator(2016, 30, 100);
+
     
     private final Board board = Board.ofQuadrantNWBlocksWalled(
             Arrays.asList(Arrays.asList(__, __, __, __, __, xx, __),
@@ -64,16 +68,16 @@ public class GameStateTest {
     
     @Test
     public void timeOutTest(){
-        GameState game = new GameState(Ticks.TOTAL_TICKS,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(Ticks.TOTAL_TICKS+1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
         assertTrue(game.isGameOver());
-        assertEquals(0,game.remainingTime(),1e-9);
+        assertEquals(-Ticks.TICK_NANOSECOND_DURATION*1e-9,game.remainingTime(),1e-11);
         assertEquals(Optional.empty(),game.winner());
     }
     @Test
     public void OneTickToEndTest(){
-        GameState game = new GameState(Ticks.TOTAL_TICKS-1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(Ticks.TOTAL_TICKS,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
         assertFalse(game.isGameOver());
-        assertEquals(Ticks.TICK_NANOSECOND_DURATION*1e-9,game.remainingTime(),1e-11);
+        assertEquals(0,game.remainingTime(),1e-11);
         assertEquals(Optional.empty(),game.winner());
     }
     
@@ -140,7 +144,7 @@ public class GameStateTest {
         GameState b = a.next(speedChangeEvents, new HashSet<>());
         
         assertEquals(a.blastedCells(),b.blastedCells());
-        assertEquals(a.alivePlayers(),b.alivePlayers());
+        assertEquals(a.alivePlayers().size(),b.alivePlayers().size());
         assertEquals(a.bombedCells(),b.bombedCells());
         List<Cell> allCells=Cell.ROW_MAJOR_ORDER;
         for(Cell c: allCells){
@@ -159,7 +163,7 @@ public class GameStateTest {
         Cell bombPosition = a.players().get(0).position().containingCell();
         
         assertEquals(a.blastedCells(),game.blastedCells());
-        assertEquals(a.alivePlayers(),game.alivePlayers());
+        assertEquals(a.alivePlayers().size(),game.alivePlayers().size());
         assertTrue(game.bombedCells().containsKey(bombPosition));
        
         //the bomb didn't explode yet
@@ -222,44 +226,115 @@ public class GameStateTest {
         assertTrue(game.blastedCells().isEmpty());
     }
     
+    /**
+     * VISUAL TEST:
+     * 
+     * ---initialization---
+     *  enter the coordinates of the starting Cell for each player
+     *  enter the maximums bombs for the players
+     *  enter the range of the players
+     *  each players have only 1 life
+     *   
+     * ---Control---
+     *   - "1","2","3","4" : select the player you control
+     *   - "w","a","s","d" : change the direction of the controlled player
+     *   - "x"             : stop the player at the next central SubCell 
+     *   - "e"             : the controlled player drop a bomb
+     */
     @Test
     public void visualNextTest(){
         Scanner scan =new Scanner(System.in);
         List<Player> gPlayers =new ArrayList<>();
+        System.out.println("maxBombs?");
+        int maxBombs= scan.nextInt();
+        System.out.println("range?");
+        int range= scan.nextInt();
+        System.out.println("life?");
+        int life= scan.nextInt();
         for(int i=0; i<4;i++){
             System.out.println("player " + (i+1)+ " position :");
-            gPlayers.add(new Player(PlayerID.values()[i],1,new Cell(scan.nextInt(),scan.nextInt()),3,i+1));
+            gPlayers.add(new Player(PlayerID.values()[i],life,new Cell(scan.nextInt(),scan.nextInt()),maxBombs,range));
         }
         
         GameState game= new GameState(board,gPlayers);
         boolean inGame=true;
+        PlayerID control = PlayerID.PLAYER_1; 
         while( inGame){
             String s= scan.nextLine();
             Set<PlayerID> bombdrp= new HashSet<>();
+            Map<PlayerID,Optional<Direction>> speedChange= new HashMap<>();
             switch(s){
             case "1":
-                bombdrp.add(PlayerID.PLAYER_1);
+                control=PlayerID.PLAYER_1;
                 break;
             case "2":
-                bombdrp.add(PlayerID.PLAYER_2);
+                control=PlayerID.PLAYER_2;
                 break;
             case "3":
-                bombdrp.add(PlayerID.PLAYER_3);
+                control=PlayerID.PLAYER_3;
                 break;
             case "4":
-                bombdrp.add(PlayerID.PLAYER_4);
+                control=PlayerID.PLAYER_4;
+                break;
+            case "e":
+                bombdrp.add(control);
+                break;
+            case "w":
+                speedChange.put(control,Optional.of(Direction.N));
+                break;
+            case "a":
+                speedChange.put(control,Optional.of(Direction.W));
+                break;
+            case "s":
+                speedChange.put(control,Optional.of(Direction.S));
+                break;
+            case "d":
+                speedChange.put(control,Optional.of(Direction.E));
+                break;
+            case "x":
+                speedChange.put(control,Optional.empty());
                 break;
             case "0":
                 inGame=false;
                 
             }
-            game=game.next(speedChangeEvents, bombdrp);
+            game=game.next(speedChange, bombdrp);
             GameStatePrinter.printGameState(game);
             
             
         }
+        scan.close();
         
     }
+    
+//    @Test
+//    public void priorityCheck(){
+//        GameState game = new GameState(board, players);
+//        int count = 0;
+//        
+//        // only works if sortedPlayer() is changed to public (bad but i am too lazy)
+//        for(List<PlayerID> l : GameState.PLAYER_PERMUTATION){
+//            for(PlayerID i : l){
+//                System.out.print(i.ordinal());
+//            }
+//            System.out.println();
+//            count++;
+//
+//        }
+//        
+//        System.out.println("count : " + count);
+//
+//        
+//        for (int i = 0; i < 50; i++) {
+//            for (Player p : game.sortedPlayers()) {
+//                System.out.print(p.id().ordinal());
+//            }
+//            System.out.println();
+//            game = game.next(RANDOM.randomSpeedChangeEvents(),
+//                    RANDOM.randomBombDropEvents());
+//        }
+//
+//    }
     
     
     

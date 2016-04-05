@@ -3,14 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4">
-		<attributes>
-			<attribute name="annotationpath" value="/xblast2016/lib/MutabilityDetector-0.9.4.jar"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="lib/MutabilityDetector-0.9.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/sq.jar"/>
 	<classpathentry kind="lib" path="lib/MutabilityDetector-0.9.4-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/MutabilityDetector-0.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/MutabilityDetector-0.9.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/xblast2016/lib/MutabilityDetector-0.9.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
