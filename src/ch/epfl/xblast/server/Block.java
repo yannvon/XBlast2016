@@ -9,9 +9,9 @@ import java.util.NoSuchElementException;
  * @author Yann Vonlanthen (258857)
  */
 public enum Block {
-
-    FREE, INDESTRUCTIBLE_WALL, DESTRUCTIBLE_WALL, CRUMBLING_WALL, BONUS_BOMB(
-            Bonus.INC_BOMB), BONUS_RANGE(Bonus.INC_RANGE);
+    
+    FREE, INDESTRUCTIBLE_WALL, DESTRUCTIBLE_WALL, CRUMBLING_WALL, 
+    BONUS_BOMB(Bonus.INC_BOMB), BONUS_RANGE(Bonus.INC_RANGE);
 
     // Attributes
     private Bonus maybeAssociatedBonus; // corresponding bonus or null
@@ -50,7 +50,7 @@ public enum Block {
      * @return true if the block can host a player, false otherwise
      */
     public boolean canHostPlayer() {
-        return (isFree() || isBonus());
+        return isFree() || isBonus();
     }
 
     /**

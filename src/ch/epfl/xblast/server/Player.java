@@ -240,10 +240,10 @@ public final class Player {
     public Player(PlayerID id, int lives, Cell position, int maxBombs,
             int bombRange) {
         this(id, 
-                lifeStateSqCreation(ArgumentChecker.requireNonNegative(lives)),
-                DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),
-                maxBombs, 
-                bombRange);
+             lifeStateSqCreation(ArgumentChecker.requireNonNegative(lives)),
+             DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),
+             maxBombs,
+             bombRange);
     }
 
     /**

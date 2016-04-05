@@ -94,7 +94,7 @@ public final class Cell {
             return true;
         }
         // to compare two Cells it is sufficient to compare their unique indexes
-        if (this.getClass().equals(that.getClass())) {
+        if (getClass() == that.getClass()) {
             return this.rowMajorIndex() == ((Cell) that).rowMajorIndex();
         }
         return false;
@@ -146,17 +146,15 @@ public final class Cell {
         
         // Declare needed variables
         boolean horizontal = true;
-        ArrayList<Cell> spiral = new ArrayList<Cell>();
+        ArrayList<Cell> spiral = new ArrayList<>();
         
         // Ordering Algorithm
         while (!ix.isEmpty() && !iy.isEmpty()) {
             ArrayList<Integer> i1 = horizontal ? ix : iy;
             ArrayList<Integer> i2 = horizontal ? iy : ix;
-            int c2 = i2.get(0);
-            i2.remove(0);
+            int c2 = i2.remove(0);
             for (int c1 : i1) {
-                spiral.add(horizontal ? new Cell(c1, c2)
-                        : new Cell(c2, c1));
+                spiral.add(horizontal ? new Cell(c1, c2) : new Cell(c2, c1));
             }
             Collections.reverse(i1);
             horizontal = !horizontal;

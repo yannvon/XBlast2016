@@ -32,8 +32,7 @@ public final class Board {
         if (blocks.size() != Cell.COUNT) {
             throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
         }
-        
-        board = Collections.unmodifiableList(new ArrayList<>(blocks));
+        this.board = Collections.unmodifiableList(new ArrayList<>(blocks));
 
     }
 
@@ -51,7 +50,7 @@ public final class Board {
         checkBlockMatrix(rows, Cell.ROWS, Cell.COLUMNS);
     
         // add a constant sequence of given block to a temporary ArrayList
-        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
+        List<Sq<Block>> tempBoard = new ArrayList<>();
     
         for (int i = 0; i < Cell.ROWS; i++) {
             for (int j = 0; j < Cell.COLUMNS; j++) {
@@ -110,19 +109,15 @@ public final class Board {
      */
     public static Board ofQuadrantNWBlocksWalled(List<List<Block>> quadrantNWBlocks) {
         
-        // the expected matrix dimensions
-        int rows = (Cell.ROWS - 1)/2;
-        int cols = (Cell.COLUMNS - 1)/2;
-        
         // check matrix
-        checkBlockMatrix(quadrantNWBlocks, rows, cols);
+        checkBlockMatrix(quadrantNWBlocks, (Cell.ROWS - 1)/2, (Cell.COLUMNS - 1)/2);
     
         // temporary block matrix
         List<List<Block>> finalMatrix = new ArrayList<>();
         
         // mirror every row to get entire rows of the upper half board
-        for(int i = 0; i < rows; i++){
-            finalMatrix.add(Lists.mirrored(quadrantNWBlocks.get(i)));
+        for(List<Block> l : quadrantNWBlocks){
+            finalMatrix.add(Lists.mirrored(l));
         }
         
         // mirror the upper half board to get entire inner Board
@@ -178,10 +173,10 @@ public final class Board {
         }
         // 2) check if the amount of blocks in each column is correct
         else {
-            for (int i = 0; i < matrixRows; i++) {
-                if (matrix.get(i).size() != columns) {
+            for (List<Block> l : matrix) {
+                if (l.size() != columns) {
                     throw new IllegalArgumentException(
-                            "The amount of elements of row " + i
+                            "The amount of elements of row " + matrix.indexOf(l)
                                     + " does not match the desired value");
                 }
             }
