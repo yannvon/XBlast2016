@@ -61,6 +61,7 @@ public class RandomGame {
         while(!game.isGameOver()){
             
             GameStatePrinter.printGameState(game);
+            //GameStatePrinterwithoutColor.printGameState(game);
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
             Thread.sleep(50);
             //--- POWER SHELL ---
