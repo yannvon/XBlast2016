@@ -57,7 +57,19 @@ public class VisualTest {
     }
 
     /**
-     * @param args
+     * VISUAL TEST:
+     * 
+     * ---initialization---
+     *  enter the coordinates of the starting Cell for each player
+     *  enter the maximums bombs for the players
+     *  enter the range of the players
+     *  each players have only 1 life
+     *   
+     * ---Control---
+     *   - "1","2","3","4" : select the player you control
+     *   - "w","a","s","d" : change the direction of the controlled player
+     *   - "x"             : stop the player at the next central SubCell 
+     *   - "e"             : the controlled player drop a bomb
      */
     public static void main(String[] args) {
 
