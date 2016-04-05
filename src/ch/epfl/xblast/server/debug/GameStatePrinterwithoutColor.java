@@ -23,7 +23,7 @@ public final class GameStatePrinterwithoutColor {
         Map<Cell,Bomb> bombs= s.bombedCells();
         Set<Cell> blasts= s.blastedCells();
         StringBuilder toPrint = new StringBuilder();
-        toPrint.append("/n");
+        toPrint.append("\n");
 
         for (int y = 0; y < Cell.ROWS; ++y) {
             // 1) print game board
