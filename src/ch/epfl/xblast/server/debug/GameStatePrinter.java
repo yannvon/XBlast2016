@@ -29,7 +29,7 @@ public final class GameStatePrinter {
     private static final String bCyan = "\u001b[46m";
     private static final String bWhite = "\u001b[47m";
     private static final String bBlue = "\u001b[44m";
-    private static final String bRed = "\u001b[41m";;
+    private static final String bRed = "\u001b[41m";
     private static final String nl = "\n";
     
     private GameStatePrinter() {}
