@@ -67,16 +67,7 @@ public final class GameState {
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
             List<Sq<Cell>> blasts) {
 
-        // 1) check ticks, players and board requirements
-        this.ticks = ArgumentChecker.requireNonNegative(ticks);
-        int nbPlayers = players.size();
-        if (nbPlayers != 4) {
-            throw new IllegalArgumentException(
-                    "The Game requires 4 players instead of " + nbPlayers);
-        }
-        this.board = Objects.requireNonNull(board);
-
-        // 2) copy lists and save an unmodifiable view of them
+        // 1) copy lists and save an unmodifiable view of them
         this.players = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(players)));
         this.explosions = Collections.unmodifiableList(
@@ -85,6 +76,15 @@ public final class GameState {
                 new ArrayList<>(Objects.requireNonNull(bombs)));
         this.blasts = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(blasts)));
+
+        // 2) check ticks, players and board requirements
+        this.ticks = ArgumentChecker.requireNonNegative(ticks);
+        int nbPlayers = players.size();
+        if (nbPlayers != 4) {
+            throw new IllegalArgumentException(
+                    "The Game requires 4 players instead of " + nbPlayers);
+        }
+        this.board = Objects.requireNonNull(board);
     }
 
     /**
@@ -145,7 +145,7 @@ public final class GameState {
      *         otherwise an empty Optional
      */
     public Optional<PlayerID> winner() {
-        List<Player> alivePlayers = alivePlayers();
+        List<Player> alivePlayers = alivePlayers(); //FIXME
         return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
                 : Optional.empty();
     }
@@ -261,8 +261,7 @@ public final class GameState {
             }
             // otherwise only the fuse gets shorter
             else {
-                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse,
-                        b.range()));
+                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
             }
         }
 
@@ -272,8 +271,7 @@ public final class GameState {
                 speedChangeEvents);
 
         // 6) construct and return the new GameStates
-        return new GameState(ticks + 1, board1, players1, bombs1, explosions1,
-                blasts1);
+        return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
     }
 
     /*
@@ -450,78 +448,10 @@ public final class GameState {
             }
         }
         return newlyDroppedBombs;
-    }
-    /**
-     * Method in charge of evolving the Players according to what happens around
-     * them and what commands they give.
-     * 
-     * @param players0
-     *            (unordered) list of all players
-     * @param playerBonuses
-     *            mapping playerID's to consumed bonuses
-     * @param bombedCells1
-     *            set of all cells containing a bomb
-     * @param board1
-     *            board on which the game is played on
-     * @param blastedCells1
-     *            cell that contain a blast
-     * @param speedChangeEvents
-     *            events of players wanting to change their speed (direction)
-     * @return list containing all players of the following tick
-     */
-    private static List<Player> nextPlayersYann(List<Player> players0,
-            Map<PlayerID, Bonus> playerBonuses, Set<Cell> bombedCells1,
-            Board board1, Set<Cell> blastedCells1,
-            Map<PlayerID, Optional<Direction>> speedChangeEvents) {
-        
-        List<Player> players1 = new ArrayList<>();
-
-        // --- EVOLUTION ORDER ---
-
-        for (Player p : players0) {
-            PlayerID id = p.id();
-            
-            // 1) Computation of the new Directed Position sequence
-            //      - if the player does not want to move nothing is changed here.
-            Sq<DirectedPosition> directedPositions = speedChangeEvents.containsKey(id)
-                    ? constructDPSq(p, speedChangeEvents.get(id))
-                    : p.directedPositions();
-
-            // 2) Evolution of Directed Position sequence
-            //      - multiple criteria have to be met:
-
-            // FIXME really do a method for that?
-            if (allowedToMove(p, directedPositions, board1, bombedCells1)) {
-                directedPositions = directedPositions.tail();
-            }
-
-            // 3) Evolution of LifeState sequence
-            
-            SubCell newPlayerPos = directedPositions.head().position();
-            boolean blasted = blastedCells1.contains(newPlayerPos.containingCell());
-            boolean vulnerable = p.lifeState()
-                    .state() == Player.LifeState.State.VULNERABLE;
-
-            Sq<LifeState> lifeStates = (blasted && vulnerable) ? p.statesForNextLife()
-                    : p.lifeStates().tail();
-
-            // 4) changes in abilities (in case the player found a bonus)
-            Player p1 = new Player(id, lifeStates, directedPositions, p.maxBombs(), p.bombRange());
-            
-            if (playerBonuses.containsKey(id)) {
-                p1 = playerBonuses.get(id).applyTo(p1);
-            }
-            
-            // 5) add new player to list
-            players1.add(p1);
-        }
-        
-        return players1;
     }    
     
-    
     /**
-     * Calculate the new players of the next GameState according to the current events
+     * Calculate the new players of the next GameState according to the current events //TODO comments
      * 
      * @param players0
      * @param playerBonuses
@@ -574,8 +504,7 @@ public final class GameState {
             
             //if the player want to change his direction
             if(speedChangeEvents.containsKey(id)){
-                Optional<Direction> wantedDir= speedChangeEvents.get(id);
-                
+                Optional<Direction> wantedDir = speedChangeEvents.get(id);
                 
                 // if the wanted direction is parallel to the previous direction
                 // change the direction instantly
@@ -791,7 +720,7 @@ public final class GameState {
             return dp1.concat(dp2);
         }
     }
-    
+    //FIXME
     /**
      * @param p
      * @param directedPositions
@@ -832,7 +761,7 @@ public final class GameState {
         List<PlayerID> idSorted = PLAYER_PERMUTATION
                 .get(ticks % PLAYER_PERMUTATION.size());
 
-        // create a map that associates the playerID to every player
+        // create a map that associates the playerID to every player    //FIXME
         Map<PlayerID, Player> pMap = new HashMap<>();
         for (Player p : players) {
             pMap.put(p.id(), p);
