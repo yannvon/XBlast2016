@@ -103,10 +103,10 @@ public final class GameState {
     public GameState(Board board, List<Player> players) {
         this(0, 
              board, 
-             players, 
-             new ArrayList<Bomb>(),         //FIXME
-             new ArrayList<Sq<Sq<Cell>>>(), 
-             new ArrayList<Sq<Cell>>());
+             players,
+             Collections.emptyList(),
+             Collections.emptyList(), //FIXME<
+             Collections.emptyList());
     }
 
     /**
@@ -689,7 +689,7 @@ public final class GameState {
         List<PlayerID> idSorted = PLAYER_PERMUTATION
                 .get(ticks % PLAYER_PERMUTATION.size());
 
-        // create a map that associates the playerID to every player    //FIXME
+        // create a map that associates the playerID to every players
         Map<PlayerID, Player> pMap = new HashMap<>();
         for (Player p : players) {
             pMap.put(p.id(), p);

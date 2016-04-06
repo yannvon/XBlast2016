@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sun.xml.internal.ws.api.policy.AlternativeSelector;
+
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.server.Block;
@@ -60,16 +62,17 @@ public class RandomGame {
         //2) make the game evolve and display it (new tick all 50ms)
         while(!game.isGameOver()){
             
-            //GameStatePrinter.printGameState(game);
-            GameStatePrinterwithoutColor.printGameState(game);
+            GameStatePrinter.printGameState(game);
+            //GameStatePrinterwithoutColor.printGameState(game);
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
-            Thread.sleep(50);
+            //Thread.sleep(100);
             //--- POWER SHELL ---
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             
             //--- ConEmu ---
             //System.out.print(ESC + "2J"); 
         }
+        GameStatePrinter.printGameState(game);
         System.out.println(game.winner().get());
         System.out.println(game.winner().get().ordinal());
         
