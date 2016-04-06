@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
@@ -29,8 +28,7 @@ public final class GameState {
     // Static attributes
     private static final int ALLOWED_DISTANCE_TO_BOMB = 6;
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
-            .unmodifiableList(Lists
-                    .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
+            .unmodifiableList(Lists.<PlayerID> permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
     private static final Block[] BONUS_GENERATOR = { Block.BONUS_BOMB,
             Block.BONUS_RANGE, Block.FREE };
@@ -68,16 +66,7 @@ public final class GameState {
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
             List<Sq<Cell>> blasts) {
 
-        // 1) check ticks, players and board requirements
-        this.ticks = ArgumentChecker.requireNonNegative(ticks);
-        int nbPlayers = players.size();
-        if (nbPlayers != 4) {
-            throw new IllegalArgumentException(
-                    "The Game requires 4 players instead of " + nbPlayers);
-        }
-        this.board = Objects.requireNonNull(board);
-
-        // 2) copy lists and save an unmodifiable view of them
+        // 1) copy lists and save an unmodifiable view of them
         this.players = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(players)));
         this.explosions = Collections.unmodifiableList(
@@ -86,6 +75,15 @@ public final class GameState {
                 new ArrayList<>(Objects.requireNonNull(bombs)));
         this.blasts = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(blasts)));
+        
+        // 2) check ticks, players and board requirements
+        this.ticks = ArgumentChecker.requireNonNegative(ticks);
+        int nbPlayers = players.size();
+        if (nbPlayers != 4) {
+            throw new IllegalArgumentException(
+                    "The Game requires 4 players instead of " + nbPlayers);
+        }
+        this.board = Objects.requireNonNull(board);
     }
 
     /**
@@ -103,8 +101,12 @@ public final class GameState {
      *             negative.
      */
     public GameState(Board board, List<Player> players) {
-        this(0, board, players, new ArrayList<Bomb>(),
-                new ArrayList<Sq<Sq<Cell>>>(), new ArrayList<Sq<Cell>>());
+        this(0, 
+             board, 
+             players, 
+             new ArrayList<Bomb>(),         //FIXME
+             new ArrayList<Sq<Sq<Cell>>>(), 
+             new ArrayList<Sq<Cell>>());
     }
 
     /**
@@ -142,7 +144,7 @@ public final class GameState {
      *         otherwise an empty Optional
      */
     public Optional<PlayerID> winner() {
-        List<Player> alivePlayers = alivePlayers();
+        List<Player> alivePlayers = alivePlayers(); //FIXME
         return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
                 : Optional.empty();
     }
@@ -258,8 +260,7 @@ public final class GameState {
             }
             // otherwise only the fuse gets shorter
             else {
-                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse,
-                        b.range()));
+                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
             }
         }
 
@@ -269,8 +270,7 @@ public final class GameState {
                 speedChangeEvents);
 
         // 6) construct and return the new GameStates
-        return new GameState(ticks + 1, board1, players1, bombs1, explosions1,
-                blasts1);
+        return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
     }
 
     /*
@@ -487,7 +487,7 @@ public final class GameState {
     }
 
     /**
-     * ADDITIONAL FUNCTION:
+     * ADDITIONAL FUNCTION: //TODO  comments 
      * change the direction of the players and move them according to the conditions 
      * 
      * @param speedChangeEvents
@@ -546,7 +546,6 @@ public final class GameState {
         return players1;
     }
     
-
     /**
      * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
      * according to where the player wants to go.
@@ -554,8 +553,8 @@ public final class GameState {
      * @param p
      *            player that wants to move
      * @param speedChangeEvent
-     *            Direction where the player wants to go, empty if he wants to
-     *            stop
+     *            Direction where the player wants to go, empty if he wants to stop
+     *            
      * @return a sequence of DirectedPosition that describes the players path
      */
     private static Sq<DirectedPosition> constructDPSq(Player p,
@@ -590,6 +589,7 @@ public final class GameState {
         }
     }
 
+    //TODO comments
     /**
      * ADDITIONAL FUNCTION:
      * determine the new sequence of LifeState for each players
@@ -619,7 +619,7 @@ public final class GameState {
         return newStatePlayer;
     }
 
-    
+    //TODO comments
     /**
      * ADDITIONAL FUNCTION:
      * determine the players upgraded by the respective bonus
@@ -689,7 +689,7 @@ public final class GameState {
         List<PlayerID> idSorted = PLAYER_PERMUTATION
                 .get(ticks % PLAYER_PERMUTATION.size());
 
-        // create a map that associates the playerID to every player
+        // create a map that associates the playerID to every player    //FIXME
         Map<PlayerID, Player> pMap = new HashMap<>();
         for (Player p : players) {
             pMap.put(p.id(), p);
