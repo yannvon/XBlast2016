@@ -39,16 +39,7 @@ public enum Direction {
      *             when the argument is not one of the 4 direction
      */
     public boolean isHorizontal() { //FIXME return(this == E || this == W);
-        switch (this) {
-        case E:
-        case W:
-            return true;
-        case S:
-        case N:
-            return false;
-        default:
-            throw new Error(); // will never happen
-        }
+        return(this == E || this == W);
     }
 
     /**

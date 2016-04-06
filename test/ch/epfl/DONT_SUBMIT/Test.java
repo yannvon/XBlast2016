@@ -17,9 +17,8 @@ import ch.epfl.xblast.Lists;
  */
 public class Test {
     public static void main(String[] args) {
-       List<Integer> l = Arrays.asList(1,2,3,4,5);
-       l.set(2,5);
-       System.out.println(l);
-       
+       String s= "sa";
+       String s1= "s"+"a";
+       System.out.println(s1==s);
     }
 }
