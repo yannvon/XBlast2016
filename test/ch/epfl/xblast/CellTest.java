@@ -12,7 +12,9 @@ public class CellTest {
     @Test public void checkMyClassIsImmutable() {
         assertImmutable(Cell.class); 
     }
-    
+    @Test public void equals(){
+        assertEquals(new Cell(1,1),new Cell(1,1));
+    }
     @Test
     public void rowMajorIndexCorrespondsToOrder() {
         int i = 0;

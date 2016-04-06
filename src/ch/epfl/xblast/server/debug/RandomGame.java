@@ -60,15 +60,15 @@ public class RandomGame {
         //2) make the game evolve and display it (new tick all 50ms)
         while(!game.isGameOver()){
             
-            GameStatePrinter.printGameState(game);
-            //GameStatePrinterwithoutColor.printGameState(game);
+            //GameStatePrinter.printGameState(game);
+            GameStatePrinterwithoutColor.printGameState(game);
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
             Thread.sleep(50);
             //--- POWER SHELL ---
-            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             
             //--- ConEmu ---
-            System.out.print(ESC + "2J"); 
+            //System.out.print(ESC + "2J"); 
         }
         System.out.println(game.winner().get());
         System.out.println(game.winner().get().ordinal());
