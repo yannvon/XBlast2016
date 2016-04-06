@@ -47,6 +47,11 @@ public class GameStateTest {
             );
     
 
+    //   ---Next Tests---
+         
+    private final Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
+
+
     @Test
     public void initialGameTest() {
         
@@ -134,10 +139,6 @@ public class GameStateTest {
         GameState game = new GameState(1,board,players,new ArrayList<>(),new ArrayList<>(),null);
 
     }
-    //   ---Next Tests---
-         
-    private final Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
-    
     @Test
     public void normalNextTest(){
         GameState a = new GameState(board,players);
@@ -226,7 +227,62 @@ public class GameStateTest {
         assertTrue(game.blastedCells().isEmpty());
     }
     
-    //TODO priorityCheck:
+    @Test
+    public void bonusPriorityTest(){
+        List<Player> p= new ArrayList<>(players);
+        p.set(1,new Player(PlayerID.PLAYER_2,3,new Cell(1,1),3,3));
+        
+        Board oneBonus = Board.ofQuadrantNWBlocksWalled(
+                Arrays.asList(Arrays.asList(Block.BONUS_BOMB, __, __, __, __, xx, __),
+                        Arrays.asList(__, XX, xx, XX, xx, XX, xx),
+                        Arrays.asList(__, xx, __, __, __, xx, __),
+                        Arrays.asList(xx, XX, __, XX, XX, XX, XX),
+                        Arrays.asList(__, xx, __, xx, __, __, __),
+                        Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
+        //Tick 0
+        GameState a = new GameState(0,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        List<Player> pl =a.alivePlayers();
+        assertEquals(4,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        
+        //Tick 1
+        a = new GameState(1,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(3,pl.get(0).maxBombs());
+        assertEquals(4,pl.get(1).maxBombs());
+
+        
+    }
+    
+    @Test
+    public void bombPriorityTest(){
+        List<Player> p= new ArrayList<>(players);
+        Cell initialPos=new Cell(1,1);
+        p.set(1,new Player(PlayerID.PLAYER_2,3,initialPos,3,3));
+        
+        //Tick 0
+        GameState a = new GameState(0,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        Set<PlayerID> drp= new HashSet<>();
+        drp.add(PlayerID.PLAYER_1);
+        drp.add(PlayerID.PLAYER_2);
+
+        a= a.next(new HashMap<>(), drp);
+        Map<Cell,Bomb> bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_1,bb.get(initialPos).ownerId());
+        
+        //Tick 1
+        a = new GameState(1,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_2,bb.get(initialPos).ownerId());
+
+        
+    }
     
 //    @Test
 //    public void priorityCheck(){
