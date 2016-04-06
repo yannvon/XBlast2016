@@ -10,27 +10,13 @@ package ch.epfl.xblast;
 public final class SubCell {
 
     // Constants related to the devision of the Game Board into Sub Cells
-    public final static int SUBDIVISION = 16;
-    public final static int CENTRAL = SUBDIVISION / 2;
-    public final static int COLUMNS = Cell.COLUMNS * SUBDIVISION;
-    public final static int ROWS = Cell.ROWS * SUBDIVISION;
+    private static final int SUBDIVISION = 16;
+    private static final int CENTRAL = SUBDIVISION / 2;
+    private static final int COLUMNS = Cell.COLUMNS * SUBDIVISION;
+    private static final int ROWS = Cell.ROWS * SUBDIVISION;
 
     // Attributes
     private final int x, y;
-
-    /**
-     * Sole SubCell constructor. Accepts every integer as parameter, but the
-     * coordinates are then normalized to fit inside the Game Board.
-     * 
-     * @param x
-     *            x-coordinate
-     * @param y
-     *            y-coordinate
-     */
-    public SubCell(int x, int y) {
-        this.x = Math.floorMod(x, COLUMNS);
-        this.y = Math.floorMod(y, ROWS);
-    }
 
     /**
      * Retrieves the central SubCell of any given Cell.
@@ -44,6 +30,20 @@ public final class SubCell {
         int x = cell.x() * SUBDIVISION + CENTRAL;
         int y = cell.y() * SUBDIVISION + CENTRAL;
         return new SubCell(x, y);
+    }
+
+    /**
+     * Sole SubCell constructor. Accepts every integer as parameter, but the
+     * coordinates are then normalized to fit inside the Game Board.
+     * 
+     * @param x
+     *            x-coordinate
+     * @param y
+     *            y-coordinate
+     */
+    public SubCell(int x, int y) {
+        this.x = Math.floorMod(x, COLUMNS);
+        this.y = Math.floorMod(y, ROWS);
     }
 
     /**

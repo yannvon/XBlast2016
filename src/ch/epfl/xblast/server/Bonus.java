@@ -12,22 +12,22 @@ public enum Bonus {
     INC_BOMB {
         @Override
         public Player applyTo(Player player) {
-            return (player.maxBombs() < MAX_BOMBS)
-                    ? player.withMaxBombs(player.maxBombs() + 1) : player;
+            return (player.maxBombs() < MAX_BOMBS) ?
+                    player.withMaxBombs(player.maxBombs() + 1) : player;
         }
     },
 
     INC_RANGE {
         @Override
         public Player applyTo(Player player) {
-            return (player.bombRange() < MAX_RANGE)
-                    ? player.withBombRange(player.bombRange() + 1) : player;
+            return (player.bombRange() < MAX_RANGE) ?
+                    player.withBombRange(player.bombRange() + 1) : player;
         }
     };
     
     // Constants
-    public static final int MAX_BOMBS = 9;
-    public static final int MAX_RANGE = 9;
+    private static final int MAX_BOMBS = 9;
+    private static final int MAX_RANGE = 9;
     
 
     /**

@@ -17,11 +17,6 @@ public final class Lists {
 
     
     /**
-     * Empty private constructor: the class is not instantiable.
-     */
-    private Lists() {}
-
-    /**
      * mirrored() returns a symmetric copy of the input list. Note that the last
      * element of the input list appears only once in the result.
      * 
@@ -86,4 +81,9 @@ public final class Lists {
         
         return output;
     }
+
+    /**
+     * Empty private constructor: the class is not instantiable.
+     */
+    private Lists() {}
 }

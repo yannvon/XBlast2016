@@ -18,7 +18,7 @@ import ch.epfl.xblast.Lists;
 public final class Board {
 
     // Attributes
-    private final List<Sq<Block>> board;
+    private final List<Sq<Block>> blocks;
 
     /**
      * Constructor of a board taking a list of block sequences as parameter.
@@ -32,7 +32,7 @@ public final class Board {
         if (blocks.size() != Cell.COUNT) {
             throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
         }
-        this.board = Collections.unmodifiableList(new ArrayList<>(blocks));
+        this.blocks = Collections.unmodifiableList(new ArrayList<>(blocks));
 
     }
 
@@ -138,7 +138,7 @@ public final class Board {
      * @return the block sequence of a specific cell
      */
     public Sq<Block> blocksAt(Cell c){
-        return board.get(c.rowMajorIndex());
+        return blocks.get(c.rowMajorIndex());
     }
     
     /**

@@ -23,6 +23,13 @@ import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.Player.LifeState;
 import ch.epfl.xblast.server.Player.LifeState.State;
 
+/**
+ * This class represents a current state of a game.
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ *
+ */
 public final class GameState {
 
     // Static attributes

@@ -13,13 +13,15 @@ import java.util.List;
 public final class Cell {
 
     // Constants defining the Game Board size
-    public final static int COLUMNS = 15;
-    public final static int ROWS = 13;
-    public final static int COUNT = ROWS * COLUMNS;
+    public static final int COLUMNS = 15;
+    public static final int ROWS = 13;
+    public static final int COUNT = ROWS * COLUMNS;
     
     // Unmodifiable arrays containing all Cells of the Game Board
-    public final static List<Cell> ROW_MAJOR_ORDER = Collections.unmodifiableList(rowMajorOrder());
-    public final static List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());
+    public final static List<Cell> ROW_MAJOR_ORDER = 
+            Collections.unmodifiableList(rowMajorOrder());
+    public final static List<Cell> SPIRAL_ORDER = 
+            Collections.unmodifiableList(spiralOrder());
 
     // Attributes
     private final int x, y;
