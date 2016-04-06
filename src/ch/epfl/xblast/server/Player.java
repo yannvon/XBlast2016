@@ -241,7 +241,7 @@ public final class Player {
             int bombRange) {
         this(id, 
              lifeStateSqCreation(ArgumentChecker.requireNonNegative(lives)),
-             DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),
+             DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),//FIXME requireNonNull?
              maxBombs,
              bombRange);
     }
