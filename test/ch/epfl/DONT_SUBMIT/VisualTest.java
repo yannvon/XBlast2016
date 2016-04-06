@@ -18,6 +18,7 @@ import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 import ch.epfl.xblast.server.debug.GameStatePrinter;
+import ch.epfl.xblast.server.debug.GameStatePrinterwithoutColor;
 import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
 /**
@@ -130,7 +131,7 @@ public class VisualTest {
 
             }
             game = game.next(speedChange, bombdrp);
-            GameStatePrinter.printGameState(game);
+            GameStatePrinterwithoutColor.printGameState(game);
         }
         scan.close();
     }

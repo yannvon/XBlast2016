@@ -217,11 +217,12 @@ public final class GameState {
         // Declare and fill consumedBonuses and playerBonuses (used later)
         Set<Cell> consumedBonuses = new HashSet<>();
         Map<PlayerID, Bonus> playerBonuses = new HashMap<>();
+        List<Player> sortedPlayers = sortedPlayers();
 
-        for (Player pl : players) {
+        for (Player pl : sortedPlayers) {
             Cell plPosition = pl.position().containingCell();
             Block blockAtPosition = board.blockAt(plPosition);
-            if (blockAtPosition.isBonus() && pl.position().isCentral()) {
+            if (blockAtPosition.isBonus() && pl.position().isCentral() && !consumedBonuses.contains(blockAtPosition)) {
                 consumedBonuses.add(plPosition);
                 playerBonuses.put(pl.id(), blockAtPosition.associatedBonus());
             }
@@ -245,9 +246,9 @@ public final class GameState {
         List<Bomb> bombs0 = new ArrayList<>(bombs);
         List<Bomb> bombs1 = new ArrayList<>();
 
-        // 4.1) add all newly dropped bombs (using sortedPlayers() method to
+        // 4.1) add all newly dropped bombs (using sortedPlayers method to
         // resolve conflicts)
-        bombs0.addAll(newlyDroppedBombs(sortedPlayers(), bombDrpEvents, bombs));
+        bombs0.addAll(newlyDroppedBombs(sortedPlayers, bombDrpEvents, bombs));
 
         // 4.2) every bomb either explodes (and disappears) or evolves (fuse-1).
         for (Bomb b : bombs0) {
