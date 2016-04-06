@@ -3,9 +3,6 @@ package ch.epfl.xblast.server.debug;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import com.sun.xml.internal.ws.api.policy.AlternativeSelector;
-
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.server.Block;
@@ -23,7 +20,7 @@ import ch.epfl.xblast.server.Player;
 public class RandomGame {
     
     //Constants used for convenience
-    private final static String ESC = "\033[";
+    private static final String ESC = "\033[";
     private static final String background = "\u001b[41m";
     
     private static final RandomEventGenerator RANDOM = new RandomEventGenerator(2016, 30, 100);
@@ -58,26 +55,20 @@ public class RandomGame {
         //1) create new game
         GameState game = new GameState(board, players);
         
-        
         //2) make the game evolve and display it (new tick all 50ms)
         while(!game.isGameOver()){
             
             GameStatePrinter.printGameState(game);
             //GameStatePrinterwithoutColor.printGameState(game);
             game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
-            //Thread.sleep(100);
+            Thread.sleep(50);
             //--- POWER SHELL ---
-            //new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             
             //--- ConEmu ---
             //System.out.print(ESC + "2J"); 
         }
         GameStatePrinter.printGameState(game);
         System.out.println(game.winner().get());
-        System.out.println(game.winner().get().ordinal());
-        
-        
-        
     }
-
 }
