@@ -52,9 +52,9 @@ public final class Board {
         // add a constant sequence of given block to a temporary ArrayList
         List<Sq<Block>> tempBoard = new ArrayList<>();
     
-        for (int i = 0; i < Cell.ROWS; i++) {
-            for (int j = 0; j < Cell.COLUMNS; j++) {
-                tempBoard.add(Sq.constant(rows.get(i).get(j)));
+        for (List<Block> row: rows) {
+            for (Block b : row) {
+                tempBoard.add(Sq.constant(b));
             }
         }
     
@@ -79,17 +79,20 @@ public final class Board {
     
         List<List<Block>> walledBlocks = new ArrayList<>();
         
+        //add the last row of Wall-Blocks
+        List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
+        walledBlocks.add(walledRow);
+        
         // add walls and copy the blocks of given matrix into new walled matrix
-        for (int i = 0; i < Cell.ROWS-2; ++i) {
-            walledBlocks.add( new ArrayList<>());
-            walledBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
-            walledBlocks.get(i).addAll(innerBlocks.get(i));
-            walledBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
+        for (List<Block> innerRow : innerBlocks) {
+            List<Block> row=new ArrayList<>();
+            row.add(Block.INDESTRUCTIBLE_WALL);
+            row.addAll(innerRow);
+            row.add(Block.INDESTRUCTIBLE_WALL);
+            walledBlocks.add(row);
         }
         
-        // add the first and last row of Wall-Blocks
-        List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
-        walledBlocks.add(0, walledRow); //costly operation, chosen for the sake of readability
+        // add the last row of Wall-Blocks
         walledBlocks.add(walledRow);
     
         // call ofRows method to construct Board from walledBlocks matrix
