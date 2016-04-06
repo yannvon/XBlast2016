@@ -29,7 +29,8 @@ public final class GameState {
     // Static attributes
     private static final int ALLOWED_DISTANCE_TO_BOMB = 6;
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
-            .unmodifiableList(Lists.<PlayerID>permutations(Arrays.asList(PlayerID.values())));
+            .unmodifiableList(Lists
+                    .<PlayerID> permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
     private static final Block[] BONUS_GENERATOR = { Block.BONUS_BOMB,
             Block.BONUS_RANGE, Block.FREE };
@@ -67,7 +68,16 @@ public final class GameState {
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
             List<Sq<Cell>> blasts) {
 
-        // 1) copy lists and save an unmodifiable view of them
+        // 1) check ticks, players and board requirements
+        this.ticks = ArgumentChecker.requireNonNegative(ticks);
+        int nbPlayers = players.size();
+        if (nbPlayers != 4) {
+            throw new IllegalArgumentException(
+                    "The Game requires 4 players instead of " + nbPlayers);
+        }
+        this.board = Objects.requireNonNull(board);
+
+        // 2) copy lists and save an unmodifiable view of them
         this.players = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(players)));
         this.explosions = Collections.unmodifiableList(
@@ -76,15 +86,6 @@ public final class GameState {
                 new ArrayList<>(Objects.requireNonNull(bombs)));
         this.blasts = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(blasts)));
-
-        // 2) check ticks, players and board requirements
-        this.ticks = ArgumentChecker.requireNonNegative(ticks);
-        int nbPlayers = players.size();
-        if (nbPlayers != 4) {
-            throw new IllegalArgumentException(
-                    "The Game requires 4 players instead of " + nbPlayers);
-        }
-        this.board = Objects.requireNonNull(board);
     }
 
     /**
@@ -102,12 +103,8 @@ public final class GameState {
      *             negative.
      */
     public GameState(Board board, List<Player> players) {
-        this(0, 
-             board, 
-             players, 
-             new ArrayList<Bomb>(),     //FIXME
-             new ArrayList<Sq<Sq<Cell>>>(), 
-             new ArrayList<Sq<Cell>>());
+        this(0, board, players, new ArrayList<Bomb>(),
+                new ArrayList<Sq<Sq<Cell>>>(), new ArrayList<Sq<Cell>>());
     }
 
     /**
@@ -145,7 +142,7 @@ public final class GameState {
      *         otherwise an empty Optional
      */
     public Optional<PlayerID> winner() {
-        List<Player> alivePlayers = alivePlayers(); //FIXME
+        List<Player> alivePlayers = alivePlayers();
         return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
                 : Optional.empty();
     }
@@ -261,7 +258,8 @@ public final class GameState {
             }
             // otherwise only the fuse gets shorter
             else {
-                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
+                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse,
+                        b.range()));
             }
         }
 
@@ -271,7 +269,8 @@ public final class GameState {
                 speedChangeEvents);
 
         // 6) construct and return the new GameStates
-        return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
+        return new GameState(ticks + 1, board1, players1, bombs1, explosions1,
+                blasts1);
     }
 
     /*
@@ -448,19 +447,26 @@ public final class GameState {
             }
         }
         return newlyDroppedBombs;
-    }    
+    }
+        
     
     /**
-     * Calculate the new players of the next GameState according to the current events //TODO comments
+     * Method in charge of evolving the Players according to what happens around
+     * them and what commands they give.
      * 
      * @param players0
+     *            (unordered) list of all players
      * @param playerBonuses
+     *            mapping playerID's to consumed bonuses
      * @param bombedCells1
+     *            set of all cells containing a bomb
      * @param board1
+     *            board on which the game is played on
      * @param blastedCells1
+     *            cell that contain a blast
      * @param speedChangeEvents
-     * 
-     * @return the list of players for the next step
+     *            events of players wanting to change their speed (direction)
+     * @return list containing all players of the following tick
      */
     private static List<Player> nextPlayers(List<Player> players0,
             Map<PlayerID, Bonus> playerBonuses, Set<Cell> bombedCells1,
@@ -474,7 +480,7 @@ public final class GameState {
         //2)change the state of the players. lose life if blasted
         List<Player> newStatePlayers = nextStatePlayers(movedPlayers,blastedCells1);
         
-        //3)add the upgrade to the player(s)
+        //3)add potential upgrades to the player(s)
         List<Player> players1 = nextUpgradedPlayers(newStatePlayers,playerBonuses);
         
         return players1;
@@ -497,97 +503,92 @@ public final class GameState {
 
         List<Player> players1=new ArrayList<>();
         for(Player p: players0){
-            Sq<DirectedPosition> directedPos1 = p.directedPositions();
             PlayerID id=p.id();
             
-            //Step 1----Set the new DirectedPosition of the player----
-            
-            //if the player want to change his direction
-            if(speedChangeEvents.containsKey(id)){
-                Optional<Direction> wantedDir = speedChangeEvents.get(id);
-                
-                // if the wanted direction is parallel to the previous direction
-                // change the direction instantly
-                if(wantedDir.isPresent() && p.direction().isParallelTo(wantedDir.get())){
-                    directedPos1 = DirectedPosition.moving(new DirectedPosition(
-                            p.position(), wantedDir.get()));
-                }
-                
-                else {          
-                    Predicate<DirectedPosition> central= u -> {
-                        return  u.position().isCentral();
-                    };
-                    Predicate<DirectedPosition> notCentral= u -> {
-                        return  !u.position().isCentral();
-                    };
-                    
-                    //find the first SubCell where the player can turn
-                    SubCell turn =directedPos1.findFirst(central).position();
-                    
-                    //continue ahead while the player can't turn
-                    directedPos1= directedPos1.takeWhile(notCentral);
-                    
-                    //set the DirectedPosition after the central SubCell
-                    Sq<DirectedPosition> changedDirectedPos;
-                    
-                    // stop the directedPosition if the Optional is empty
-                    if(!wantedDir.isPresent()){
-                        changedDirectedPos = DirectedPosition.stopped(new DirectedPosition(turn,p.direction()));
-                    }
-                    // turn at the first central SubCell to the given direction
-                    else{
-                        changedDirectedPos = DirectedPosition.moving(new DirectedPosition(turn,wantedDir.get()));
-                    }
-                    
-                    //add the sequence of directedposition after the central Subcell to the sequence before.
-                    directedPos1=directedPos1.concat(changedDirectedPos);
-                }
-            }
-            
-            
-            //Step 2----evolve the DirectedPosition if the player is allowed to move---- 
-           
-            //--1)determine if the player is allowed to move--
-            
-            //can move if the player is invulnerable or vulnerable
-            boolean allowedToMove = p.lifeState().canMove();
-            
-            // if the position is a central SubCell can move only if the
-            // neighbor Cell is not a Wall
-            if(p.position().isCentral()){
-                Cell futurCell= p.position().containingCell().neighbor(directedPos1.head().direction());
-                allowedToMove &= board1.blockAt(futurCell).canHostPlayer();
-            }
+            // STEP 1 Computation of the new Directed Position sequence
+            //      - if the player does not want to move nothing is changed here.
+            Sq<DirectedPosition> directedPositions1 = speedChangeEvents.containsKey(id)
+                    ? constructDPSq(p, speedChangeEvents.get(id))
+                    : p.directedPositions();
 
-            // if the player position have a distance to the central SubCell of 6
-            // and that the player is going toward the central SubCell then the
-            // player can move only if there is no Bomb on the Cell
-            if(p.position().distanceToCentral()== ALLOWED_DISTANCE_TO_BOMB ){
-                //the future position
-                SubCell futurpos = directedPos1.tail().head().position();
-                //if the player is moving toward the central SubCell
-                if(futurpos.distanceToCentral() < ALLOWED_DISTANCE_TO_BOMB){
-                    Cell position= p.position().containingCell();
-                    allowedToMove &= !bombedCells1.contains(position);
-                }
+            // STEP 2 Evolution of Directed Position sequence
+            //      - multiple criteria have to be met:
+
+            // defining some useful variables
+            SubCell currentSubCell = p.position();
+            Cell nextCell = directedPositions1.tail()
+                    .findFirst(d -> d.position().isCentral()).position()
+                    .containingCell();
+            Block nextBlock = board1.blockAt(nextCell);
+            SubCell nextSubCell = directedPositions1.tail().head().position();
+
+            // evaluation of the different logic expressions
+            boolean movingTowardsCentral = currentSubCell
+                    .distanceToCentral() > nextSubCell.distanceToCentral();
+            boolean canMove = p.lifeState().canMove();
+            boolean blockedByWall = currentSubCell.isCentral()
+                    && !nextBlock.canHostPlayer();
+            boolean blockedByBomb = bombedCells1
+                    .contains(currentSubCell.containingCell())
+                    && currentSubCell
+                            .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB
+                    && movingTowardsCentral;
+
+            // if all criteria is met the player can move
+            if (canMove && !blockedByWall && !blockedByBomb) {
+                directedPositions1 = directedPositions1.tail();
             }
             
-            
-            //--2)evolve the DirectedPosition--
-            if(allowedToMove){
-                directedPos1 = directedPos1.tail();
-            }
-            
-            //----add the new player to the list----
-            players1.add(new Player(p.id(),p.lifeStates(),directedPos1,p.maxBombs(),p.bombRange()));
+            //---- add the new moved player to the list----
+            players1.add(new Player(p.id(),p.lifeStates(),directedPositions1,p.maxBombs(),p.bombRange()));
             
         }
-        
-        
-        
         return players1;
     }
     
+
+    /**
+     * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
+     * according to where the player wants to go.
+     * 
+     * @param p
+     *            player that wants to move
+     * @param speedChangeEvent
+     *            Direction where the player wants to go, empty if he wants to
+     *            stop
+     * @return a sequence of DirectedPosition that describes the players path
+     */
+    private static Sq<DirectedPosition> constructDPSq(Player p,
+            Optional<Direction> speedChange) {
+    
+        // compute direction where player where player wants to go
+        Direction d = speedChange.orElse(p.direction());
+        
+        // a player can immediately go back or continue in same direction
+        if (speedChange.isPresent() && d.isParallelTo(p.direction())) {
+            return DirectedPosition.moving(new DirectedPosition(p.position(),d));
+        }
+    
+        // a player wants to do fancy stuff wait until next central cell
+        else {
+            Sq<DirectedPosition> sq = p.directedPositions();
+            // find nearest central SubCell
+            SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
+    
+            // compute first part of sequence
+            Sq<DirectedPosition> dp1 = sq
+                    .takeWhile(t -> !t.position().isCentral());
+            // compute second part: the player either stays at the central
+            // SubCell or takes a turn.
+            Sq<DirectedPosition> dp2 = speedChange.isPresent()
+                    ? DirectedPosition
+                            .moving(new DirectedPosition(nextCentral, d))
+                    : DirectedPosition
+                            .stopped(new DirectedPosition(nextCentral, d));
+    
+            return dp1.concat(dp2);
+        }
+    }
 
     /**
      * ADDITIONAL FUNCTION:
@@ -596,22 +597,23 @@ public final class GameState {
      * @param movedPlayers
      * @param blastedCells1
      *
-     * @return the list of players with the new LifeState for the next tep
+     * @return the list of players with the new LifeState for the next step
      */
     private static List<Player> nextStatePlayers(List<Player> movedPlayers,
             Set<Cell> blastedCells1) {
         
         List<Player> newStatePlayer = new ArrayList<>();
-        for(Player p: movedPlayers){
-            Sq<LifeState> states = p.lifeStates();
+        for (Player p : movedPlayers) {
             
-            if(blastedCells1.contains(p.position().containingCell()) && p.lifeState().state() == State.VULNERABLE){
-                states= p.statesForNextLife();
-            }
-            else{
-                states= states.tail();
-            }
-            newStatePlayer.add(new Player(p.id(),states,p.directedPositions(),p.maxBombs(),p.bombRange()));
+            boolean blasted = blastedCells1
+                    .contains(p.position().containingCell());
+            boolean vulnerable = p.lifeState().state() == State.VULNERABLE;
+
+            Sq<LifeState> lifeStates1 = (blasted && vulnerable)
+                    ? p.statesForNextLife() : p.lifeStates().tail();
+
+            newStatePlayer.add(new Player(p.id(), lifeStates1,
+                    p.directedPositions(), p.maxBombs(), p.bombRange()));
         }
         
         return newStatePlayer;
@@ -633,12 +635,8 @@ public final class GameState {
         List<Player> players1=new ArrayList<>();
         
         for(Player p: newStatePlayers){
-            if(playerBonuses.containsKey(p.id())){
-                players1.add(playerBonuses.get(p.id()).applyTo(p));
-            }
-            else{
-                players1.add(p);
-            }
+            players1.add(playerBonuses.containsKey(p.id())
+                    ? playerBonuses.get(p.id()).applyTo(p) : p);
         }
         
         return players1;
@@ -679,76 +677,6 @@ public final class GameState {
     }
 
     /**
-     * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
-     * according to where the player wants to go.
-     * 
-     * @param p
-     *            player that wants to move
-     * @param speedChangeEvent
-     *            Direction where the player wants to go, empty if he wants to
-     *            stop
-     * @return a sequence of DirectedPosition that describes the players path
-     */
-    private static Sq<DirectedPosition> constructDPSq(Player p,
-            Optional<Direction> speedChange) {
-    
-        // compute direction where player where player wants to go
-        Direction d = speedChange.isPresent()? speedChange.get() : p.direction();
-        
-        // a player can immediately go back or continue in same direction
-        if (d.isParallelTo(p.direction()) && speedChange.isPresent()) {
-            return DirectedPosition.moving(new DirectedPosition(p.position(),d));
-        }
-    
-        // a player wants to do fancy stuff wait until next central cell
-        else {
-            Sq<DirectedPosition> sq = p.directedPositions();
-            // find nearest central SubCell
-            SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
-    
-            // compute first part of sequence
-            Sq<DirectedPosition> dp1 = sq
-                    .takeWhile(t -> !t.position().isCentral());
-            // compute second part: the player either stays at the central
-            // SubCell or takes a turn.
-            Sq<DirectedPosition> dp2 = speedChange.isPresent()
-                    ? DirectedPosition
-                            .moving(new DirectedPosition(nextCentral, d))
-                    : DirectedPosition
-                            .stopped(new DirectedPosition(nextCentral, d));
-
-            return dp1.concat(dp2);
-        }
-    }
-    //FIXME
-    /**
-     * @param p
-     * @param directedPositions
-     * @param board1
-     * @return
-     */
-    private static boolean allowedToMove(Player p, Sq<DirectedPosition> directedPositions, Board board1, Set<Cell> bombedCells1){
-        // defining some useful variables
-        SubCell pos = p.position();            
-        Cell nextCell = directedPositions.tail().findFirst(d -> d.position().isCentral())
-                .position().containingCell();
-        Block nextBlock = board1.blockAt(nextCell);
-        SubCell nextSubCell = directedPositions.tail().head().position();
-        
-        // evaluation of the different logic expressions
-        boolean movingTowardsCentral = pos.distanceToCentral() > nextSubCell.distanceToCentral();
-        boolean canMove = p.lifeState().canMove();           
-        boolean blockedByWall = pos.isCentral()
-                && !nextBlock.canHostPlayer();
-        boolean blockedByBomb = bombedCells1.contains(pos.containingCell())
-                && pos.distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB && movingTowardsCentral;
-        
-        // if all criteria is met the player can move
-        return canMove && !blockedByWall && !blockedByBomb;
-         
-    }
-
-    /**
      * Returns a sorted version of the list of players according to current
      * permutation that defines who has the priority in case of a conflict.
      * 
@@ -761,7 +689,7 @@ public final class GameState {
         List<PlayerID> idSorted = PLAYER_PERMUTATION
                 .get(ticks % PLAYER_PERMUTATION.size());
 
-        // create a map that associates the playerID to every player    //FIXME
+        // create a map that associates the playerID to every player
         Map<PlayerID, Player> pMap = new HashMap<>();
         for (Player p : players) {
             pMap.put(p.id(), p);
