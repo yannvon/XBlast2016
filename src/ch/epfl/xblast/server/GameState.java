@@ -112,7 +112,7 @@ public final class GameState {
              board, 
              players,
              Collections.emptyList(),
-             Collections.emptyList(), //FIXME<
+             Collections.emptyList(),
              Collections.emptyList());
     }
 
@@ -151,7 +151,7 @@ public final class GameState {
      *         otherwise an empty Optional
      */
     public Optional<PlayerID> winner() {
-        List<Player> alivePlayers = alivePlayers(); //FIXME
+        List<Player> alivePlayers = alivePlayers();
         return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
                 : Optional.empty();
     }
@@ -212,10 +212,10 @@ public final class GameState {
      * GameState and the events that happened.
      * 
      * @param speedChangeEvents
-     *            map that associate the players who want to change theirs direction
-     *            and the direction wanted
+     *            mapping between all the player that want to change direction
+     *            and the respective speedChange.
      * @param bombDrpEvents
-     *            new bombs that the players added
+     *            set of players that want to add a bomb
      * @return GameState of the next tick
      */
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents,
@@ -286,7 +286,7 @@ public final class GameState {
      */
 
     /**
-     * SUPPLEMENTARY METHOD: Calculate the List of blasts for the next Tick.
+     * Computes the List of blasts for the next Tick.
      * 
      * @param blasts0
      *            current blasts
@@ -330,7 +330,7 @@ public final class GameState {
     private static Board nextBoard(Board board0, Set<Cell> consumedBonuses,
             Set<Cell> blastedCells1) {
 
-        // 1) create list of block sq that will be used to create new board
+        // 1) create list of block sequences that will be used to create new board
         List<Sq<Block>> board1 = new ArrayList<>();
 
         // 2) go through every cell
@@ -349,34 +349,31 @@ public final class GameState {
             // make it disappear.
             else if (head.isBonus() && blastedCells1.contains(currentCell)) {
 
-                Sq<Block> newBonusSq = blocks.tail()
-                        .limit(Ticks.BONUS_DISAPPEARING_TICKS);
+                Sq<Block> newBonusSq = 
+                        blocks.tail().limit(Ticks.BONUS_DISAPPEARING_TICKS);
                 newBonusSq = newBonusSq.concat(Sq.constant(Block.FREE));
                 board1.add(newBonusSq);
-
             }
             // 2.3) if current Cell was a destructible wall and got blasted,
             // generate a sequence that will let a bonus appear (or not)
             else if (head == Block.DESTRUCTIBLE_WALL
                     && blastedCells1.contains(currentCell)) {
 
-                Sq<Block> newCrumblingWallSq = Sq.repeat(
-                        Ticks.WALL_CRUMBLING_TICKS, Block.CRUMBLING_WALL);
+                Sq<Block> newCrumblingWallSq = 
+                        Sq.repeat(Ticks.WALL_CRUMBLING_TICKS, Block.CRUMBLING_WALL);
 
                 // use the bonus generator array to get a random bonus.
-                Block randomBonus = BONUS_GENERATOR[RANDOM
-                        .nextInt(BONUS_GENERATOR.length)];
-                newCrumblingWallSq = newCrumblingWallSq
-                        .concat(Sq.constant(randomBonus));
+                Block randomBonus = 
+                        BONUS_GENERATOR[RANDOM.nextInt(BONUS_GENERATOR.length)];
+                newCrumblingWallSq = 
+                        newCrumblingWallSq.concat(Sq.constant(randomBonus));
                 board1.add(newCrumblingWallSq);
-
             }
             // 2.4) if none of the above was the case for current cell, simply
             // take its tail.
             else {
                 board1.add(blocks.tail());
             }
-
         }
         return new Board(board1);
     }
@@ -481,12 +478,12 @@ public final class GameState {
             Board board1, Set<Cell> blastedCells1,
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
 
-        //1)move the players
-        List<Player> movedPlayers = nextMovedPlayers(players0,board1, bombedCells1,
-                speedChangeEvents);
+        //1)move the players.
+        List<Player> movedPlayers = 
+                nextMovedPlayers(players0, board1, bombedCells1, speedChangeEvents);
         
-        //2)change the state of the players. lose life if blasted
-        List<Player> newStatePlayers = nextStatePlayers(movedPlayers,blastedCells1);
+        //2)change the lifeState of the players according to their new position.
+        List<Player> newStatePlayers = nextEvolvedStatePlayers(movedPlayers, blastedCells1);
         
         //3)add potential upgrades to the player(s)
         List<Player> players1 = nextUpgradedPlayers(newStatePlayers,playerBonuses);
@@ -495,51 +492,55 @@ public final class GameState {
     }
 
     /**
-     * ADDITIONAL FUNCTION: //TODO  comments 
-     * change the direction of the players and move them according to the conditions 
+     * ADDITIONAL METHOD: Computes the new DirectedPosition sequence for every
+     * player according to the speedChangeEvents and evolves the (potentially)
+     * new sequences if the player fulfills all conditions to move.
      * 
      * @param speedChangeEvents
+     *            mapping between all the player that want to change direction
+     *            and the respective speedChange.
      * @param bombedCells1
+     *            set of all cells that host a bomb
      * @param players0
+     *            list of all players in their current state
      * @param board1
-     *  
+     *            board of the next tick
      * @return a list of the moved players for the next step
      */
     private static List<Player> nextMovedPlayers(List<Player> players0,
             Board board1, Set<Cell> bombedCells1,
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
 
-        List<Player> players1=new ArrayList<>();
-        for(Player p: players0){
-            PlayerID id=p.id();
+        List<Player> players1 = new ArrayList<>();
+        for (Player p : players0) {
+            PlayerID id = p.id();
             
             // STEP 1 Computation of the new Directed Position sequence
             //      - if the player does not want to move nothing is changed here.
-            Sq<DirectedPosition> directedPositions1 = speedChangeEvents.containsKey(id)
-                    ? constructDPSq(p, speedChangeEvents.get(id))
-                    : p.directedPositions();
+            Sq<DirectedPosition> directedPositions1 = 
+                    speedChangeEvents.containsKey(id) ? 
+                            constructDPSq(p, speedChangeEvents.get(id)) : p.directedPositions();
 
             // STEP 2 Evolution of Directed Position sequence
             //      - multiple criteria have to be met:
 
             // defining some useful variables
             SubCell currentSubCell = p.position();
-            Cell nextCell = directedPositions1.tail()
-                    .findFirst(d -> d.position().isCentral()).position()
-                    .containingCell();
+            Cell nextCell = 
+                    directedPositions1.tail().findFirst(d -> d.position().isCentral())
+                    .position().containingCell();
             Block nextBlock = board1.blockAt(nextCell);
             SubCell nextSubCell = directedPositions1.tail().head().position();
 
             // evaluation of the different logic expressions
-            boolean movingTowardsCentral = currentSubCell
-                    .distanceToCentral() > nextSubCell.distanceToCentral();
+            boolean movingTowardsCentral = 
+                    currentSubCell.distanceToCentral() > nextSubCell.distanceToCentral();
             boolean canMove = p.lifeState().canMove();
             boolean blockedByWall = currentSubCell.isCentral()
                     && !nextBlock.canHostPlayer();
-            boolean blockedByBomb = bombedCells1
-                    .contains(currentSubCell.containingCell())
-                    && currentSubCell
-                            .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB
+            boolean blockedByBomb = 
+                    bombedCells1.contains(currentSubCell.containingCell())
+                    && currentSubCell.distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB
                     && movingTowardsCentral;
 
             // if all criteria is met the player can move
@@ -547,15 +548,14 @@ public final class GameState {
                 directedPositions1 = directedPositions1.tail();
             }
             
-            //---- add the new moved player to the list----
+            // STEP 3 add the new moved player to the list
             players1.add(new Player(p.id(),p.lifeStates(),directedPositions1,p.maxBombs(),p.bombRange()));
-            
         }
         return players1;
     }
     
     /**
-     * Helper Method for nextPlayers. Constructs a sequence of DirectedPositions
+     * ADDITIONAL METHOD for nextPlayers. Constructs a sequence of DirectedPositions
      * according to where the player wants to go.
      * 
      * @param p
@@ -568,24 +568,24 @@ public final class GameState {
     private static Sq<DirectedPosition> constructDPSq(Player p,
             Optional<Direction> speedChange) {
     
-        // compute direction where player where player wants to go
+        // 1) compute direction where player where player wants to go
         Direction d = speedChange.orElse(p.direction());
         
-        // a player can immediately go back or continue in same direction
+        // 2) a player can immediately go back or continue in same direction
         if (speedChange.isPresent() && d.isParallelTo(p.direction())) {
             return DirectedPosition.moving(new DirectedPosition(p.position(),d));
         }
     
-        // a player wants to do fancy stuff wait until next central cell
+        // 3) if a player wants to do fancy stuff wait until next central cell
         else {
             Sq<DirectedPosition> sq = p.directedPositions();
             // find nearest central SubCell
             SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
     
-            // compute first part of sequence
-            Sq<DirectedPosition> dp1 = sq
-                    .takeWhile(t -> !t.position().isCentral());
-            // compute second part: the player either stays at the central
+            // 3.1) compute first part of sequence
+            Sq<DirectedPosition> dp1 = 
+                    sq.takeWhile(t -> !t.position().isCentral());
+            // 3.2) compute second part: the player either stays at the central
             // SubCell or takes a turn.
             Sq<DirectedPosition> dp2 = speedChange.isPresent()
                     ? DirectedPosition
@@ -597,17 +597,20 @@ public final class GameState {
         }
     }
 
-    //TODO comments
     /**
-     * ADDITIONAL FUNCTION:
-     * determine the new sequence of LifeState for each players
+     * ADDITIONAL FUNCTION: determines the new sequence of LifeStates for each
+     * player
      * 
      * @param movedPlayers
+     *            list of all players that have an evolved DirectedPosition
+     *            sequence
      * @param blastedCells1
+     *            set containing all blasted Cells of the next Tick
      *
-     * @return the list of players with the new LifeState for the next step
+     * @return the list of players with the new LifeState sequence for the next
+     *         step
      */
-    private static List<Player> nextStatePlayers(List<Player> movedPlayers,
+    private static List<Player> nextEvolvedStatePlayers(List<Player> movedPlayers,
             Set<Cell> blastedCells1) {
         
         List<Player> newStatePlayer = new ArrayList<>();
@@ -622,31 +625,31 @@ public final class GameState {
 
             newStatePlayer.add(new Player(p.id(), lifeStates1,
                     p.directedPositions(), p.maxBombs(), p.bombRange()));
-        }
-        
+        }        
         return newStatePlayer;
     }
 
-    //TODO comments
     /**
-     * ADDITIONAL FUNCTION:
-     * determine the players upgraded by the respective bonus
+     * ADDITIONAL FUNCTION: Computes the list of players with changed attributes
+     * if they picked up a bonus.
      * 
      * @param newStatePlayers
+     *            list of players that have a new sequence of DirectedPositions
+     *            and LifeStates
      * @param playerBonuses
+     *            mapping playerID's to consumed bonuses
      * 
-     * @return the list of the players upgraded by the bonus 
+     * @return the list of the players with applied bonuses
      */
     private static List<Player> nextUpgradedPlayers(
             List<Player> newStatePlayers, Map<PlayerID, Bonus> playerBonuses) {
+
+        List<Player> players1 = new ArrayList<>();
         
-        List<Player> players1=new ArrayList<>();
-        
-        for(Player p: newStatePlayers){
+        for (Player p : newStatePlayers) {
             players1.add(playerBonuses.containsKey(p.id())
                     ? playerBonuses.get(p.id()).applyTo(p) : p);
         }
-        
         return players1;
     }
 
@@ -685,7 +688,7 @@ public final class GameState {
     }
 
     /**
-     * Returns a sorted version of the list of players according to current
+     * HELPER METHOD: Returns a sorted version of the list of players according to current
      * permutation that defines who has the priority in case of a conflict.
      * 
      * @return a list of players ordered by priority
