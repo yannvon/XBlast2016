@@ -65,7 +65,7 @@ public final class GameStatePrinterwithoutColor {
         
         // 2) print additional player and game info
         for(Player p : ps){
-            toPrint.append("P" + p.id().ordinal() + " : " + p.lives()  + " lives " + p.lifeState().state() );
+            toPrint.append("P" + (p.id().ordinal()+1) + " : " + p.lives()  + " lives " + p.lifeState().state() );
             toPrint.append("    max bombs: " + p.maxBombs() + " range: "  + p.bombRange());
             toPrint.append("    position: " + p.position().containingCell() + stringForDistToCentral(p) );
 

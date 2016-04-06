@@ -229,7 +229,7 @@ public final class GameState {
         for (Player pl : sortedPlayers) {
             Cell plPosition = pl.position().containingCell();
             Block blockAtPosition = board.blockAt(plPosition);
-            if (blockAtPosition.isBonus() && pl.position().isCentral() && !consumedBonuses.contains(blockAtPosition)) {
+            if (blockAtPosition.isBonus() && pl.position().isCentral() && !consumedBonuses.contains(plPosition)) {
                 consumedBonuses.add(plPosition);
                 playerBonuses.put(pl.id(), blockAtPosition.associatedBonus());
             }
