@@ -9,16 +9,20 @@ import static org.mutabilitydetector.unittesting.MutabilityAssert.*;
 
 public class CellTest {
 
-    @Test public void checkMyClassIsImmutable() {
-        assertImmutable(Cell.class); 
+    @Test
+    public void checkMyClassIsImmutable() {
+        assertImmutable(Cell.class);
     }
-    @Test public void equals(){
-        assertEquals(new Cell(1,1),new Cell(1,1));
+
+    @Test
+    public void equals() {
+        assertEquals(new Cell(1, 1), new Cell(1, 1));
     }
+
     @Test
     public void rowMajorIndexCorrespondsToOrder() {
         int i = 0;
-        for (Cell c: Cell.ROW_MAJOR_ORDER)
+        for (Cell c : Cell.ROW_MAJOR_ORDER)
             assertEquals(i++, c.rowMajorIndex());
         assertEquals(Cell.COUNT, i);
     }
