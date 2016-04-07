@@ -231,6 +231,8 @@ public class GameStateTest {
     public void bonusPriorityTest(){
         List<Player> p= new ArrayList<>(players);
         p.set(1,new Player(PlayerID.PLAYER_2,3,new Cell(1,1),3,3));
+        p.set(2,new Player(PlayerID.PLAYER_3,3,new Cell(1,1),3,3));
+        p.set(3,new Player(PlayerID.PLAYER_4,3,new Cell(1,1),3,3));
         
         Board oneBonus = Board.ofQuadrantNWBlocksWalled(
                 Arrays.asList(Arrays.asList(Block.BONUS_BOMB, __, __, __, __, xx, __),
@@ -246,6 +248,8 @@ public class GameStateTest {
         List<Player> pl =a.alivePlayers();
         assertEquals(4,pl.get(0).maxBombs());
         assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
         
         //Tick 1
         a = new GameState(1,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
@@ -254,7 +258,38 @@ public class GameStateTest {
         pl =a.alivePlayers();
         assertEquals(3,pl.get(0).maxBombs());
         assertEquals(4,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
+        
+        //Tick 6
+        a = new GameState(6,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
 
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(3,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(4,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
+        
+      //Tick 23
+        a = new GameState(23,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(3,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(4,pl.get(3).maxBombs());
+        
+        //Tick 24
+        a = new GameState(24,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(4,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
         
     }
     
@@ -263,12 +298,16 @@ public class GameStateTest {
         List<Player> p= new ArrayList<>(players);
         Cell initialPos=new Cell(1,1);
         p.set(1,new Player(PlayerID.PLAYER_2,3,initialPos,3,3));
+        p.set(2,new Player(PlayerID.PLAYER_3,3,initialPos,3,3));
+        p.set(3,new Player(PlayerID.PLAYER_4,3,initialPos,3,3));
         
         //Tick 0
         GameState a = new GameState(0,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
         Set<PlayerID> drp= new HashSet<>();
         drp.add(PlayerID.PLAYER_1);
         drp.add(PlayerID.PLAYER_2);
+        drp.add(PlayerID.PLAYER_3);
+        drp.add(PlayerID.PLAYER_4);
 
         a= a.next(new HashMap<>(), drp);
         Map<Cell,Bomb> bb =a.bombedCells();
@@ -280,6 +319,27 @@ public class GameStateTest {
         a= a.next(new HashMap<>(), drp);
         bb =a.bombedCells();
         assertEquals(PlayerID.PLAYER_2,bb.get(initialPos).ownerId());
+        
+      //Tick 21
+        a = new GameState(21,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_4,bb.get(initialPos).ownerId());
+        
+      //Tick 20
+        a = new GameState(20,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_1,bb.get(initialPos).ownerId());
+        
+      //Tick 11
+        a = new GameState(11,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_3,bb.get(initialPos).ownerId());
 
         
     }
