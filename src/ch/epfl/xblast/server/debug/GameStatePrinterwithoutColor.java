@@ -74,6 +74,9 @@ public final class GameStatePrinterwithoutColor {
         toPrint.append("Remaining Time: " + String.format("%.1f", s.remainingTime()) );
 
         toPrint.append("\n");
+        toPrint.append("TICK_NUMBER: " + s.ticks());
+        toPrint.append("\n");
+
         System.out.println(toPrint.toString());
     }
 

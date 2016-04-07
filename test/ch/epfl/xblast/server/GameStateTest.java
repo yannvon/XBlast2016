@@ -290,7 +290,6 @@ public class GameStateTest {
         assertEquals(3,pl.get(1).maxBombs());
         assertEquals(3,pl.get(2).maxBombs());
         assertEquals(3,pl.get(3).maxBombs());
-        
     }
     
     @Test
@@ -343,36 +342,4 @@ public class GameStateTest {
 
         
     }
-    
-//    @Test
-//    public void priorityCheck(){
-//        GameState game = new GameState(board, players);
-//        int count = 0;
-//        
-//        // only works if sortedPlayer() is changed to public (bad but i am too lazy)
-//        for(List<PlayerID> l : GameState.PLAYER_PERMUTATION){
-//            for(PlayerID i : l){
-//                System.out.print(i.ordinal());
-//            }
-//            System.out.println();
-//            count++;
-//
-//        }
-//        
-//        System.out.println("count : " + count);
-//
-//        
-//        for (int i = 0; i < 50; i++) {
-//            for (Player p : game.sortedPlayers()) {
-//                System.out.print(p.id().ordinal());
-//            }
-//            System.out.println();
-//            game = game.next(RANDOM.randomSpeedChangeEvents(),
-//                    RANDOM.randomBombDropEvents());
-//        }
-//
-//    }
-    
-    
-    
 }
