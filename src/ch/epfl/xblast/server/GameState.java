@@ -152,8 +152,8 @@ public final class GameState {
      */
     public Optional<PlayerID> winner() {
         List<Player> alivePlayers = alivePlayers();
-        return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
-                : Optional.empty();
+        return alivePlayers.size() == 1 ? 
+                Optional.of(alivePlayers.get(0).id()) : Optional.empty();
     }
 
     /**
@@ -346,7 +346,9 @@ public final class GameState {
                 board1.add(Sq.constant(Block.FREE));
             }
             // 2.2) if current Cell is a bonus and was blasted,
-            // make it disappear.
+            // make it disappear. 
+            //  - also handling the case where a already 
+            //      disappearing bonus gets blasted again
             else if (head.isBonus() && blastedCells1.contains(currentCell)) {
 
                 Sq<Block> newBonusSq = 
