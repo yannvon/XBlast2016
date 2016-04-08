@@ -71,6 +71,11 @@ public final class GameStatePrinterwithoutColor {
 
             toPrint.append("\n");
         }
+        if(s.isGameOver()){
+            toPrint.append("GAME OVER : ");
+            toPrint.append(" winner: "+s.winner());
+        }
+        
         toPrint.append("Remaining Time: " + String.format("%.1f", s.remainingTime()) );
 
         toPrint.append("\n");
