@@ -131,8 +131,7 @@ public class VisualTest {
 
             }
             game = game.next(speedChange, bombdrp);
-            GameStatePrinter.printGameState(game);
-            //GameStatePrinterwithoutColor.printGameState(game)s;
+            GameStatePrinterwithoutColor.printGameState(game);
         }
         scan.close();
     }
