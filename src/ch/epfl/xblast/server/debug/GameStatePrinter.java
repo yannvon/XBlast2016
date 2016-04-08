@@ -83,6 +83,10 @@ public final class GameStatePrinter {
             toPrint.append("    position: " + p.position().containingCell() + stringForDistToCentral(p) + nl);
             
         }
+        if(s.isGameOver()){
+            toPrint.append("GAME OVER : ");
+            toPrint.append(" winner: "+s.winner());
+        }
         toPrint.append(nl);
         toPrint.append("Remaining Time: " + String.format("%.1f", s.remainingTime()) + nl);
         toPrint.append("TICK_NUMBER: " + s.ticks() + nl);
