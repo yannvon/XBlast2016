@@ -1,9 +1,13 @@
 
 package ch.epfl.DONT_SUBMIT;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import ch.epfl.xblast.server.GameStateTest;
+import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Lists;
+import ch.epfl.xblast.PlayerID;
 
 /**
  * @author LoicVandenberghe (257742)
@@ -15,6 +19,18 @@ import ch.epfl.xblast.server.GameStateTest;
  */
 public class Test {
     public static void main(String[] args) {
-       
+        printPermutations();
+    }
+    
+    /**
+     * Debug function used to knows the order of permutations
+     * 
+     */
+    public static void printPermutations(){
+        List<List<PlayerID>> PlayerPermutations = Collections
+                .unmodifiableList(Lists.<PlayerID> permutations(Arrays.asList(PlayerID.values())));
+        for(List<PlayerID> l :PlayerPermutations){
+            System.out.println((PlayerPermutations.indexOf(l))+" : "+l);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package ch.epfl.xblast;
 
 /**
- * An immutable sub cell.
+ * An immutable subdivision of Cell.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -10,10 +10,10 @@ package ch.epfl.xblast;
 public final class SubCell {
 
     // Constants related to the devision of the Game Board into Sub Cells
-    public final static int SUBDIVISION = 16;
-    public final static int CENTRAL = 8;
-    public final static int COLUMNS = Cell.COLUMNS * SUBDIVISION;
-    public final static int ROWS = Cell.ROWS * SUBDIVISION;
+    private static final int SUBDIVISION = 16;
+    private static final int CENTRAL = SUBDIVISION / 2;
+    private static final int COLUMNS = Cell.COLUMNS * SUBDIVISION;
+    private static final int ROWS = Cell.ROWS * SUBDIVISION;
 
     // Attributes
     private final int x, y;
@@ -52,8 +52,7 @@ public final class SubCell {
      * @return length of shortest Manhattan path to a central SubCell
      */
     public int distanceToCentral() {
-        int manhattanDist = Math.abs(x % 16 - CENTRAL) + Math.abs(y % 16 - CENTRAL);
-        return manhattanDist;
+        return Math.abs(x % SUBDIVISION - CENTRAL) + Math.abs(y % SUBDIVISION - CENTRAL);
     }
 
     /**
@@ -61,7 +60,7 @@ public final class SubCell {
      * @return true if SubCell is central, false otherwise
      */
     public boolean isCentral() {
-        return CENTRAL == x % SUBDIVISION && CENTRAL == y % SUBDIVISION;
+        return distanceToCentral() == 0;
     }
 
     /**
@@ -71,7 +70,8 @@ public final class SubCell {
      * @param d
      *            Direction of neighbor SubCell
      * @return new SubCell that is located in given Direction from this SubCell
-     * @throws Error when the argument is not one of the 4 direction
+     * @throws Error
+     *             when the argument is not one of the 4 direction
      */
     public SubCell neighbor(Direction d) {
         switch (d) {
@@ -96,20 +96,6 @@ public final class SubCell {
         return new Cell(x / SUBDIVISION, y / SUBDIVISION);
     }
 
-    @Override
-    public boolean equals(Object that) {
-        if (that == null) {
-            return false;
-        }
-        if (this == that){
-            return true;
-        }
-        if (this.getClass().equals(that.getClass())) {
-            return this.x == ((SubCell) that).x() && this.y() == ((SubCell) that).y();
-        }
-        return false;
-    }
-
     /**
      * Getter for the x-coordinate of the SubCell.
      * @return the x-coordinate
@@ -127,6 +113,31 @@ public final class SubCell {
     }
 
     @Override
+    /**
+     * Compares an Object to a SubCell.
+     * 
+     * @return true if given Object is equal to this SubCell, false otherwise
+     */
+    public boolean equals(Object that) {
+        if (that == null) {
+            return false;
+        }
+        if (this == that){
+            return true;
+        }
+        if (getClass() == that.getClass()) {
+            return x == ((SubCell) that).x()
+                    && y == ((SubCell) that).y();
+        }
+        return false;
+    }
+
+    @Override
+    /**
+     * Defines how to represent a SubCell.
+     * 
+     * @return a String representation of the SubCell.
+     */
     public String toString() {
         return "(" + x + "," + y + ")";
     }
@@ -135,5 +146,4 @@ public final class SubCell {
     public int hashCode(){
         return x + y * COLUMNS;
     }
-
 }

@@ -11,14 +11,14 @@ import ch.epfl.xblast.Lists;
 /**
  * The immutable class Board represents the Game Board of the xblast game.
  * 
- * @author Loic Vandenberghe (257742)
+ * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */
 public final class Board {
 
     // Attributes
-    private final List<Sq<Block>> board;
+    private final List<Sq<Block>> blocks;
 
     /**
      * Constructor of a board taking a list of block sequences as parameter.
@@ -32,9 +32,7 @@ public final class Board {
         if (blocks.size() != Cell.COUNT) {
             throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
         }
-        
-        board = Collections.unmodifiableList(new ArrayList<>(blocks));
-
+        this.blocks = Collections.unmodifiableList(new ArrayList<>(blocks));
     }
 
     /**
@@ -49,19 +47,18 @@ public final class Board {
     public static Board ofRows(List<List<Block>> rows) {
         // check matrix
         checkBlockMatrix(rows, Cell.ROWS, Cell.COLUMNS);
-
+    
         // add a constant sequence of given block to a temporary ArrayList
-        ArrayList<Sq<Block>> tempBoard = new ArrayList<>();
-
-        for (int i = 0; i < Cell.ROWS; i++) {
-            for (int j = 0; j < Cell.COLUMNS; j++) {
-                tempBoard.add(Sq.constant(rows.get(i).get(j)));
+        List<Sq<Block>> tempBoard = new ArrayList<>();
+    
+        for (List<Block> row: rows) {
+            for (Block b : row) {
+                tempBoard.add(Sq.constant(b));
             }
         }
-
+    
         // return the new Board
         return new Board(tempBoard);
-
     }
 
     /**
@@ -77,25 +74,27 @@ public final class Board {
     public static Board ofInnerBlocksWalled(List<List<Block>> innerBlocks) {
         // check matrix
         checkBlockMatrix(innerBlocks, Cell.ROWS - 2, Cell.COLUMNS - 2);
-
+    
         List<List<Block>> walledBlocks = new ArrayList<>();
         
+        //add the last row of Wall-Blocks
+        List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
+        walledBlocks.add(walledRow);
+        
         // add walls and copy the blocks of given matrix into new walled matrix
-        for (int i = 0; i < Cell.ROWS-2; ++i) {
-            walledBlocks.add( new ArrayList<>());
-            walledBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
-            walledBlocks.get(i).addAll(innerBlocks.get(i));
-            walledBlocks.get(i).add(Block.INDESTRUCTIBLE_WALL);
+        for (List<Block> innerRow : innerBlocks) {
+            List<Block> row=new ArrayList<>();
+            row.add(Block.INDESTRUCTIBLE_WALL);
+            row.addAll(innerRow);
+            row.add(Block.INDESTRUCTIBLE_WALL);
+            walledBlocks.add(row);
         }
         
-        // add the first and last row of Wall-Blocks
-        List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
-        walledBlocks.add(0, walledRow); //costly operation, chosen for the sake of readability
+        // add the last row of Wall-Blocks
         walledBlocks.add(walledRow);
-
+    
         // call ofRows method to construct Board from walledBlocks matrix
         return ofRows(walledBlocks);
-        
     }
 
     /**
@@ -110,29 +109,24 @@ public final class Board {
      */
     public static Board ofQuadrantNWBlocksWalled(List<List<Block>> quadrantNWBlocks) {
         
-        // the expected matrix dimensions
-        int rows = (Cell.ROWS - 1)/2;
-        int cols = (Cell.COLUMNS - 1)/2;
-        
         // check matrix
-        checkBlockMatrix(quadrantNWBlocks, rows, cols);
-       
+        checkBlockMatrix(quadrantNWBlocks, (Cell.ROWS - 1)/2, (Cell.COLUMNS - 1)/2);
+    
         // temporary block matrix
         List<List<Block>> finalMatrix = new ArrayList<>();
         
         // mirror every row to get entire rows of the upper half board
-        for(int i = 0; i < rows; i++){
-            finalMatrix.add(Lists.mirrored(quadrantNWBlocks.get(i)));
+        for(List<Block> l : quadrantNWBlocks){
+            finalMatrix.add(Lists.mirrored(l));
         }
         
         // mirror the upper half board to get entire inner Board
         finalMatrix = Lists.mirrored(finalMatrix);
-
+    
         // call ofInnerBlocksWalled to add walls and construct board
         return ofInnerBlocksWalled(finalMatrix);
     }
-    
-    
+
     /**
      * Returns the block sequence of a given cell
      * 
@@ -141,7 +135,7 @@ public final class Board {
      * @return the block sequence of a specific cell
      */
     public Sq<Block> blocksAt(Cell c){
-        return board.get(c.rowMajorIndex());
+        return blocks.get(c.rowMajorIndex());
     }
     
     /**
@@ -154,7 +148,7 @@ public final class Board {
     public Block blockAt(Cell c){
         return blocksAt(c).head();
     }
-    
+
     /**
      * Checks if a given matrix of blocks has the desired size.
      * 
@@ -167,11 +161,11 @@ public final class Board {
      * @throws IllegalArgumentException
      *             if the matrix doesn't have the right size
      */
-    public static final void checkBlockMatrix(List<List<Block>> matrix,
+    private static final void checkBlockMatrix(List<List<Block>> matrix,
             int rows, int columns) {
-
+    
         int matrixRows = matrix.size();
-
+    
         // 1) check if the amount of rows is correct
         if (matrixRows != rows) {
             throw new IllegalArgumentException(
@@ -179,10 +173,10 @@ public final class Board {
         }
         // 2) check if the amount of blocks in each column is correct
         else {
-            for (int i = 0; i < matrixRows; i++) {
-                if (matrix.get(i).size() != columns) {
+            for (List<Block> l : matrix) {
+                if (l.size() != columns) {
                     throw new IllegalArgumentException(
-                            "The amount of elements of row " + i
+                            "The amount of elements of row " + matrix.indexOf(l)
                                     + " does not match the desired value");
                 }
             }

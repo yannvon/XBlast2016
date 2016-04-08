@@ -66,11 +66,11 @@ public final class Bomb {
      * @throws IllegalArgumentException
      *             if range is negative or fuseLength non-positive
      */
-    public Bomb(PlayerID ownerId, Cell position, int fuseLengths, int range) {
+    public Bomb(PlayerID ownerId, Cell position, int fuseLength, int range) {
         this(ownerId, 
-                position,
-                Sq.iterate(ArgumentChecker.requireNonNegative(fuseLengths),i -> i - 1).limit(fuseLengths),
-                range);
+             position,
+             Sq.iterate(ArgumentChecker.requireNonNegative(fuseLength),i -> i - 1).limit(fuseLength),
+             range);
     }
 
     /**

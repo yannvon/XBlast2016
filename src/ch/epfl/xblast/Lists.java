@@ -17,12 +17,6 @@ public final class Lists {
 
     
     /**
-     * Empty private constructor: the class is not instantiable.
-     */
-    private Lists() {
-    }
-    
-    /**
      * mirrored() returns a symmetric copy of the input list. Note that the last
      * element of the input list appears only once in the result.
      * 
@@ -31,7 +25,8 @@ public final class Lists {
      * @param l
      *            list that has to be mirrored
      * @return the mirrored list
-     * @throws IllegalArgumentException  if the list is empty
+     * @throws IllegalArgumentException
+     *             if the list is empty
      */
     public static <T> List<T> mirrored(List<T> l){
         
@@ -50,35 +45,34 @@ public final class Lists {
         
         return mirrored;
     }
-    
+
     /**
-     * Returns a list containing all possible permutations of the input list, in random order.
+     * Returns a list containing all possible permutations of the input list, in
+     * random order.
      * 
-     * @param l list for which the elements will be permuted
+     * @param l
+     *            list for which the elements will be permuted
      * @return a list containing the lists of every permutation
      */
     public static <T> List<List<T>> permutations(List<T> l){
         
         //declare List that will then be returned plus copy the received List for safety reasons
         List<List<T>> output = new LinkedList<>();
-        List<T> input = new LinkedList<>(l);    //FIXME what if T immuable?
+        List<T> input = new LinkedList<>(l);
 
-        
         //if list is empty, the result is an empty list
-        if(l.isEmpty()){
+        if(input.isEmpty()){
             output.add(input);
             return output;
         }
             
         //if list contains one element or more, remove one and start recursive call.
-        T deleted = input.remove(0);    //FIXME use sublist like asked?
+        T deleted = input.remove(0);    
         List<List<T>> permuted = permutations(input);
 
-        //add removed element at every position and save the new list in the output list
-        int permutationLength = l.size();
-        
+        //add removed element at every position and save the new list in the output list        
         for(List<T> list : permuted){
-            for(int i = 0; i < permutationLength; i++){
+            for(int i = 0; i < l.size(); i++){
                 List<T> complete = new LinkedList<>(list);
                 complete.add(i, deleted);
                 output.add(complete);
@@ -87,4 +81,9 @@ public final class Lists {
         
         return output;
     }
+
+    /**
+     * Empty private constructor: the class is not instantiable.
+     */
+    private Lists() {}
 }

@@ -9,30 +9,13 @@ import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.GameState;
-import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 
-public final class GameStatePrinter {
+public final class GameStatePrinterwithoutColor {
     // constants
-    private static final String red = "\u001b[31m";
-    private static final String yellow = "\u001b[33m";
-    private static final String green = "\u001b[32m";
-    private static final String blue = "\u001b[34m";
-    private static final String black = "\u001b[30m";
-    private static final String magenta = "\u001b[35m";
-    private static final String cyan = "\u001b[36m";
-    private static final String white = "\u001b[37m";
-    private static final String framed = "\u001b[51m";
-    private static final String std = "\u001b[0m";
-    private static final String bBlack = "\u001b[40m";
-    private static final String bGreen = "\u001b[42m";
-    private static final String bCyan = "\u001b[46m";
-    private static final String bWhite = "\u001b[47m";
-    private static final String bBlue = "\u001b[44m";
-    private static final String bRed = "\u001b[41m";
-    private static final String nl = "\n";
+
     
-    private GameStatePrinter() {}
+    private GameStatePrinterwithoutColor() {}
 
     public static void printGameState(GameState s) {
         List<Player> ps = s.alivePlayers();
@@ -40,6 +23,7 @@ public final class GameStatePrinter {
         Map<Cell,Bomb> bombs= s.bombedCells();
         Set<Cell> blasts= s.blastedCells();
         StringBuilder toPrint = new StringBuilder();
+        toPrint.append("\n");
 
         for (int y = 0; y < Cell.ROWS; ++y) {
             // 1) print game board
@@ -57,7 +41,7 @@ public final class GameStatePrinter {
                 
                 // bombs
                 if (bombs.containsKey(c)){
-                    toPrint.append(red + "@@" + std);
+                    toPrint.append("@@");
                     continue xLoop;
                 }
                 
@@ -66,30 +50,38 @@ public final class GameStatePrinter {
                 
                 // blasts
                 if (blasts.contains(c) && b.isFree()){
-                    toPrint.append(bRed + "~~" + std);
+                    toPrint.append("~~");
                     continue xLoop;
                 }
                 // blocks
                 toPrint.append(stringForBlock(b));
                 
             }
+            toPrint.append("\n");
 
-            toPrint.append(nl);
         }
+
+        toPrint.append("\n\n");
+        
         // 2) print additional player and game info
         for(Player p : ps){
-            toPrint.append("P" + p.id().ordinal() + " : " +red+ p.lives() + std + " lives " + p.lifeState().state() + nl);
-            toPrint.append("    max bombs: " + green+ p.maxBombs()+std + " range: " +cyan + p.bombRange()+ std + nl);
-            toPrint.append("    position: " + p.position().containingCell() + stringForDistToCentral(p) + nl);
-            
+            toPrint.append("P" + (p.id().ordinal()+1) + " : " + p.lives()  + " lives " + p.lifeState().state() );
+            toPrint.append("    max bombs: " + p.maxBombs() + " range: "  + p.bombRange());
+            toPrint.append("    position: " + p.position().containingCell() + stringForDistToCentral(p) );
+
+            toPrint.append("\n");
         }
         if(s.isGameOver()){
             toPrint.append("GAME OVER : ");
             toPrint.append(" winner: "+s.winner());
         }
-        toPrint.append(nl);
-        toPrint.append("Remaining Time: " + String.format("%.1f", s.remainingTime()) + nl);
-        toPrint.append("TICK_NUMBER: " + s.ticks() + nl);
+        
+        toPrint.append("Remaining Time: " + String.format("%.1f", s.remainingTime()) );
+
+        toPrint.append("\n");
+        toPrint.append("TICK_NUMBER: " + s.ticks());
+        toPrint.append("\n");
+
         System.out.println(toPrint.toString());
     }
 
@@ -102,17 +94,17 @@ public final class GameStatePrinter {
         case S: b.append('v'); break;
         case W: b.append('<'); break;
         }
-        return bCyan + white + b.toString() + std;
+        return b.toString();
     }
 
     private static String stringForBlock(Block b) {
         switch (b) {
         case FREE: return "  ";
-        case INDESTRUCTIBLE_WALL: return bBlack + "##" + std;
-        case DESTRUCTIBLE_WALL: return bBlack + "??" + std;
-        case CRUMBLING_WALL: return bBlack + "¿¿" + std;
-        case BONUS_BOMB: return bGreen + "+b" + std;
-        case BONUS_RANGE: return bGreen + "+r" + std;
+        case INDESTRUCTIBLE_WALL: return "##" ;
+        case DESTRUCTIBLE_WALL: return "??";
+        case CRUMBLING_WALL: return "¿¿";
+        case BONUS_BOMB: return"+b";
+        case BONUS_RANGE: return "+r" ;
         default: throw new Error();
         }
     }

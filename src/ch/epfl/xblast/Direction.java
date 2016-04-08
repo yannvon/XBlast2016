@@ -1,9 +1,9 @@
 package ch.epfl.xblast;
 
 /**
- * Enum of Directions.
+ * Enumeration of Directions.
  * 
- * @author Loic Vandenberghe (257742)
+ * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  */
 public enum Direction {
@@ -11,8 +11,10 @@ public enum Direction {
 
     /**
      * Returns the opposite Direction.
+     * 
      * @return the opposite Direction
-     * @throws Error when the argument is not one of the 4 direction
+     * @throws Error
+     *             when the argument is not one of the 4 direction
      */
     public Direction opposite() {
         switch (this) {
@@ -31,20 +33,13 @@ public enum Direction {
 
     /**
      * Determines whether the Direction is horizontal or not.
+     * 
      * @return true if horizontal, false otherwise
-     * @throws Error when the argument is not one of the 4 direction
+     * @throws Error
+     *             when the argument is not one of the 4 direction
      */
     public boolean isHorizontal() {
-        switch (this) {
-        case E:
-        case W:
-            return true;
-        case S:
-        case N:
-            return false;
-        default:
-            throw new Error(); // will never happen
-        }
+        return(this == E || this == W);
     }
 
     /**

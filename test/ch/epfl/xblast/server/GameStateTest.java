@@ -19,6 +19,7 @@ import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.server.debug.ClassComparator;
 import ch.epfl.xblast.server.debug.GameStatePrinter;
+import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
 public class GameStateTest {
 
@@ -26,6 +27,9 @@ public class GameStateTest {
     private final Block __ = Block.FREE;
     private final Block XX = Block.INDESTRUCTIBLE_WALL;
     private final Block xx = Block.DESTRUCTIBLE_WALL;
+    
+    private static final RandomEventGenerator RANDOM = new RandomEventGenerator(2016, 30, 100);
+
     
     private final Board board = Board.ofQuadrantNWBlocksWalled(
             Arrays.asList(Arrays.asList(__, __, __, __, __, xx, __),
@@ -42,6 +46,11 @@ public class GameStateTest {
             new Player(PlayerID.PLAYER_4,3,new Cell(3,4),3,3)
             );
     
+
+    //   ---Next Tests---
+         
+    private final Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
+
 
     @Test
     public void initialGameTest() {
@@ -64,16 +73,16 @@ public class GameStateTest {
     
     @Test
     public void timeOutTest(){
-        GameState game = new GameState(Ticks.TOTAL_TICKS,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(Ticks.TOTAL_TICKS+1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
         assertTrue(game.isGameOver());
-        assertEquals(0,game.remainingTime(),1e-9);
+        assertEquals(-Ticks.TICK_NANOSECOND_DURATION*1e-9,game.remainingTime(),1e-11);
         assertEquals(Optional.empty(),game.winner());
     }
     @Test
     public void OneTickToEndTest(){
-        GameState game = new GameState(Ticks.TOTAL_TICKS-1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(Ticks.TOTAL_TICKS,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
         assertFalse(game.isGameOver());
-        assertEquals(Ticks.TICK_NANOSECOND_DURATION*1e-9,game.remainingTime(),1e-11);
+        assertEquals(0,game.remainingTime(),1e-11);
         assertEquals(Optional.empty(),game.winner());
     }
     
@@ -130,17 +139,13 @@ public class GameStateTest {
         GameState game = new GameState(1,board,players,new ArrayList<>(),new ArrayList<>(),null);
 
     }
-    //   ---Next Tests---
-         
-    private final Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
-    
     @Test
     public void normalNextTest(){
         GameState a = new GameState(board,players);
         GameState b = a.next(speedChangeEvents, new HashSet<>());
         
         assertEquals(a.blastedCells(),b.blastedCells());
-        assertEquals(a.alivePlayers(),b.alivePlayers());
+        assertEquals(a.alivePlayers().size(),b.alivePlayers().size());
         assertEquals(a.bombedCells(),b.bombedCells());
         List<Cell> allCells=Cell.ROW_MAJOR_ORDER;
         for(Cell c: allCells){
@@ -159,7 +164,7 @@ public class GameStateTest {
         Cell bombPosition = a.players().get(0).position().containingCell();
         
         assertEquals(a.blastedCells(),game.blastedCells());
-        assertEquals(a.alivePlayers(),game.alivePlayers());
+        assertEquals(a.alivePlayers().size(),game.alivePlayers().size());
         assertTrue(game.bombedCells().containsKey(bombPosition));
        
         //the bomb didn't explode yet
@@ -223,44 +228,118 @@ public class GameStateTest {
     }
     
     @Test
-    public void visualNextTest(){
-        Scanner scan =new Scanner(System.in);
-        List<Player> gPlayers =new ArrayList<>();
-        for(int i=0; i<4;i++){
-            System.out.println("player " + (i+1)+ " position :");
-            gPlayers.add(new Player(PlayerID.values()[i],1,new Cell(scan.nextInt(),scan.nextInt()),3,i+1));
-        }
+    public void bonusPriorityTest(){
+        List<Player> p= new ArrayList<>(players);
+        p.set(1,new Player(PlayerID.PLAYER_2,3,new Cell(1,1),3,3));
+        p.set(2,new Player(PlayerID.PLAYER_3,3,new Cell(1,1),3,3));
+        p.set(3,new Player(PlayerID.PLAYER_4,3,new Cell(1,1),3,3));
         
-        GameState game= new GameState(board,gPlayers);
-        boolean inGame=true;
-        while( inGame){
-            String s= scan.nextLine();
-            Set<PlayerID> bombdrp= new HashSet<>();
-            switch(s){
-            case "1":
-                bombdrp.add(PlayerID.PLAYER_1);
-                break;
-            case "2":
-                bombdrp.add(PlayerID.PLAYER_2);
-                break;
-            case "3":
-                bombdrp.add(PlayerID.PLAYER_3);
-                break;
-            case "4":
-                bombdrp.add(PlayerID.PLAYER_4);
-                break;
-            case "0":
-                inGame=false;
-                
-            }
-            game=game.next(speedChangeEvents, bombdrp);
-            GameStatePrinter.printGameState(game);
-            
-            
-        }
+        Board oneBonus = Board.ofQuadrantNWBlocksWalled(
+                Arrays.asList(Arrays.asList(Block.BONUS_BOMB, __, __, __, __, xx, __),
+                        Arrays.asList(__, XX, xx, XX, xx, XX, xx),
+                        Arrays.asList(__, xx, __, __, __, xx, __),
+                        Arrays.asList(xx, XX, __, XX, XX, XX, XX),
+                        Arrays.asList(__, xx, __, xx, __, __, __),
+                        Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
+        //Tick 0
+        GameState a = new GameState(0,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        List<Player> pl =a.alivePlayers();
+        assertEquals(4,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
         
+        //Tick 1
+        a = new GameState(1,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(3,pl.get(0).maxBombs());
+        assertEquals(4,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
+        
+        //Tick 6
+        a = new GameState(6,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(3,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(4,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
+        
+      //Tick 23
+        a = new GameState(23,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(3,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(4,pl.get(3).maxBombs());
+        
+        //Tick 24
+        a = new GameState(24,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), new HashSet<>());
+        pl =a.alivePlayers();
+        assertEquals(4,pl.get(0).maxBombs());
+        assertEquals(3,pl.get(1).maxBombs());
+        assertEquals(3,pl.get(2).maxBombs());
+        assertEquals(3,pl.get(3).maxBombs());
     }
     
-    
-    
+    @Test
+    public void bombPriorityTest(){
+        List<Player> p= new ArrayList<>(players);
+        Cell initialPos=new Cell(1,1);
+        p.set(1,new Player(PlayerID.PLAYER_2,3,initialPos,3,3));
+        p.set(2,new Player(PlayerID.PLAYER_3,3,initialPos,3,3));
+        p.set(3,new Player(PlayerID.PLAYER_4,3,initialPos,3,3));
+        
+        //Tick 0
+        GameState a = new GameState(0,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        Set<PlayerID> drp= new HashSet<>();
+        drp.add(PlayerID.PLAYER_1);
+        drp.add(PlayerID.PLAYER_2);
+        drp.add(PlayerID.PLAYER_3);
+        drp.add(PlayerID.PLAYER_4);
+
+        a= a.next(new HashMap<>(), drp);
+        Map<Cell,Bomb> bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_1,bb.get(initialPos).ownerId());
+        
+        //Tick 1
+        a = new GameState(1,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_2,bb.get(initialPos).ownerId());
+        
+      //Tick 21
+        a = new GameState(21,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_4,bb.get(initialPos).ownerId());
+        
+      //Tick 20
+        a = new GameState(20,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_1,bb.get(initialPos).ownerId());
+        
+      //Tick 11
+        a = new GameState(11,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+
+        a= a.next(new HashMap<>(), drp);
+        bb =a.bombedCells();
+        assertEquals(PlayerID.PLAYER_3,bb.get(initialPos).ownerId());
+
+        
+    }
 }

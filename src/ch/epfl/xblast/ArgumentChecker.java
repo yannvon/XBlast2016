@@ -13,9 +13,7 @@ public final class ArgumentChecker {
     /**
      * Constructor: private since class should not be instantiable.
      */
-    private ArgumentChecker() {
-
-    }
+    private ArgumentChecker() {}
 
     /**
      * Determines if given integer is non-negative

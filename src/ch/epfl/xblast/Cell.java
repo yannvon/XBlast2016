@@ -13,13 +13,15 @@ import java.util.List;
 public final class Cell {
 
     // Constants defining the Game Board size
-    public final static int COLUMNS = 15;
-    public final static int ROWS = 13;
-    public final static int COUNT = ROWS * COLUMNS;
+    public static final int COLUMNS = 15;
+    public static final int ROWS = 13;
+    public static final int COUNT = ROWS * COLUMNS;
     
     // Unmodifiable arrays containing all Cells of the Game Board
-    public final static List<Cell> ROW_MAJOR_ORDER = Collections.unmodifiableList(rowMajorOrder());
-    public final static List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());
+    public final static List<Cell> ROW_MAJOR_ORDER = 
+            Collections.unmodifiableList(rowMajorOrder());
+    public final static List<Cell> SPIRAL_ORDER = 
+            Collections.unmodifiableList(spiralOrder());
 
     // Attributes
     private final int x, y;
@@ -64,12 +66,12 @@ public final class Cell {
     }
     
     /**
-     * Returns the neighbouring cell in given Direction. Since the Game Board is
+     * Returns the neighboring cell in given Direction. Since the Game Board is
      * considered a torus, this Cell always exists.
      * 
      * @param dir
-     *            direction of the neighbour
-     * @return the neighbouring Cell in given Direction
+     *            direction of the neighbor
+     * @return the neighboring Cell in given Direction
      */
     public Cell neighbor(Direction dir) {
         switch (dir) {
@@ -86,6 +88,11 @@ public final class Cell {
     }
     
     @Override
+    /**
+     * Compares an Object to a Cell.
+     * 
+     * @return true if the Object is equal to this Cell, false otherwise
+     */
     public boolean equals(Object that) {
         if (that == null) {
             return false;
@@ -94,17 +101,32 @@ public final class Cell {
             return true;
         }
         // to compare two Cells it is sufficient to compare their unique indexes
-        if (this.getClass().equals(that.getClass())) {
+        if (getClass() == that.getClass()) {
             return this.rowMajorIndex() == ((Cell) that).rowMajorIndex();
         }
         return false;
     }
     
     @Override
+    /**
+     * Defines how to print a Cell.
+     * 
+     * @return a String representation of the Cell.
+     */
     public String toString() {
         return "(" + x + "," + y + ")";
     }
     
+    @Override
+    /**
+     * Returns the hash value of the Cell.
+     * 
+     * @return integer hash value
+     */
+    public int hashCode(){
+       return rowMajorIndex(); 
+    }
+
     /**
      * Constructs an array containing all Cells of the Game Board following the
      * reading order.
@@ -141,26 +163,19 @@ public final class Cell {
         
         // Declare needed variables
         boolean horizontal = true;
-        ArrayList<Cell> spiral = new ArrayList<Cell>();
+        ArrayList<Cell> spiral = new ArrayList<>();
         
         // Ordering Algorithm
         while (!ix.isEmpty() && !iy.isEmpty()) {
             ArrayList<Integer> i1 = horizontal ? ix : iy;
             ArrayList<Integer> i2 = horizontal ? iy : ix;
-            int c2 = i2.get(0);
-            i2.remove(0);
+            int c2 = i2.remove(0);
             for (int c1 : i1) {
-                spiral.add(horizontal ? new Cell(c1, c2)
-                        : new Cell(c2, c1));
+                spiral.add(horizontal ? new Cell(c1, c2) : new Cell(c2, c1));
             }
             Collections.reverse(i1);
             horizontal = !horizontal;
         }
         return spiral;
-    }
-    
-    @Override
-    public int hashCode(){
-       return rowMajorIndex(); 
     }
 }
