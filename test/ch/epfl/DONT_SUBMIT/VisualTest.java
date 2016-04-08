@@ -63,6 +63,15 @@ public class VisualTest {
                             Arrays.asList(b, r, b, r, b, r, b),
                             Arrays.asList(b, r, b, r, b, r, b),
                             Arrays.asList(b, r, b, r, b, r, b)))
+            ,
+
+            Board.ofQuadrantNWBlocksWalled(
+                    Arrays.asList(Arrays.asList(__, __, __, __, __, __, __),
+                            Arrays.asList(__, __, __, __, __, __, __),
+                            Arrays.asList(__, __, __, __, __, __, __),
+                            Arrays.asList(__, __, __, __, __, __, __),
+                            Arrays.asList(__, __, __, __, __, __, __),
+                            Arrays.asList(__, __, __, __, __, __, __)))
             
             
             
@@ -106,7 +115,7 @@ public class VisualTest {
                     new Cell(scan.nextInt(), scan.nextInt()), maxBombs, range));
         }
         
-        System.out.println("board?/n  0:normal/n  1:with lot of destructible wall/n  2:with lot of bonus");
+        System.out.println("board?\n  0:normal\n  1:with lot of destructible wall\n  2:with lot of bonus\n  3:empty Board");
 
         GameState game = new GameState(boards.get(scan.nextInt()%3), gPlayers);
         boolean inGame = true;
