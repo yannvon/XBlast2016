@@ -117,7 +117,7 @@ public class VisualTest {
         
         System.out.println("board?\n  0:normal\n  1:with lot of destructible wall\n  2:with lot of bonus\n  3:empty Board");
 
-        GameState game = new GameState(boards.get(scan.nextInt()%3), gPlayers);
+        GameState game = new GameState(boards.get(scan.nextInt()%boards.size()), gPlayers);
         boolean inGame = true;
         PlayerID control = PlayerID.PLAYER_1;
         while (inGame) {
