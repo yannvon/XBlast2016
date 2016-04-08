@@ -1,6 +1,5 @@
 package ch.epfl.DONT_SUBMIT;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,38 +34,24 @@ public class VisualTest {
     private final static Block __ = Block.FREE;
     private final static Block XX = Block.INDESTRUCTIBLE_WALL;
     private final static Block xx = Block.DESTRUCTIBLE_WALL;
-    private final static Block b = Block.BONUS_BOMB;
-    private final static Block r = Block.BONUS_RANGE;
 
+    private static final RandomEventGenerator RANDOM = new RandomEventGenerator(
+            2016, 30, 100);
 
-    private final static List<Board> boards = Arrays.asList(
-            Board.ofQuadrantNWBlocksWalled(
+    private final static Board board = Board.ofQuadrantNWBlocksWalled(
             Arrays.asList(Arrays.asList(__, __, __, __, __, xx, __),
                     Arrays.asList(__, XX, xx, XX, xx, XX, xx),
                     Arrays.asList(__, xx, __, __, __, xx, __),
                     Arrays.asList(xx, XX, __, XX, XX, XX, XX),
                     Arrays.asList(__, xx, __, xx, __, __, __),
-                    Arrays.asList(xx, XX, xx, XX, xx, XX, __)))
-            ,
-            Board.ofQuadrantNWBlocksWalled(
-                    Arrays.asList(Arrays.asList(__, __, xx, xx, xx, xx, xx),
-                            Arrays.asList(__, xx, xx, xx, xx, xx, xx),
-                            Arrays.asList(__, xx, xx, xx, xx, xx, xx),
-                            Arrays.asList(xx, xx, xx, xx, xx, xx, xx),
-                            Arrays.asList(xx, xx, xx, xx, xx, xx, xx),
-                            Arrays.asList(xx, xx, xx, xx, xx, xx, XX)))
-            ,
-            Board.ofQuadrantNWBlocksWalled(
-                    Arrays.asList(Arrays.asList(__, __, r, b, b, b, b),
-                            Arrays.asList(__, r, b, b, b, r, b),
-                            Arrays.asList(__, b, b, r, b, b, b),
-                            Arrays.asList(b, r, b, r, b, r, b),
-                            Arrays.asList(b, r, b, r, b, r, b),
-                            Arrays.asList(b, r, b, r, b, r, b)))
-            
-            
-            
-            );
+                    Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
+
+    private final static List<Player> players = Arrays.asList(
+            new Player(PlayerID.PLAYER_1, 3, new Cell(1, 1), 3, 3),
+            new Player(PlayerID.PLAYER_2, 3, new Cell(7, 6), 3, 3),
+            new Player(PlayerID.PLAYER_3, 3, new Cell(8, 9), 3, 3),
+            new Player(PlayerID.PLAYER_4, 3, new Cell(3, 4), 3, 3));
+
     
     private VisualTest() {
        
@@ -86,11 +71,8 @@ public class VisualTest {
      *   - "w","a","s","d" : change the direction of the controlled player
      *   - "x"             : stop the player at the next central SubCell 
      *   - "e"             : the controlled player drop a bomb
-     *   - "all"           : all the players put a bomb
-     * @throws IOException 
-     * @throws InterruptedException 
      */
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) {
 
         Scanner scan = new Scanner(System.in);
         List<Player> gPlayers = new ArrayList<>();
@@ -105,10 +87,8 @@ public class VisualTest {
             gPlayers.add(new Player(PlayerID.values()[i], life,
                     new Cell(scan.nextInt(), scan.nextInt()), maxBombs, range));
         }
-        
-        System.out.println("board?/n  0:normal/n  1:with lot of destructible wall/n  2:with lot of bonus");
 
-        GameState game = new GameState(boards.get(scan.nextInt()%3), gPlayers);
+        GameState game = new GameState(board, gPlayers);
         boolean inGame = true;
         PlayerID control = PlayerID.PLAYER_1;
         while (inGame) {
@@ -145,12 +125,6 @@ public class VisualTest {
                 break;
             case "x":
                 speedChange.put(control, Optional.empty());
-                break;
-            case "all":
-                for(PlayerID id:PlayerID.values()){
-
-                    bombdrp.add(id);
-                }
                 break;
             case "0":
                 inGame = false;

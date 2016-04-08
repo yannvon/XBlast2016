@@ -88,6 +88,11 @@ public final class Cell {
     }
     
     @Override
+    /**
+     * Compares an Object to a Cell.
+     * 
+     * @return true if the Object is equal to this Cell, false otherwise
+     */
     public boolean equals(Object that) {
         if (that == null) {
             return false;
@@ -103,11 +108,21 @@ public final class Cell {
     }
     
     @Override
+    /**
+     * Defines how to print a Cell.
+     * 
+     * @return a String representation of the Cell.
+     */
     public String toString() {
         return "(" + x + "," + y + ")";
     }
     
     @Override
+    /**
+     * Returns the hash value of the Cell.
+     * 
+     * @return integer hash value
+     */
     public int hashCode(){
        return rowMajorIndex(); 
     }

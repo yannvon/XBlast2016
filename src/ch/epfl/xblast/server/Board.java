@@ -33,7 +33,6 @@ public final class Board {
             throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
         }
         this.blocks = Collections.unmodifiableList(new ArrayList<>(blocks));
-
     }
 
     /**
@@ -60,7 +59,6 @@ public final class Board {
     
         // return the new Board
         return new Board(tempBoard);
-    
     }
 
     /**
@@ -97,7 +95,6 @@ public final class Board {
     
         // call ofRows method to construct Board from walledBlocks matrix
         return ofRows(walledBlocks);
-        
     }
 
     /**

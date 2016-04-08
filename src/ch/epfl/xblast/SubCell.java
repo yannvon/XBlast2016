@@ -113,6 +113,11 @@ public final class SubCell {
     }
 
     @Override
+    /**
+     * Compares an Object to a SubCell.
+     * 
+     * @return true if given Object is equal to this SubCell, false otherwise
+     */
     public boolean equals(Object that) {
         if (that == null) {
             return false;
@@ -128,6 +133,11 @@ public final class SubCell {
     }
 
     @Override
+    /**
+     * Defines how to represent a SubCell.
+     * 
+     * @return a String representation of the SubCell.
+     */
     public String toString() {
         return "(" + x + "," + y + ")";
     }
