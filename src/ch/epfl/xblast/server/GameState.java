@@ -474,7 +474,7 @@ public final class GameState {
      * them and what commands they give.
      * 
      * @param players0
-     *            (unordered) list of all players
+     *            (unordered!) list of all players
      * @param playerBonuses
      *            mapping playerID's to consumed bonuses
      * @param bombedCells1
@@ -493,24 +493,24 @@ public final class GameState {
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
 
         /*
-         * 1) move the players by first creating new DirectedPosition Sq 
-         *      and then evolving it.
+         * 1,2) move the players in two steps: first by creating a new 
+         *      DirectedPosition sequence and then evolving according to the
+         *      environment the player is in.
          */
         List<Player> movedPlayers = 
                 nextMovedPlayers(players0, board1, bombedCells1, speedChangeEvents);
         
         /*
-         * 2) change the lifeState sequence of the players 
+         * 3) change the lifeState sequence of the players 
          *      according to their new position.
          */
         List<Player> newStatePlayers = nextEvolvedStatePlayers(movedPlayers, blastedCells1);
         
         /*
-         * 3) add potential picked up bonuses to the players
+         * 4) add potential picked up bonuses to the players
+         *     and returns players1.
          */
-        List<Player> players1 = nextUpgradedPlayers(newStatePlayers,playerBonuses);
-        
-        return players1;
+        return nextUpgradedPlayers(newStatePlayers, playerBonuses);
     }
 
     /**
@@ -536,7 +536,7 @@ public final class GameState {
         List<Player> players1 = new ArrayList<>();
         for (Player p : players0) {
             PlayerID id = p.id();
-
+            
             /*
              * STEP 1 Computation of the new Directed Position sequence 
              *        - if the player does not want to move nothing is changed here.
@@ -574,9 +574,7 @@ public final class GameState {
                 directedPositions1 = directedPositions1.tail();
             }
 
-            /*
-             * STEP 3 add the new moved player to the list
-             */
+            // Finally add the new moved player to the list
             players1.add(new Player(p.id(), p.lifeStates(), directedPositions1,
                     p.maxBombs(), p.bombRange()));
         }
