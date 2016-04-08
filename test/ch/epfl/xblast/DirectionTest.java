@@ -14,6 +14,14 @@ public class DirectionTest {
     }
 
     @Test
+    public void oppositeWorksForAll4Directions() {
+        assertEquals(Direction.S, Direction.N.opposite());
+        assertEquals(Direction.W, Direction.E.opposite());
+        assertEquals(Direction.N, Direction.S.opposite());
+        assertEquals(Direction.E, Direction.W.opposite());
+    }
+    
+    @Test
     public void oppositeIsTwoStepsAway() {
         for (Direction d: Direction.values())
             assertEquals(2, Math.abs(d.ordinal() - d.opposite().ordinal()));
