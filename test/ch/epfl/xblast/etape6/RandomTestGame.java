@@ -82,13 +82,7 @@ public class RandomTestGame {
 
                 for(List<Integer> e: pos) {
                 	DirectedPosition h = seq.head();
-                	assertTrue(e.get(0) == h.position().x());
-                	assertTrue(e.get(1) == h.position().y());
-                	if(!(e.get(2) == h.direction().ordinal())){
-                	    System.out.println(speedChange);
-                	}
-                	//assertTrue(e.get(2) == h.direction().ordinal());
-                	//assertTrue(GameSimulation.compare(h, e));
+                	assertTrue(GameSimulation.compare(h, e));
 
                 	seq = seq.tail();                	
                 }

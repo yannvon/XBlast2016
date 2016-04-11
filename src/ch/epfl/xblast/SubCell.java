@@ -12,8 +12,8 @@ public final class SubCell {
     // Constants related to the devision of the Game Board into Sub Cells
     private static final int SUBDIVISION = 16;
     private static final int CENTRAL = SUBDIVISION / 2;
-    private static final int COLUMNS = Cell.COLUMNS * SUBDIVISION;
-    private static final int ROWS = Cell.ROWS * SUBDIVISION;
+    private static final int SUBCOLUMNS = Cell.COLUMNS * SUBDIVISION;
+    private static final int SUBROWS = Cell.ROWS * SUBDIVISION;
 
     // Attributes
     private final int x, y;
@@ -42,8 +42,8 @@ public final class SubCell {
      *            y-coordinate
      */
     public SubCell(int x, int y) {
-        this.x = Math.floorMod(x, COLUMNS);
-        this.y = Math.floorMod(y, ROWS);
+        this.x = Math.floorMod(x, SUBCOLUMNS);
+        this.y = Math.floorMod(y, SUBROWS);
     }
 
     /**
@@ -144,6 +144,6 @@ public final class SubCell {
     
     @Override
     public int hashCode(){
-        return x + y * COLUMNS;
+        return x + y * SUBCOLUMNS;
     }
 }
