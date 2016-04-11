@@ -102,7 +102,6 @@ public class ListsTest {
         List<Integer> starting = Arrays.asList(1,2,3);
         List<List<Integer>> result = Lists.permutations(starting);
         
-        System.out.println(result.toString());  //FIXME delete
         
         assertTrue(result.contains(Arrays.asList(1,2,3)));
         assertTrue(result.contains(Arrays.asList(2,1,3)));
@@ -121,7 +120,6 @@ public class ListsTest {
         List<String> starting = Arrays.asList("bla","blu","bli","foo","bar","baar","baaar");
         List<List<String>> result = Lists.permutations(starting);
         
-        //System.out.println(result.toString());
         
         assertTrue(result.contains(Arrays.asList("bla","blu","bli","foo","bar","baaar","baar")));
         assertTrue(result.contains(Arrays.asList("bla","blu","bli","foo","baaar","bar","baar")));
@@ -136,7 +134,6 @@ public class ListsTest {
         List<String> starting = Arrays.asList("bla");
         List<List<String>> result = Lists.permutations(starting);
         
-        System.out.println(result.toString());  //FIXME delete
         
         assertTrue(result.contains(Arrays.asList("bla")));
         assertEquals(1,result.size());
