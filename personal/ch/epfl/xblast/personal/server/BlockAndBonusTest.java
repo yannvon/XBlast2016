@@ -1,8 +1,11 @@
-package ch.epfl.xblast.server;
+package ch.epfl.xblast.personal.server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import ch.epfl.xblast.server.Block;
+import ch.epfl.xblast.server.Bonus;
 
 public class BlockAndBonusTest {
 

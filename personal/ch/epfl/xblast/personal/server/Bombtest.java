@@ -1,6 +1,6 @@
-package ch.epfl.xblast.server;
+package ch.epfl.xblast.personal.server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.server.Bomb;
 
 /**
  * JUnit test for the Bomb.java class.

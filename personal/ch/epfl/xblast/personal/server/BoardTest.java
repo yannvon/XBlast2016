@@ -1,4 +1,4 @@
-package ch.epfl.xblast.server;
+package ch.epfl.xblast.personal.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -11,6 +11,8 @@ import org.junit.Test;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.server.Block;
+import ch.epfl.xblast.server.Board;
 
 /**
  * Test Board class.

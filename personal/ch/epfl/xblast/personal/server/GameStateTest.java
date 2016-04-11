@@ -1,6 +1,8 @@
-package ch.epfl.xblast.server;
+package ch.epfl.xblast.personal.server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,8 +18,13 @@ import org.junit.Test;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.server.Block;
+import ch.epfl.xblast.server.Board;
+import ch.epfl.xblast.server.Bomb;
+import ch.epfl.xblast.server.GameState;
+import ch.epfl.xblast.server.Player;
+import ch.epfl.xblast.server.Ticks;
 import ch.epfl.xblast.server.debug.ClassComparator;
-import ch.epfl.xblast.server.debug.GameStatePrinter;
 import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
 public class GameStateTest {
