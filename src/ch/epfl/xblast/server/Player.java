@@ -76,14 +76,8 @@ public final class Player {
          * 
          * @return true if the player is allowed to move, false otherwise
          */
-        public boolean canMove() {//FIXME
-            switch (state) {
-            case VULNERABLE:
-            case INVULNERABLE:
-                return true;
-            default:
-                return false;
-            }
+        public boolean canMove() {
+            return state == State.VULNERABLE || state == State.INVULNERABLE;
         }
 
     }
