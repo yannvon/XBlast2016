@@ -595,10 +595,16 @@ public final class GameState {
     private static Sq<DirectedPosition> constructDPSq(Player p,
             Optional<Direction> speedChange) {
     
+
+        Sq<DirectedPosition> sq = p.directedPositions();
+        // find nearest central SubCell
+        DirectedPosition nextCentral = sq.findFirst(t -> t.position().isCentral());
+        
+        
         /*
          * 1) compute direction where player where player wants to go
          */
-        Direction d = speedChange.orElse(p.direction());
+        Direction d = speedChange.orElse(nextCentral.direction());
         
         /*
          * 2) a player can immediately go back or continue in same direction
@@ -611,9 +617,6 @@ public final class GameState {
          * 3) if a player wants to do fancy stuff wait until next central cell
          */
         else {
-            Sq<DirectedPosition> sq = p.directedPositions();
-            // find nearest central SubCell
-            SubCell nextCentral = sq.findFirst(t -> t.position().isCentral()).position();
     
             /*
              * 3.1) compute first part of sequence
@@ -627,9 +630,9 @@ public final class GameState {
             //
             Sq<DirectedPosition> dp2 = speedChange.isPresent()
                     ? DirectedPosition
-                            .moving(new DirectedPosition(nextCentral, d))
+                            .moving(new DirectedPosition(nextCentral.position(), d))
                     : DirectedPosition
-                            .stopped(new DirectedPosition(nextCentral, d));
+                            .stopped(nextCentral);
     
             return dp1.concat(dp2);
         }

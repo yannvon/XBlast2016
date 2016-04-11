@@ -75,7 +75,6 @@ public class RandomTestGame {
         while (!s.isGameOver()) {
             Map<PlayerID, Optional<Direction>> speedChange = randEvents.randomSpeedChangeEvents();
             s = s.next(speedChange, randEvents.randomBombDropEvents());
-            GameStatePrinterwithoutColor.printGameState(s);
             for(Player p: s.players()) {
                 List<List<Integer>> pos = GameSimulation.positionsList(pos_iterator.next());
                 Sq<DirectedPosition> seq = p.directedPositions();
