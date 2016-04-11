@@ -596,7 +596,7 @@ public final class GameState {
             Optional<Direction> speedChange) {
     
         /*
-         * 1) compute direction where player where player wants to go
+         * 1) compute direction where the player wants to go
          */
         Direction d = speedChange.orElse(p.direction());
         
