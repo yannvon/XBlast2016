@@ -126,6 +126,7 @@ public class ListsTest {
         assertTrue(result.contains(Arrays.asList("bla","bli","blu","foo","bar","baaar","baar")));
     }
     
+    
     /**
      * Test the permutation method with a single element.
      */
