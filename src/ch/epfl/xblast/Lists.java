@@ -62,9 +62,8 @@ public final class Lists {
 
         //if list is empty, the result is an empty list
         if(input.isEmpty()){
-            //output.add(input);
-            //return output;
-            return Collections.singletonList(Collections.emptyList());//FIXME
+            output.add(input);
+            return output;
         }
             
         //if list contains one element or more, remove one and start recursive call.
