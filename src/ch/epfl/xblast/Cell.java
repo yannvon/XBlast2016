@@ -66,7 +66,7 @@ public final class Cell {
     }
     
     /**
-     * Returns the neighboring cell in given Direction. Since the Game Board is
+     * Returns the neighboring cell in given Direction. Since the game board is
      * considered a torus, this Cell always exists.
      * 
      * @param dir
@@ -152,8 +152,8 @@ public final class Cell {
      */
     private static ArrayList<Cell> spiralOrder() {
         // Declare and fill two arrays that are useful for the ordering algorithm
-        ArrayList<Integer> ix = new ArrayList<Integer>();
-        ArrayList<Integer> iy = new ArrayList<Integer>();
+        ArrayList<Integer> ix = new ArrayList<>();
+        ArrayList<Integer> iy = new ArrayList<>();
         for (int i = 0; i < COLUMNS; i++) {
             ix.add(i);
         }

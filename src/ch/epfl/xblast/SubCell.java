@@ -65,13 +65,13 @@ public final class SubCell {
 
     /**
      * Returns the neighboring SubCell. Like for Cells, there always exists a
-     * neighbor, due to the (conceptual) Torus shape of the Game Board.
+     * neighbor, due to the (conceptual) Torus shape of the game board.
      * 
      * @param d
      *            Direction of neighbor SubCell
      * @return new SubCell that is located in given Direction from this SubCell
      * @throws Error
-     *             when the argument is not one of the 4 direction
+     *             if the argument is not one of the 4 direction
      */
     public SubCell neighbor(Direction d) {
         switch (d) {
@@ -119,17 +119,19 @@ public final class SubCell {
      * @return true if given Object is equal to this SubCell, false otherwise
      */
     public boolean equals(Object that) {
-        if (that == null) {
-            return false;
-        }
-        if (this == that){
-            return true;
-        }
-        if (getClass() == that.getClass()) {
-            return x == ((SubCell) that).x()
-                    && y == ((SubCell) that).y();
-        }
-        return false;
+        return (that instanceof SubCell && x == ((SubCell) that).x()
+                && y == ((SubCell) that).y());
+//        if (that == null) {                   //FIXME
+//            return false;
+//        }
+//        if (this == that){
+//            return true;
+//        }
+//        if (getClass() == that.getClass()) {
+//            return x == ((SubCell) that).x()
+//                    && y == ((SubCell) that).y();
+//        }
+//        return false;
     }
 
     @Override
@@ -143,6 +145,11 @@ public final class SubCell {
     }
     
     @Override
+    /**
+     * Returns the hash value of the SubCell.
+     * 
+     * @return integer hash value
+     */
     public int hashCode(){
         return x + y * SUBCOLUMNS;
     }

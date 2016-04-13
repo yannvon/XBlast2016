@@ -14,7 +14,7 @@ public enum Direction {
      * 
      * @return the opposite Direction
      * @throws Error
-     *             when the argument is not one of the 4 direction
+     *             if the argument is not one of the 4 directions
      */
     public Direction opposite() {
         switch (this) {
@@ -35,8 +35,6 @@ public enum Direction {
      * Determines whether the Direction is horizontal or not.
      * 
      * @return true if horizontal, false otherwise
-     * @throws Error
-     *             when the argument is not one of the 4 direction
      */
     public boolean isHorizontal() {
         return(this == E || this == W);
@@ -47,7 +45,7 @@ public enum Direction {
      * 
      * @param that
      *            the other Direction
-     * @return true if that is parallel to Direction, false otherwise
+     * @return true if that is parallel to this Direction, false otherwise
      */
     public boolean isParallelTo(Direction that) {
         return this == that || this == that.opposite();
