@@ -37,7 +37,7 @@ public enum Direction {
      * @return true if horizontal, false otherwise
      */
     public boolean isHorizontal() {
-        return(this == E || this == W);
+        return (this == E || this == W);
     }
 
     /**

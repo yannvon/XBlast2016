@@ -10,7 +10,7 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 
 /**
- * A player being characterised by a multitude of attributes. This is an
+ * A player being characterized by a multitude of attributes. This is an
  * immutable class.
  * 
  * @author Loïc Vandenberghe (257742)
@@ -77,7 +77,7 @@ public final class Player {
          * @return true if the player is allowed to move, false otherwise
          */
         public boolean canMove() {
-            return state == State.VULNERABLE || state == State.INVULNERABLE;
+            return state() == State.VULNERABLE || state() == State.INVULNERABLE;
         }
 
     }
@@ -160,7 +160,7 @@ public final class Player {
          * @return DirectedPosition with changed position but same direction
          */
         public DirectedPosition withPosition(SubCell newPosition) {
-            return new DirectedPosition(newPosition, direction);
+            return new DirectedPosition(newPosition, direction());
         }
 
         /**
@@ -171,7 +171,7 @@ public final class Player {
          * @return DirectedPosition with changed direction but same position
          */
         public DirectedPosition withDirection(Direction newDirection) {
-            return new DirectedPosition(position, newDirection);
+            return new DirectedPosition(position(), newDirection);
         }
     }
 
@@ -198,7 +198,7 @@ public final class Player {
      * @throws NullPointerException
      *             if one of the first three arguments is null.
      * @throws IllegalArgumentException
-     *             if one of the last three arguments is negative.
+     *             if one of the last two arguments is negative.
      */
     public Player(PlayerID id, Sq<LifeState> lifeStates,
             Sq<DirectedPosition> directedPos, int maxBombs, int bombRange) {
@@ -235,7 +235,7 @@ public final class Player {
             int bombRange) {
         this(id, 
              lifeStateSqCreation(ArgumentChecker.requireNonNegative(lives)),
-             DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),//FIXME requireNonNull?
+             DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),
              maxBombs,
              bombRange);
     }
@@ -266,7 +266,7 @@ public final class Player {
      * @return current lifeState
      */
     public LifeState lifeState() {
-        return lifeStates.head();
+        return lifeStates().head();
     }
 
     /**
@@ -278,13 +278,18 @@ public final class Player {
      * @return the appropriate sequence of LifeStates for the players next life
      */
     public Sq<LifeState> statesForNextLife() {
-        // creating a sequence of LifeStates where the player is dying
+        
+        /*
+         *  creating a sequence of LifeStates where the player is dying
+         */
         Sq<LifeState> dying = Sq.repeat(Ticks.PLAYER_DYING_TICKS,
                 new LifeState(lives(), LifeState.State.DYING));
 
-        // calling lifeStateSqCreation to add the appropriate sequence
-        // (either DEAD or INVULNERABLE followed by VULNERABLE with one life
-        // less)
+        /*
+         * calling lifeStateSqCreation to add the appropriate sequence
+         * (either DEAD or INVULNERABLE followed by VULNERABLE with one life
+         * less)
+         */
         return dying.concat(lifeStateSqCreation(lives() - 1));
     }
 
@@ -321,7 +326,7 @@ public final class Player {
      * @return current position
      */
     public SubCell position() {
-        return directedPos.head().position();
+        return directedPositions().head().position();
     }
 
     /**
@@ -330,7 +335,7 @@ public final class Player {
      * @return the direction towards which the player is looking
      */
     public Direction direction() {
-        return directedPos.head().direction();
+        return directedPositions().head().direction();
     }
 
     /**
@@ -351,7 +356,7 @@ public final class Player {
      * @return almost identical player but with a new maxBomb value
      */
     public Player withMaxBombs(int newMaxBombs) {
-        return new Player(id, lifeStates, directedPos, newMaxBombs, bombRange);
+        return new Player(id(), lifeStates(), directedPositions(), newMaxBombs, bombRange());
     }
 
     /**
@@ -373,7 +378,7 @@ public final class Player {
      * @return almost identical player but with a new bombRange value
      */
     public Player withBombRange(int newBombRange) {
-        return new Player(id, lifeStates, directedPos, maxBombs, newBombRange);
+        return new Player(id(), lifeStates(), directedPositions(), maxBombs(), newBombRange);
     }
 
     /**
@@ -383,7 +388,7 @@ public final class Player {
      * @return a bomb placed by the player on his current location (Cell)
      */
     public Bomb newBomb() {
-        return new Bomb(id, position().containingCell(), Ticks.BOMB_FUSE_TICKS,bombRange);
+        return new Bomb(id(), position().containingCell(), Ticks.BOMB_FUSE_TICKS,bombRange);
     }
 
     /**

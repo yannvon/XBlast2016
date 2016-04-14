@@ -38,8 +38,8 @@ public final class GameState {
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
             .unmodifiableList(Lists.<PlayerID> permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
-    private static final Block[] BONUS_GENERATOR = { Block.BONUS_BOMB,
-            Block.BONUS_RANGE, Block.FREE };
+    private static final Block[] BONUS_GENERATOR = 
+            { Block.BONUS_BOMB, Block.BONUS_RANGE, Block.FREE };
 
     // Instance attributes
     private final int ticks;
@@ -133,7 +133,7 @@ public final class GameState {
      * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
-        return (ticks > Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
+        return (ticks() > Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
     }
 
     /**
@@ -142,7 +142,7 @@ public final class GameState {
      * @return the remaining time in seconds
      */
     public double remainingTime() {
-        return ((double) Ticks.TOTAL_TICKS - ticks) / Ticks.TICKS_PER_SECOND;
+        return ((double) Ticks.TOTAL_TICKS - ticks()) / Ticks.TICKS_PER_SECOND;
     }
 
     /**
@@ -182,7 +182,7 @@ public final class GameState {
      */
     public List<Player> alivePlayers() {
         List<Player> alivePlayers = new ArrayList<>();
-        for (Player p : players) {
+        for (Player p : players()) {
             if (p.isAlive()) {
                 alivePlayers.add(p);
             }
@@ -229,7 +229,7 @@ public final class GameState {
 
         for (Player pl : sortedPlayers) {
             Cell plPosition = pl.position().containingCell();
-            Block blockAtPosition = board.blockAt(plPosition);
+            Block blockAtPosition = board().blockAt(plPosition);
             if (blockAtPosition.isBonus() && pl.position().isCentral() && !consumedBonuses.contains(plPosition)) {
                 consumedBonuses.add(plPosition);
                 playerBonuses.put(pl.id(), blockAtPosition.associatedBonus());
@@ -239,13 +239,13 @@ public final class GameState {
         // --- EVOLUTION ORDER ---
 
         // 1) evolve blasts
-        List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
+        List<Sq<Cell>> blasts1 = nextBlasts(blasts, board(), explosions);
         // 1.1) using the evolved blast we call our custom private method that
         // returns a set of all blasted cells.
         Set<Cell> blastedCells1 = blastedCells(blasts1);
 
         // 2) evolve board
-        Board board1 = nextBoard(board, consumedBonuses, blastedCells1);
+        Board board1 = nextBoard(board(), consumedBonuses, blastedCells1);
 
         // 3) evolve explosion
         List<Sq<Sq<Cell>>> explosions1 = nextExplosions(explosions);
@@ -274,12 +274,12 @@ public final class GameState {
         }
 
         // 5) players
-        List<Player> players1 = nextPlayers(players, playerBonuses,
+        List<Player> players1 = nextPlayers(players(), playerBonuses,
                 bombedCells(bombs1).keySet(), board1, blastedCells1,
                 speedChangeEvents);
 
         // 6) construct and return the new GameStates
-        return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
+        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1);
     }
 
     /*
@@ -517,7 +517,7 @@ public final class GameState {
     /**
      * ADDITIONAL METHOD: Computes the new DirectedPosition sequence for every
      * player according to the speedChangeEvents and evolves the (potentially)
-     * new sequences if the player fulfils all conditions to move.
+     * new sequences if the player fulfills all conditions to move.
      * 
      * @param speedChangeEvents
      *            mapping between all the player that want to change direction
@@ -740,21 +740,12 @@ public final class GameState {
 
         // get permutation that is currently valid
         List<PlayerID> idSorted = 
-                PLAYER_PERMUTATION.get(ticks % PLAYER_PERMUTATION.size());
+                PLAYER_PERMUTATION.get(ticks() % PLAYER_PERMUTATION.size());
 
         Comparator<Player> c = 
                 (x,y) -> (Integer.compare(idSorted.indexOf(x.id()), idSorted.indexOf(y.id())));
         Collections.sort(sortedPlayers, c);
-//        // create a map that associates the playerID to every players //FIXME
-//        Map<PlayerID, Player> pMap = new HashMap<>();
-//        for (Player p : players) {
-//            pMap.put(p.id(), p);
-//        }
-//
-//        // sort players according to current permutation
-//        for (PlayerID id : idSorted) {
-//            sortedPlayers.add(pMap.get(id));
-//        }
+        
         return sortedPlayers;
     }
 

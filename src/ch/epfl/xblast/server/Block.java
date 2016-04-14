@@ -3,7 +3,7 @@ package ch.epfl.xblast.server;
 import java.util.NoSuchElementException;
 
 /**
- * Enum of Blocks.
+ * Enumeration of Blocks.
  * 
  * @author Loic Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)

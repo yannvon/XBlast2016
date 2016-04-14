@@ -52,7 +52,7 @@ public final class SubCell {
      * @return length of shortest Manhattan path to a central SubCell
      */
     public int distanceToCentral() {
-        return Math.abs(x % SUBDIVISION - CENTRAL) + Math.abs(y % SUBDIVISION - CENTRAL);
+        return Math.abs(x() % SUBDIVISION - CENTRAL) + Math.abs(y() % SUBDIVISION - CENTRAL);
     }
 
     /**
@@ -76,13 +76,13 @@ public final class SubCell {
     public SubCell neighbor(Direction d) {
         switch (d) {
         case N:
-            return new SubCell(x, y - 1);
+            return new SubCell(x(), y() - 1);
         case S:
-            return new SubCell(x, y + 1);
+            return new SubCell(x(), y() + 1);
         case W:
-            return new SubCell(x - 1, y);
+            return new SubCell(x() - 1, y());
         case E:
-            return new SubCell(x + 1, y);
+            return new SubCell(x() + 1, y());
         }
         throw new Error(); // will never happen
     }
@@ -93,7 +93,7 @@ public final class SubCell {
      * @return Cell in which SubCell is located
      */
     public Cell containingCell() {
-        return new Cell(x / SUBDIVISION, y / SUBDIVISION);
+        return new Cell(x() / SUBDIVISION, y() / SUBDIVISION);
     }
 
     /**
@@ -119,8 +119,8 @@ public final class SubCell {
      * @return true if given Object is equal to this SubCell, false otherwise
      */
     public boolean equals(Object that) {
-        return (that instanceof SubCell && x == ((SubCell) that).x()
-                && y == ((SubCell) that).y());
+        return (that instanceof SubCell && x() == ((SubCell) that).x()
+                && y() == ((SubCell) that).y());
 //        if (that == null) {                   //FIXME
 //            return false;
 //        }
@@ -141,7 +141,7 @@ public final class SubCell {
      * @return a String representation of the SubCell.
      */
     public String toString() {
-        return "(" + x + "," + y + ")";
+        return "(" + x() + "," + y() + ")";
     }
     
     @Override
@@ -151,6 +151,6 @@ public final class SubCell {
      * @return integer hash value
      */
     public int hashCode(){
-        return x + y * SUBCOLUMNS;
+        return x() + y() * SUBCOLUMNS;
     }
 }

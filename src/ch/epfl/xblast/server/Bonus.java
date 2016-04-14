@@ -31,9 +31,11 @@ public enum Bonus {
     
 
     /**
-     * apply the bonus to a player
+     * Applies the bonus to a player
+     * 
      * @param player
-     * @return a upgraded player with the bonus
+     *            that picked up a bonus
+     * @return an upgraded player
      */
     abstract public Player applyTo(Player player);
 }

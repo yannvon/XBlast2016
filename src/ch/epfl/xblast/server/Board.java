@@ -9,7 +9,7 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Lists;
 
 /**
- * The immutable class Board represents the Game Board of the xblast game.
+ * The immutable class Board represents the game board of the XBlast game.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -48,7 +48,7 @@ public final class Board {
         // check matrix
         checkBlockMatrix(rows, Cell.ROWS, Cell.COLUMNS);
     
-        // add a constant sequence of given block to a temporary ArrayList
+        // add a constant sequence of given block to an ArrayList
         List<Sq<Block>> tempBoard = new ArrayList<>();
     
         for (List<Block> row: rows) {
@@ -77,13 +77,13 @@ public final class Board {
     
         List<List<Block>> walledBlocks = new ArrayList<>();
         
-        //add the last row of Wall-Blocks
+        // add the last row of Wall-Blocks
         List<Block> walledRow = Collections.nCopies(Cell.COLUMNS, Block.INDESTRUCTIBLE_WALL);
         walledBlocks.add(walledRow);
         
-        // add walls and copy the blocks of given matrix into new walled matrix
+        // add walls and add the blocks of given matrix into new walled matrix row
         for (List<Block> innerRow : innerBlocks) {
-            List<Block> row=new ArrayList<>();
+            List<Block> row = new ArrayList<>();
             row.add(Block.INDESTRUCTIBLE_WALL);
             row.addAll(innerRow);
             row.add(Block.INDESTRUCTIBLE_WALL);
@@ -163,11 +163,9 @@ public final class Board {
      */
     private static final void checkBlockMatrix(List<List<Block>> matrix,
             int rows, int columns) {
-    
-        int matrixRows = matrix.size();
-    
+            
         // 1) check if the amount of rows is correct
-        if (matrixRows != rows) {
+        if (matrix.size() != rows) {
             throw new IllegalArgumentException(
                     "The amount of rows does not match desired value");
         }

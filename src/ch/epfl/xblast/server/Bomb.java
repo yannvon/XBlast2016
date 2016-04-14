@@ -11,7 +11,7 @@ import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 
 /**
- * A bomb that can explode.
+ * A bomb that explodes after given amount of Ticks.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -106,7 +106,7 @@ public final class Bomb {
      * @return current length of fuse
      */
     public int fuseLength() {
-        return fuseLengths.head();
+        return fuseLengths().head();
     }
 
     /**
@@ -146,7 +146,7 @@ public final class Bomb {
      */
     private Sq<Sq<Cell>> explosionArmTowards(Direction dir) {
 
-        Sq<Cell> part = Sq.iterate(position, c -> c.neighbor(dir)).limit(range);
+        Sq<Cell> part = Sq.iterate(position(), c -> c.neighbor(dir)).limit(range());
 
         return Sq.repeat(Ticks.EXPLOSION_TICKS, part);
     }

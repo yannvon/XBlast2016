@@ -62,7 +62,7 @@ public final class Cell {
      * @return reading order index of Cell
      */
     public int rowMajorIndex() {
-        return x + y * COLUMNS;
+        return x() + y() * COLUMNS;
     }
     
     /**
@@ -76,13 +76,13 @@ public final class Cell {
     public Cell neighbor(Direction dir) {
         switch (dir) {
         case N:
-            return new Cell(x, y - 1);
+            return new Cell(x(), y() - 1);
         case S:
-            return new Cell(x, y + 1);
+            return new Cell(x(), y() + 1);
         case W:
-            return new Cell(x - 1, y);
+            return new Cell(x() - 1, y());
         case E:
-            return new Cell(x + 1, y);
+            return new Cell(x() + 1, y());
         }
         throw new Error(); // will never happen
     }
@@ -94,17 +94,21 @@ public final class Cell {
      * @return true if the Object is equal to this Cell, false otherwise
      */
     public boolean equals(Object that) {
-        if (that == null) {
-            return false;
-        }
-        if (this == that){
-            return true;
-        }
-        // to compare two Cells it is sufficient to compare their unique indexes
-        if (getClass() == that.getClass()) {
-            return this.rowMajorIndex() == ((Cell) that).rowMajorIndex();
-        }
-        return false;
+        return (that instanceof Cell
+                && (this.rowMajorIndex() == ((Cell) that).rowMajorIndex()));
+
+        //FIXME
+//        if (that == null) {
+//            return false;
+//        }
+//        if (this == that){
+//            return true;
+//        }
+//        // to compare two Cells it is sufficient to compare their unique indexes
+//        if (getClass() == that.getClass()) {
+//            return this.rowMajorIndex() == ((Cell) that).rowMajorIndex();
+//        }
+//        return false;
     }
     
     @Override
