@@ -3,6 +3,7 @@ package ch.epfl.xblast.server;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -735,22 +736,25 @@ public final class GameState {
      * @return a list of players ordered by priority
      */
     private List<Player> sortedPlayers() {
-        List<Player> sortedPlayers = new ArrayList<>();
+        List<Player> sortedPlayers = new ArrayList<>(players);
 
         // get permutation that is currently valid
-        List<PlayerID> idSorted = PLAYER_PERMUTATION
-                .get(ticks % PLAYER_PERMUTATION.size());
+        List<PlayerID> idSorted = 
+                PLAYER_PERMUTATION.get(ticks % PLAYER_PERMUTATION.size());
 
-        // create a map that associates the playerID to every players
-        Map<PlayerID, Player> pMap = new HashMap<>();
-        for (Player p : players) {
-            pMap.put(p.id(), p);
-        }
-
-        // sort players according to current permutation
-        for (PlayerID id : idSorted) {
-            sortedPlayers.add(pMap.get(id));
-        }
+        Comparator<Player> c = 
+                (x,y) -> (Integer.compare(idSorted.indexOf(x.id()), idSorted.indexOf(y.id())));
+        Collections.sort(sortedPlayers, c);
+//        // create a map that associates the playerID to every players //FIXME
+//        Map<PlayerID, Player> pMap = new HashMap<>();
+//        for (Player p : players) {
+//            pMap.put(p.id(), p);
+//        }
+//
+//        // sort players according to current permutation
+//        for (PlayerID id : idSorted) {
+//            sortedPlayers.add(pMap.get(id));
+//        }
         return sortedPlayers;
     }
 
