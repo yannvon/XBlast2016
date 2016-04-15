@@ -743,7 +743,7 @@ public final class GameState {
                 PLAYER_PERMUTATION.get(ticks() % PLAYER_PERMUTATION.size());
 
         Comparator<Player> c = 
-                (x,y) -> (Integer.compare(idSorted.indexOf(x.id()), idSorted.indexOf(y.id())));
+                (p1,p2) -> (Integer.compare(idSorted.indexOf(p1.id()), idSorted.indexOf(p2.id())));
         Collections.sort(sortedPlayers, c);
         
         return sortedPlayers;
