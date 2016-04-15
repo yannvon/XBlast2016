@@ -90,33 +90,33 @@ public final class Cell {
         throw new Error(); // will never happen
     }
     
-    @Override
     /**
      * Compares an Object to a Cell.
      * 
      * @return true if the Object is equal to this Cell, false otherwise
      */
+    @Override
     public boolean equals(Object that) {
         return (that instanceof Cell
                 && (this.rowMajorIndex() == ((Cell) that).rowMajorIndex()));
     }
     
-    @Override
     /**
      * Defines how to print a Cell.
      * 
      * @return a String representation of the Cell.
      */
+    @Override
     public String toString() {
         return "(" + x() + "," + y() + ")";
     }
     
-    @Override
     /**
      * Returns the hash value of the Cell.
      * 
      * @return integer hash value
      */
+    @Override
     public int hashCode(){
        return rowMajorIndex(); 
     }

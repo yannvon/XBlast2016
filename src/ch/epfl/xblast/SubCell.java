@@ -116,33 +116,33 @@ public final class SubCell {
         return y;
     }
 
-    @Override
     /**
      * Compares an Object to a SubCell.
      * 
      * @return true if given Object is equal to this SubCell, false otherwise
-     */
+     */    
+    @Override
     public boolean equals(Object that) {
         return (that instanceof SubCell && x() == ((SubCell) that).x()
                 && y() == ((SubCell) that).y());
     }
 
-    @Override
     /**
      * Defines how to represent a SubCell.
      * 
      * @return a String representation of the SubCell.
      */
+    @Override
     public String toString() {
         return "(" + x() + "," + y() + ")";
     }
     
-    @Override
     /**
      * Returns the hash value of the SubCell.
      * 
      * @return integer hash value
      */
+    @Override
     public int hashCode(){
         return x() + y() * SUBCOLUMNS;
     }
