@@ -18,6 +18,7 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public final class Bomb {
+    
     // Attributes
     private final PlayerID ownerId;
     private final Cell position;
@@ -36,7 +37,7 @@ public final class Bomb {
      * @param range
      *            Integer to represent bomb detonation range
      * @throws NullPointerException
-     *             if one of the first three parameters are null
+     *             if one of the first three parameters is null
      * @throws IllegalArgumentException
      *             if range is negative or fuseLength sequence empty
      */
@@ -45,8 +46,9 @@ public final class Bomb {
         this.position = Objects.requireNonNull(position);
         this.range = ArgumentChecker.requireNonNegative(range);
         this.fuseLengths = Objects.requireNonNull(fuseLengths);
-        if (fuseLengths.isEmpty()) { 
-            throw new IllegalArgumentException("fuseLentghs sequence cannot be empty.");
+        if (fuseLengths.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "fuseLentghs sequence cannot be empty.");
         }
     }
 
@@ -94,7 +96,7 @@ public final class Bomb {
     /**
      * Getter of fuseLength sequence. (present and future fuseLengths)
      * 
-     * @return a sequence representing the fuseLength
+     * @return a sequence representing the fuseLengths
      */
     public Sq<Integer> fuseLengths() {
         return fuseLengths;
@@ -127,7 +129,7 @@ public final class Bomb {
      */
     public List<Sq<Sq<Cell>>> explosion() {
         List<Sq<Sq<Cell>>> explosion = new ArrayList<>();
-        
+
         // for every direction add an explosion arm to the explosion
         for (Direction dir : Direction.values()) {
             explosion.add(explosionArmTowards(dir));
@@ -146,8 +148,8 @@ public final class Bomb {
      */
     private Sq<Sq<Cell>> explosionArmTowards(Direction dir) {
 
-        Sq<Cell> part = Sq.iterate(position(), c -> c.neighbor(dir)).limit(range());
+        Sq<Cell> arm = Sq.iterate(position(), c -> c.neighbor(dir)).limit(range());
 
-        return Sq.repeat(Ticks.EXPLOSION_TICKS, part);
+        return Sq.repeat(Ticks.EXPLOSION_TICKS, arm);
     }
 }

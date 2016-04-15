@@ -22,8 +22,8 @@ public final class SubCell {
      * Retrieves the central SubCell of any given Cell.
      * 
      * @param cell
-     *            for which the SubCell has to be found
-     * @return the SubCell that lays in the center of given Cell
+     *            for which the central SubCell has to be found
+     * @return the SubCell that lays in the centre of given Cell
      */
     public static SubCell centralSubCellOf(Cell cell) {
         // define the coordinates of the SubCell using the defined constants
@@ -52,11 +52,13 @@ public final class SubCell {
      * @return length of shortest Manhattan path to a central SubCell
      */
     public int distanceToCentral() {
-        return Math.abs(x() % SUBDIVISION - CENTRAL) + Math.abs(y() % SUBDIVISION - CENTRAL);
+        return Math.abs(x() % SUBDIVISION - CENTRAL)
+                + Math.abs(y() % SUBDIVISION - CENTRAL);
     }
 
     /**
      * Determine whether this SubCell is a central SubCell or not.
+     * 
      * @return true if SubCell is central, false otherwise
      */
     public boolean isCentral() {
@@ -98,6 +100,7 @@ public final class SubCell {
 
     /**
      * Getter for the x-coordinate of the SubCell.
+     * 
      * @return the x-coordinate
      */
     public int x() {
@@ -106,6 +109,7 @@ public final class SubCell {
     
     /**
      * Getter for the y-coordinate of the SubCell.
+     * 
      * @return the y-coordinate
      */
     public int y() {
@@ -121,17 +125,6 @@ public final class SubCell {
     public boolean equals(Object that) {
         return (that instanceof SubCell && x() == ((SubCell) that).x()
                 && y() == ((SubCell) that).y());
-//        if (that == null) {                   //FIXME
-//            return false;
-//        }
-//        if (this == that){
-//            return true;
-//        }
-//        if (getClass() == that.getClass()) {
-//            return x == ((SubCell) that).x()
-//                    && y == ((SubCell) that).y();
-//        }
-//        return false;
     }
 
     @Override

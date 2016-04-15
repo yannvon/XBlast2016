@@ -15,12 +15,9 @@ import java.util.List;
  */
 public final class Lists {
 
-    
     /**
-     * mirrored() returns a symmetric copy of the input list. Note that the last
-     * element of the input list appears only once in the result.
-     * 
-     * Warning: the added elements keep the same reference!
+     * This method returns a symmetric copy of the input list. Note that the
+     * last element of the input list appears only once in the result.
      * 
      * @param l
      *            list that has to be mirrored
@@ -31,8 +28,9 @@ public final class Lists {
     public static <T> List<T> mirrored(List<T> l){
         
         // if argument is empty, throw exception
-        if(l.isEmpty()){
-            throw new IllegalArgumentException("List given as parameter is empty!");
+        if (l.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "List given as parameter is empty!");
         }
         List<T> mirrored = new ArrayList<>(l);
         
@@ -40,7 +38,7 @@ public final class Lists {
         List<T> reversed = new ArrayList<>(l.subList(0, l.size() - 1));
         Collections.reverse(reversed);
         mirrored.addAll(reversed);
-        
+
         return mirrored;
     }
 
@@ -54,7 +52,7 @@ public final class Lists {
      */
     public static <T> List<List<T>> permutations(List<T> l){
         
-        //declare List that will then be returned plus copy the received List
+        //declare List that will then be returned and copy the received List
         List<List<T>> output = new LinkedList<>();
         List<T> input = new LinkedList<>(l);
 
@@ -64,7 +62,7 @@ public final class Lists {
         }
             
         //if list contains one element or more, remove one and start recursive call.
-        T deleted = input.remove(0);    
+        T deleted = input.remove(0);
         List<List<T>> permuted = permutations(input);
 
         //add removed element at every position and save the new list in the output list        

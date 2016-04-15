@@ -79,7 +79,6 @@ public final class Player {
         public boolean canMove() {
             return state() == State.VULNERABLE || state() == State.INVULNERABLE;
         }
-
     }
 
     /**
@@ -121,7 +120,7 @@ public final class Player {
         private final Direction direction;
 
         /**
-         * Constructs a directed position with given parameters.
+         * Constructor of a directed position.
          * 
          * @param position
          *            SubCell position of player
@@ -157,6 +156,7 @@ public final class Player {
          * Returns a new directed position with same direction but new position.
          * 
          * @param newPosition
+         *            SubCell of the new position
          * @return DirectedPosition with changed position but same direction
          */
         public DirectedPosition withPosition(SubCell newPosition) {
@@ -168,6 +168,7 @@ public final class Player {
          * direction.
          * 
          * @param newDirection
+         *            Direction of the new DirectedPosition
          * @return DirectedPosition with changed direction but same position
          */
         public DirectedPosition withDirection(Direction newDirection) {
@@ -202,7 +203,7 @@ public final class Player {
      */
     public Player(PlayerID id, Sq<LifeState> lifeStates,
             Sq<DirectedPosition> directedPos, int maxBombs, int bombRange) {
-        
+
         this.id = Objects.requireNonNull(id);
         this.lifeStates = Objects.requireNonNull(lifeStates);
         this.directedPos = Objects.requireNonNull(directedPos);
@@ -235,8 +236,9 @@ public final class Player {
             int bombRange) {
         this(id, 
              lifeStateSqCreation(ArgumentChecker.requireNonNegative(lives)),
-             DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S)),
-             maxBombs,
+             DirectedPosition.stopped(new DirectedPosition(
+                     SubCell.centralSubCellOf(position), Direction.S)),
+             maxBombs, 
              bombRange);
     }
 
@@ -278,17 +280,16 @@ public final class Player {
      * @return the appropriate sequence of LifeStates for the players next life
      */
     public Sq<LifeState> statesForNextLife() {
-        
+
         /*
-         *  creating a sequence of LifeStates where the player is dying
+         * creating a sequence of LifeStates where the player is dying
          */
         Sq<LifeState> dying = Sq.repeat(Ticks.PLAYER_DYING_TICKS,
                 new LifeState(lives(), LifeState.State.DYING));
 
         /*
-         * calling lifeStateSqCreation to add the appropriate sequence
-         * (either DEAD or INVULNERABLE followed by VULNERABLE with one life
-         * less)
+         * calling lifeStateSqCreation to add the appropriate sequence (either
+         * DEAD or INVULNERABLE followed by VULNERABLE with one life less)
          */
         return dying.concat(lifeStateSqCreation(lives() - 1));
     }
@@ -356,7 +357,8 @@ public final class Player {
      * @return almost identical player but with a new maxBomb value
      */
     public Player withMaxBombs(int newMaxBombs) {
-        return new Player(id(), lifeStates(), directedPositions(), newMaxBombs, bombRange());
+        return new Player(id(), lifeStates(), directedPositions(), newMaxBombs,
+                bombRange());
     }
 
     /**
@@ -378,7 +380,8 @@ public final class Player {
      * @return almost identical player but with a new bombRange value
      */
     public Player withBombRange(int newBombRange) {
-        return new Player(id(), lifeStates(), directedPositions(), maxBombs(), newBombRange);
+        return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
+                newBombRange);
     }
 
     /**
@@ -388,7 +391,8 @@ public final class Player {
      * @return a bomb placed by the player on his current location (Cell)
      */
     public Bomb newBomb() {
-        return new Bomb(id(), position().containingCell(), Ticks.BOMB_FUSE_TICKS,bombRange);
+        return new Bomb(id(), position().containingCell(),
+                Ticks.BOMB_FUSE_TICKS, bombRange);
     }
 
     /**

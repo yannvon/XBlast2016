@@ -43,6 +43,7 @@ public final class Cell {
     
     /**
      * Getter for the x-coordinate of the Cell.
+     * 
      * @return the x-coordinate
      */
     public int x() {
@@ -51,6 +52,7 @@ public final class Cell {
 
     /**
      * Getter for the y-coordinate of the Cell.
+     * 
      * @return the y-coordinate
      */
     public int y() {
@@ -59,6 +61,7 @@ public final class Cell {
     
     /**
      * Returns the Index of the Cell following the reading order.
+     * 
      * @return reading order index of Cell
      */
     public int rowMajorIndex() {
@@ -96,19 +99,6 @@ public final class Cell {
     public boolean equals(Object that) {
         return (that instanceof Cell
                 && (this.rowMajorIndex() == ((Cell) that).rowMajorIndex()));
-
-        //FIXME
-//        if (that == null) {
-//            return false;
-//        }
-//        if (this == that){
-//            return true;
-//        }
-//        // to compare two Cells it is sufficient to compare their unique indexes
-//        if (getClass() == that.getClass()) {
-//            return this.rowMajorIndex() == ((Cell) that).rowMajorIndex();
-//        }
-//        return false;
     }
     
     @Override
@@ -118,7 +108,7 @@ public final class Cell {
      * @return a String representation of the Cell.
      */
     public String toString() {
-        return "(" + x + "," + y + ")";
+        return "(" + x() + "," + y() + ")";
     }
     
     @Override
@@ -169,7 +159,7 @@ public final class Cell {
         boolean horizontal = true;
         ArrayList<Cell> spiral = new ArrayList<>();
         
-        // Ordering Algorithm
+        // Apply ordering Algorithm
         while (!ix.isEmpty() && !iy.isEmpty()) {
             ArrayList<Integer> i1 = horizontal ? ix : iy;
             ArrayList<Integer> i2 = horizontal ? iy : ix;

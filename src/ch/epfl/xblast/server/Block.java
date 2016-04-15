@@ -94,7 +94,8 @@ public enum Block {
      */
     public Bonus associatedBonus() {
         if (maybeAssociatedBonus == null) {
-            throw new NoSuchElementException("This Block does not contain a bonus");
+            throw new NoSuchElementException(
+                    "This Block does not contain a bonus");
         }
         return maybeAssociatedBonus;
     }

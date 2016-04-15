@@ -696,23 +696,6 @@ public final class GameState {
     }
 
     /**
-     * OVERLOAD: returns a set with all cells on which there is a blast. The
-     * list of blasts is given as parameter.
-     * 
-     * @param blasts
-     *            list of all blasts
-     * @return set with all blasted Cells
-     */
-    private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
-
-        Set<Cell> blastedCells = new HashSet<>();
-        for (Sq<Cell> blast : blasts) {
-            blastedCells.add(blast.head());
-        }
-        return blastedCells;
-    }
-
-    /**
      * OVERLOAD: returns a map that associates the bombs to the Cells they
      * occupy. The list of bombs is given as parameter.
      * 
@@ -727,6 +710,23 @@ public final class GameState {
             bombedCells.put(bomb.position(), bomb);
         }
         return bombedCells;
+    }
+
+    /**
+     * OVERLOAD: returns a set with all cells on which there is a blast. The
+     * list of blasts is given as parameter.
+     * 
+     * @param blasts
+     *            list of all blasts
+     * @return set with all blasted Cells
+     */
+    private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
+    
+        Set<Cell> blastedCells = new HashSet<>();
+        for (Sq<Cell> blast : blasts) {
+            blastedCells.add(blast.head());
+        }
+        return blastedCells;
     }
 
     /**

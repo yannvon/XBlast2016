@@ -30,13 +30,15 @@ public final class Board {
      */
     public Board(List<Sq<Block>> blocks) {
         if (blocks.size() != Cell.COUNT) {
-            throw new IllegalArgumentException("The amount of Blocks doesn't match the expected value of " + Cell.COUNT );
+            throw new IllegalArgumentException(
+                    "The amount of Blocks doesn't match the expected value of: "
+                            + Cell.COUNT);
         }
         this.blocks = Collections.unmodifiableList(new ArrayList<>(blocks));
     }
 
     /**
-     * Constructs a constant Board, given block matrix.
+     * Constructs a constant Board, given a block matrix.
      * 
      * @param rows
      *            a matrix of blocks
@@ -47,18 +49,16 @@ public final class Board {
     public static Board ofRows(List<List<Block>> rows) {
         // check matrix
         checkBlockMatrix(rows, Cell.ROWS, Cell.COLUMNS);
-    
-        // add a constant sequence of given block to an ArrayList
-        List<Sq<Block>> tempBoard = new ArrayList<>();
-    
-        for (List<Block> row: rows) {
+
+        // add a constant sequence every given block to the new board
+        List<Sq<Block>> blocks = new ArrayList<>();
+
+        for (List<Block> row : rows) {
             for (Block b : row) {
-                tempBoard.add(Sq.constant(b));
+                blocks.add(Sq.constant(b));
             }
         }
-    
-        // return the new Board
-        return new Board(tempBoard);
+        return new Board(blocks);
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Board {
         // add the last row of Wall-Blocks
         walledBlocks.add(walledRow);
     
-        // call ofRows method to construct Board from walledBlocks matrix
+        // call ofRows method to construct Board from the walledBlocks matrix
         return ofRows(walledBlocks);
     }
 
@@ -108,21 +108,22 @@ public final class Board {
      *             if the list quadrantNWBlocks is not in the right format
      */
     public static Board ofQuadrantNWBlocksWalled(List<List<Block>> quadrantNWBlocks) {
-        
+
         // check matrix
-        checkBlockMatrix(quadrantNWBlocks, (Cell.ROWS - 1)/2, (Cell.COLUMNS - 1)/2);
-    
+        checkBlockMatrix(quadrantNWBlocks, (Cell.ROWS - 1) / 2,
+                (Cell.COLUMNS - 1) / 2);
+
         // temporary block matrix
         List<List<Block>> finalMatrix = new ArrayList<>();
-        
+
         // mirror every row to get entire rows of the upper half board
-        for(List<Block> l : quadrantNWBlocks){
+        for (List<Block> l : quadrantNWBlocks) {
             finalMatrix.add(Lists.mirrored(l));
         }
-        
+
         // mirror the upper half board to get entire inner Board
         finalMatrix = Lists.mirrored(finalMatrix);
-    
+
         // call ofInnerBlocksWalled to add walls and construct board
         return ofInnerBlocksWalled(finalMatrix);
     }
@@ -131,10 +132,10 @@ public final class Board {
      * Returns the block sequence of a given cell
      * 
      * @param c
-     *            Cell for which you want the block sequence
+     *            Cell for which the block sequence is wanted
      * @return the block sequence of a specific cell
      */
-    public Sq<Block> blocksAt(Cell c){
+    public Sq<Block> blocksAt(Cell c) {
         return blocks.get(c.rowMajorIndex());
     }
     
@@ -163,7 +164,7 @@ public final class Board {
      */
     private static final void checkBlockMatrix(List<List<Block>> matrix,
             int rows, int columns) {
-            
+
         // 1) check if the amount of rows is correct
         if (matrix.size() != rows) {
             throw new IllegalArgumentException(
