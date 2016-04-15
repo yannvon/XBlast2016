@@ -7,9 +7,29 @@ package ch.epfl.xblast.server;
  */
 public final class ExplosionPainter {
     
+    public static final byte BYTE_FOR_EMPTY = 0b1000;//16?
+    
     private ExplosionPainter(){}
     
-    public static byte byteForBomb(){
+    /**
+     * @param bomb
+     * @return
+     */
+    public static byte byteForBomb(Bomb bomb){
+        //TODO
+        return 0;
+    }
+    
+    /**
+     * @param n
+     * @param e
+     * @param s
+     * @param w
+     * @return
+     */
+    public static byte byteForBlast(boolean n,boolean e,boolean s,boolean w){
+        //TODO
+        
         return 0;
     }
 }
