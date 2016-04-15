@@ -11,11 +11,6 @@ package ch.epfl.xblast;
 public final class ArgumentChecker {
 
     /**
-     * Constructor: private since class should not be instantiable.
-     */
-    private ArgumentChecker() {}
-
-    /**
      * Determines if given integer is non-negative
      * 
      * @param value
@@ -31,4 +26,9 @@ public final class ArgumentChecker {
         }
         return value;
     }
+
+    /**
+     * Constructor: private since class should not be instantiable.
+     */
+    private ArgumentChecker() {}
 }

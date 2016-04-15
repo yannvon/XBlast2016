@@ -22,8 +22,8 @@ public final class SubCell {
      * Retrieves the central SubCell of any given Cell.
      * 
      * @param cell
-     *            for which the SubCell has to be found
-     * @return the SubCell that lays in the center of given Cell
+     *            for which the central SubCell has to be found
+     * @return the SubCell that lays in the centre of given Cell
      */
     public static SubCell centralSubCellOf(Cell cell) {
         // define the coordinates of the SubCell using the defined constants
@@ -52,11 +52,13 @@ public final class SubCell {
      * @return length of shortest Manhattan path to a central SubCell
      */
     public int distanceToCentral() {
-        return Math.abs(x % SUBDIVISION - CENTRAL) + Math.abs(y % SUBDIVISION - CENTRAL);
+        return Math.abs(x() % SUBDIVISION - CENTRAL)
+                + Math.abs(y() % SUBDIVISION - CENTRAL);
     }
 
     /**
      * Determine whether this SubCell is a central SubCell or not.
+     * 
      * @return true if SubCell is central, false otherwise
      */
     public boolean isCentral() {
@@ -65,24 +67,24 @@ public final class SubCell {
 
     /**
      * Returns the neighboring SubCell. Like for Cells, there always exists a
-     * neighbor, due to the (conceptual) Torus shape of the Game Board.
+     * neighbor, due to the (conceptual) Torus shape of the game board.
      * 
      * @param d
      *            Direction of neighbor SubCell
      * @return new SubCell that is located in given Direction from this SubCell
      * @throws Error
-     *             when the argument is not one of the 4 direction
+     *             if the argument is not one of the 4 direction
      */
     public SubCell neighbor(Direction d) {
         switch (d) {
         case N:
-            return new SubCell(x, y - 1);
+            return new SubCell(x(), y() - 1);
         case S:
-            return new SubCell(x, y + 1);
+            return new SubCell(x(), y() + 1);
         case W:
-            return new SubCell(x - 1, y);
+            return new SubCell(x() - 1, y());
         case E:
-            return new SubCell(x + 1, y);
+            return new SubCell(x() + 1, y());
         }
         throw new Error(); // will never happen
     }
@@ -93,11 +95,12 @@ public final class SubCell {
      * @return Cell in which SubCell is located
      */
     public Cell containingCell() {
-        return new Cell(x / SUBDIVISION, y / SUBDIVISION);
+        return new Cell(x() / SUBDIVISION, y() / SUBDIVISION);
     }
 
     /**
      * Getter for the x-coordinate of the SubCell.
+     * 
      * @return the x-coordinate
      */
     public int x() {
@@ -106,44 +109,41 @@ public final class SubCell {
     
     /**
      * Getter for the y-coordinate of the SubCell.
+     * 
      * @return the y-coordinate
      */
     public int y() {
         return y;
     }
 
-    @Override
     /**
      * Compares an Object to a SubCell.
      * 
      * @return true if given Object is equal to this SubCell, false otherwise
-     */
+     */    
+    @Override
     public boolean equals(Object that) {
-        if (that == null) {
-            return false;
-        }
-        if (this == that){
-            return true;
-        }
-        if (getClass() == that.getClass()) {
-            return x == ((SubCell) that).x()
-                    && y == ((SubCell) that).y();
-        }
-        return false;
+        return (that instanceof SubCell && x() == ((SubCell) that).x()
+                && y() == ((SubCell) that).y());
     }
 
-    @Override
     /**
      * Defines how to represent a SubCell.
      * 
      * @return a String representation of the SubCell.
      */
+    @Override
     public String toString() {
-        return "(" + x + "," + y + ")";
+        return "(" + x() + "," + y() + ")";
     }
     
+    /**
+     * Returns the hash value of the SubCell.
+     * 
+     * @return integer hash value
+     */
     @Override
     public int hashCode(){
-        return x + y * SUBCOLUMNS;
+        return x() + y() * SUBCOLUMNS;
     }
 }

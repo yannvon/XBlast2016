@@ -3,6 +3,7 @@ package ch.epfl.xblast.server;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,7 @@ import ch.epfl.xblast.server.Player.LifeState;
 import ch.epfl.xblast.server.Player.LifeState.State;
 
 /**
- * This class represents a current state of a game.
+ * This class represents the current state of a game.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -35,10 +36,10 @@ public final class GameState {
     // Static attributes
     private static final int ALLOWED_DISTANCE_TO_BOMB = 6;
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
-            .unmodifiableList(Lists.<PlayerID> permutations(Arrays.asList(PlayerID.values())));
+            .unmodifiableList(Lists.permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
-    private static final Block[] BONUS_GENERATOR = { Block.BONUS_BOMB,
-            Block.BONUS_RANGE, Block.FREE };
+    private static final Block[] BONUS_GENERATOR = 
+            { Block.BONUS_BOMB, Block.BONUS_RANGE, Block.FREE };
 
     // Instance attributes
     private final int ticks;
@@ -82,13 +83,12 @@ public final class GameState {
                 new ArrayList<>(Objects.requireNonNull(bombs)));
         this.blasts = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(blasts)));
-        
+
         // 2) check ticks, players and board requirements
         this.ticks = ArgumentChecker.requireNonNegative(ticks);
-        int nbPlayers = players.size();
-        if (nbPlayers != 4) {
+        if (players.size() != 4) {
             throw new IllegalArgumentException(
-                    "The Game requires 4 players instead of " + nbPlayers);
+                    "The Game requires 4 players instead of " + players.size());
         }
         this.board = Objects.requireNonNull(board);
     }
@@ -132,7 +132,7 @@ public final class GameState {
      * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
-        return (ticks > Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
+        return (ticks() > Ticks.TOTAL_TICKS || alivePlayers().size() <= 1);
     }
 
     /**
@@ -141,7 +141,7 @@ public final class GameState {
      * @return the remaining time in seconds
      */
     public double remainingTime() {
-        return ((double) Ticks.TOTAL_TICKS - ticks) / Ticks.TICKS_PER_SECOND;
+        return ((double) Ticks.TOTAL_TICKS - ticks()) / Ticks.TICKS_PER_SECOND;
     }
 
     /**
@@ -152,8 +152,8 @@ public final class GameState {
      */
     public Optional<PlayerID> winner() {
         List<Player> alivePlayers = alivePlayers();
-        return alivePlayers.size() == 1 ? 
-                Optional.of(alivePlayers.get(0).id()) : Optional.empty();
+        return alivePlayers.size() == 1 ? Optional.of(alivePlayers.get(0).id())
+                : Optional.empty();
     }
 
     /**
@@ -181,7 +181,7 @@ public final class GameState {
      */
     public List<Player> alivePlayers() {
         List<Player> alivePlayers = new ArrayList<>();
-        for (Player p : players) {
+        for (Player p : players()) {
             if (p.isAlive()) {
                 alivePlayers.add(p);
             }
@@ -228,8 +228,9 @@ public final class GameState {
 
         for (Player pl : sortedPlayers) {
             Cell plPosition = pl.position().containingCell();
-            Block blockAtPosition = board.blockAt(plPosition);
-            if (blockAtPosition.isBonus() && pl.position().isCentral() && !consumedBonuses.contains(plPosition)) {
+            Block blockAtPosition = board().blockAt(plPosition);
+            if (blockAtPosition.isBonus() && pl.position().isCentral()
+                    && !consumedBonuses.contains(plPosition)) {
                 consumedBonuses.add(plPosition);
                 playerBonuses.put(pl.id(), blockAtPosition.associatedBonus());
             }
@@ -238,13 +239,13 @@ public final class GameState {
         // --- EVOLUTION ORDER ---
 
         // 1) evolve blasts
-        List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
+        List<Sq<Cell>> blasts1 = nextBlasts(blasts, board(), explosions);
         // 1.1) using the evolved blast we call our custom private method that
         // returns a set of all blasted cells.
         Set<Cell> blastedCells1 = blastedCells(blasts1);
 
         // 2) evolve board
-        Board board1 = nextBoard(board, consumedBonuses, blastedCells1);
+        Board board1 = nextBoard(board(), consumedBonuses, blastedCells1);
 
         // 3) evolve explosion
         List<Sq<Sq<Cell>>> explosions1 = nextExplosions(explosions);
@@ -262,7 +263,7 @@ public final class GameState {
 
             Sq<Integer> newFuse = b.fuseLengths().tail();
             // if the fuse has burned out or the bomb was hit by a blast it
-            // explodes and disappears
+            // explodes and disappears (not added to bombs1)
             if (newFuse.isEmpty() || blastedCells1.contains(b.position())) {
                 explosions1.addAll(b.explosion());
             }
@@ -272,13 +273,13 @@ public final class GameState {
             }
         }
 
-        // 5) players
-        List<Player> players1 = nextPlayers(players, playerBonuses,
+        // 5) evolve players
+        List<Player> players1 = nextPlayers(players(), playerBonuses,
                 bombedCells(bombs1).keySet(), board1, blastedCells1,
                 speedChangeEvents);
 
         // 6) construct and return the new GameStates
-        return new GameState(ticks + 1, board1, players1, bombs1, explosions1, blasts1);
+        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1);
     }
 
     /*
@@ -344,6 +345,7 @@ public final class GameState {
         for (Cell currentCell : allCells) {
             Sq<Block> blocks = board0.blocksAt(currentCell);
             Block head = blocks.head();
+            boolean blasted = blastedCells1.contains(currentCell);
 
             /*
              * 2.1) if current Cell contains a bonus that was consumed,
@@ -358,7 +360,7 @@ public final class GameState {
              *      (we also handle the case where a already disappearing 
              *      bonus gets blasted again)
              */
-            else if (head.isBonus() && blastedCells1.contains(currentCell)) {
+            else if (head.isBonus() && blasted) {
 
                 Sq<Block> newBonusSq = 
                         blocks.tail().limit(Ticks.BONUS_DISAPPEARING_TICKS);
@@ -368,19 +370,18 @@ public final class GameState {
             
             /*
              * 2.3) if current Cell was a destructible wall and got blasted,
-             *      generate a sequence that will maybe make a bonus appear.
+             * generate a sequence that will maybe make a bonus appear.
              */
-            else if (head == Block.DESTRUCTIBLE_WALL
-                    && blastedCells1.contains(currentCell)) {
+            else if (head == Block.DESTRUCTIBLE_WALL && blasted) {
 
-                Sq<Block> newCrumblingWallSq = 
-                        Sq.repeat(Ticks.WALL_CRUMBLING_TICKS, Block.CRUMBLING_WALL);
+                Sq<Block> newCrumblingWallSq = Sq.repeat(
+                        Ticks.WALL_CRUMBLING_TICKS, Block.CRUMBLING_WALL);
 
                 // use the bonus generator array to get a random bonus.
-                Block randomBonus = 
-                        BONUS_GENERATOR[RANDOM.nextInt(BONUS_GENERATOR.length)];
-                newCrumblingWallSq = 
-                        newCrumblingWallSq.concat(Sq.constant(randomBonus));
+                Block randomBonus = BONUS_GENERATOR[RANDOM
+                        .nextInt(BONUS_GENERATOR.length)];
+                newCrumblingWallSq = newCrumblingWallSq
+                        .concat(Sq.constant(randomBonus));
                 board1.add(newCrumblingWallSq);
             }
             
@@ -457,10 +458,10 @@ public final class GameState {
                     ++placedBombsNb;
                 }
             }
-            boolean canAddBomb = placedBombsNb < p.maxBombs();
+            boolean hasBombsLeft = placedBombsNb < p.maxBombs();
 
             // if every condition is satisfied the player drops a bomb
-            if (wantsToDrop && isAlive && locationFree && canAddBomb) {
+            if (wantsToDrop && isAlive && locationFree && hasBombsLeft) {
                 placedBombs.add(position);
                 newlyDroppedBombs.add(p.newBomb());
             }
@@ -468,13 +469,12 @@ public final class GameState {
         return newlyDroppedBombs;
     }
         
-    
     /**
      * Method in charge of evolving the Players according to what happens around
      * them and what commands they give.
      * 
      * @param players0
-     *            (unordered!) list of all players
+     *            unordered (!) list of all players
      * @param playerBonuses
      *            mapping playerID's to consumed bonuses
      * @param bombedCells1
@@ -482,7 +482,7 @@ public final class GameState {
      * @param board1
      *            board on which the game is played on
      * @param blastedCells1
-     *            cell that contain a blast
+     *            cell that contains a blast
      * @param speedChangeEvents
      *            events of players wanting to change their speed (direction)
      * @return list containing all players of the following tick
@@ -493,7 +493,7 @@ public final class GameState {
             Map<PlayerID, Optional<Direction>> speedChangeEvents) {
 
         /*
-         * 1,2) move the players in two steps: first by creating a new 
+         * 1) and 2) move the players in two steps: first by creating a new 
          *      DirectedPosition sequence and then evolving according to the
          *      environment the player is in.
          */
@@ -504,13 +504,13 @@ public final class GameState {
          * 3) change the lifeState sequence of the players 
          *      according to their new position.
          */
-        List<Player> newStatePlayers = nextEvolvedStatePlayers(movedPlayers, blastedCells1);
+        List<Player> evolvedStatePlayers = nextEvolvedStatePlayers(movedPlayers, blastedCells1);
         
         /*
          * 4) add potential picked up bonuses to the players
-         *     and returns players1.
+         *     and return players1.
          */
-        return nextUpgradedPlayers(newStatePlayers, playerBonuses);
+        return nextUpgradedPlayers(evolvedStatePlayers, playerBonuses);
     }
 
     /**
@@ -542,24 +542,23 @@ public final class GameState {
              *        - if the player does not want to move nothing is changed here.
              */
             Sq<DirectedPosition> directedPositions1 = speedChangeEvents.containsKey(id) ? 
-                            constructDPSq(p, speedChangeEvents.get(id)) : p.directedPositions();
+                            constructDPSeq(p, speedChangeEvents.get(id)) : p.directedPositions();
 
             /*
              *  STEP 2 Evolution of Directed Position sequence
-             *         - multiple criteria have to be met:
+             *         - multiple criteria have to be met to move:
              */
-                            
+
             // defining some useful variables
             SubCell currentSubCell = p.position();
-            Cell nextCell = directedPositions1.tail()
-                    .findFirst(d -> d.position().isCentral()).position()
-                    .containingCell();
-            Block nextBlock = board1.blockAt(nextCell);
             SubCell nextSubCell = directedPositions1.tail().head().position();
-
+            Block nextBlock = board1.blockAt(directedPositions1.tail()
+                    .findFirst(d -> d.position().isCentral()).position()
+                    .containingCell());
+            
             // evaluation of the different logic expressions
-            boolean movingTowardsCentral = 
-                    currentSubCell.distanceToCentral() > nextSubCell.distanceToCentral();
+            boolean movingTowardsCentral = currentSubCell
+                    .distanceToCentral() > nextSubCell.distanceToCentral();
             boolean canMove = p.lifeState().canMove();
             boolean blockedByWall = currentSubCell.isCentral()
                     && !nextBlock.canHostPlayer();
@@ -582,24 +581,24 @@ public final class GameState {
     }
     
     /**
-     * ADDITIONAL METHOD for nextPlayers. Constructs a sequence of DirectedPositions
-     * according to where the player wants to go.
+     * ADDITIONAL METHOD for nextMovedPlayers. Constructs a sequence of
+     * DirectedPositions according to where the player wants to go.
      * 
      * @param p
      *            player that wants to move
      * @param speedChangeEvent
-     *            Direction where the player wants to go, empty if he wants to stop
-     *            
+     *            Direction where the player wants to go, empty if he wants to
+     *            stop
+     * 
      * @return a sequence of DirectedPosition that describes the players path
      */
-    private static Sq<DirectedPosition> constructDPSq(Player p,
+    private static Sq<DirectedPosition> constructDPSeq(Player p,
             Optional<Direction> speedChange) {
     
-
         Sq<DirectedPosition> sq = p.directedPositions();
+        
         // find nearest central SubCell
         DirectedPosition nextCentral = sq.findFirst(t -> t.position().isCentral());
-        
         
         /*
          * 1) compute direction where player where player wants to go
@@ -612,28 +611,25 @@ public final class GameState {
         if (speedChange.isPresent() && d.isParallelTo(p.direction())) {
             return DirectedPosition.moving(new DirectedPosition(p.position(),d));
         }
-    
+
         /*
-         * 3) if a player wants to do fancy stuff wait until next central cell
+         * 3) if a player wants to stop or take a turn wait until next central
+         *    cell
          */
         else {
-    
             /*
-             * 3.1) compute first part of sequence
+             * 3.1) compute first part of the sequence
              */
-            Sq<DirectedPosition> dp1 = 
-                    sq.takeWhile(t -> !t.position().isCentral());
+            Sq<DirectedPosition> dp1 = sq
+                    .takeWhile(t -> !t.position().isCentral());
             /*
-             *  3.2) compute second part: the player either stays at the central
-             *       SubCell or takes a turn.
+             * 3.2) compute second part: the player either stays at the central
+             * SubCell or takes a turn.
              */
-            //
             Sq<DirectedPosition> dp2 = speedChange.isPresent()
-                    ? DirectedPosition
-                            .moving(new DirectedPosition(nextCentral.position(), d))
-                    : DirectedPosition
-                            .stopped(nextCentral);
-    
+                    ? DirectedPosition.moving(
+                            new DirectedPosition(nextCentral.position(), d))
+                    : DirectedPosition.stopped(nextCentral);
             return dp1.concat(dp2);
         }
     }
@@ -651,12 +647,12 @@ public final class GameState {
      * @return the list of players with the new LifeState sequence for the next
      *         step
      */
-    private static List<Player> nextEvolvedStatePlayers(List<Player> movedPlayers,
-            Set<Cell> blastedCells1) {
-        
+    private static List<Player> nextEvolvedStatePlayers(
+            List<Player> movedPlayers, Set<Cell> blastedCells1) {
+
         List<Player> newStatePlayer = new ArrayList<>();
         for (Player p : movedPlayers) {
-            
+
             boolean blasted = blastedCells1
                     .contains(p.position().containingCell());
             boolean vulnerable = p.lifeState().state() == State.VULNERABLE;
@@ -666,7 +662,7 @@ public final class GameState {
 
             newStatePlayer.add(new Player(p.id(), lifeStates1,
                     p.directedPositions(), p.maxBombs(), p.bombRange()));
-        }        
+        }
         return newStatePlayer;
     }
 
@@ -686,29 +682,12 @@ public final class GameState {
             List<Player> newStatePlayers, Map<PlayerID, Bonus> playerBonuses) {
 
         List<Player> players1 = new ArrayList<>();
-        
+
         for (Player p : newStatePlayers) {
             players1.add(playerBonuses.containsKey(p.id())
                     ? playerBonuses.get(p.id()).applyTo(p) : p);
         }
         return players1;
-    }
-
-    /**
-     * OVERLOAD: returns a set with all cells on which there is a blast. The
-     * list of blasts is given as parameter.
-     * 
-     * @param blasts
-     *            list of all blasts
-     * @return set with all blasted Cells
-     */
-    private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
-
-        Set<Cell> blastedCells = new HashSet<>();
-        for (Sq<Cell> blast : blasts) {
-            blastedCells.add(blast.head());
-        }
-        return blastedCells;
     }
 
     /**
@@ -729,29 +708,40 @@ public final class GameState {
     }
 
     /**
-     * HELPER METHOD: Returns a sorted version of the list of players according to current
-     * permutation that defines who has the priority in case of a conflict.
+     * OVERLOAD: returns a set with all cells on which there is a blast. The
+     * list of blasts is given as parameter.
+     * 
+     * @param blasts
+     *            list of all blasts
+     * @return set with all blasted Cells
+     */
+    private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
+
+        Set<Cell> blastedCells = new HashSet<>();
+        for (Sq<Cell> blast : blasts) {
+            blastedCells.add(blast.head());
+        }
+        return blastedCells;
+    }
+
+    /**
+     * HELPER METHOD: Returns a sorted version of the list of players according
+     * to current permutation that defines who has the priority in case of a
+     * conflict.
      * 
      * @return a list of players ordered by priority
      */
     private List<Player> sortedPlayers() {
-        List<Player> sortedPlayers = new ArrayList<>();
+        List<Player> sortedPlayers = new ArrayList<>(players);
 
         // get permutation that is currently valid
         List<PlayerID> idSorted = PLAYER_PERMUTATION
-                .get(ticks % PLAYER_PERMUTATION.size());
+                .get(ticks() % PLAYER_PERMUTATION.size());
 
-        // create a map that associates the playerID to every players
-        Map<PlayerID, Player> pMap = new HashMap<>();
-        for (Player p : players) {
-            pMap.put(p.id(), p);
-        }
+        Comparator<Player> c = (p1, p2) -> (Integer
+                .compare(idSorted.indexOf(p1.id()), idSorted.indexOf(p2.id())));
+        Collections.sort(sortedPlayers, c);
 
-        // sort players according to current permutation
-        for (PlayerID id : idSorted) {
-            sortedPlayers.add(pMap.get(id));
-        }
         return sortedPlayers;
     }
-
 }

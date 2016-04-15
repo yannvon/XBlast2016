@@ -20,6 +20,12 @@ public class CellTest {
     public void equals() {
         assertEquals(new Cell(1, 1), new Cell(1, 1));
     }
+    @Test
+    public void notEquals() {
+        assertFalse(new Cell(1, 1).equals( new Cell(1,2)));
+        assertFalse(new Cell(1, 1).equals( null));
+        
+    }
 
     @Test
     public void rowMajorIndexCorrespondsToOrder() {

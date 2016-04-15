@@ -15,12 +15,9 @@ import java.util.List;
  */
 public final class Lists {
 
-    
     /**
-     * mirrored() returns a symmetric copy of the input list. Note that the last
-     * element of the input list appears only once in the result.
-     * 
-     * Warning: the added elements keep the same reference!
+     * This method returns a symmetric copy of the input list. Note that the
+     * last element of the input list appears only once in the result.
      * 
      * @param l
      *            list that has to be mirrored
@@ -31,18 +28,17 @@ public final class Lists {
     public static <T> List<T> mirrored(List<T> l){
         
         // if argument is empty, throw exception
-        if(l.isEmpty()){
-            throw new IllegalArgumentException("List given as parameter is empty!");
+        if (l.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "List given as parameter is empty!");
         }
-        
-        List<T> mirrored = new ArrayList<T>(l);
+        List<T> mirrored = new ArrayList<>(l);
         
         // create sublist, reverse it and add it to input list
-        List<T> reversed = new ArrayList<T>(l.subList(0, l.size() - 1));
+        List<T> reversed = new ArrayList<>(l.subList(0, l.size() - 1));
         Collections.reverse(reversed);
-        
         mirrored.addAll(reversed);
-        
+
         return mirrored;
     }
 
@@ -51,23 +47,22 @@ public final class Lists {
      * random order.
      * 
      * @param l
-     *            list for which the elements will be permuted
+     *            list of which the elements will be permuted
      * @return a list containing the lists of every permutation
      */
     public static <T> List<List<T>> permutations(List<T> l){
         
-        //declare List that will then be returned plus copy the received List for safety reasons
+        //declare List that will then be returned and copy the received List
         List<List<T>> output = new LinkedList<>();
         List<T> input = new LinkedList<>(l);
 
         //if list is empty, the result is an empty list
         if(input.isEmpty()){
-            output.add(input);
-            return output;
+            return Collections.singletonList(Collections.emptyList());
         }
             
         //if list contains one element or more, remove one and start recursive call.
-        T deleted = input.remove(0);    
+        T deleted = input.remove(0);
         List<List<T>> permuted = permutations(input);
 
         //add removed element at every position and save the new list in the output list        
@@ -78,7 +73,6 @@ public final class Lists {
                 output.add(complete);
             }
         }
-        
         return output;
     }
 

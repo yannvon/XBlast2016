@@ -43,6 +43,7 @@ public final class Cell {
     
     /**
      * Getter for the x-coordinate of the Cell.
+     * 
      * @return the x-coordinate
      */
     public int x() {
@@ -51,6 +52,7 @@ public final class Cell {
 
     /**
      * Getter for the y-coordinate of the Cell.
+     * 
      * @return the y-coordinate
      */
     public int y() {
@@ -59,14 +61,15 @@ public final class Cell {
     
     /**
      * Returns the Index of the Cell following the reading order.
+     * 
      * @return reading order index of Cell
      */
     public int rowMajorIndex() {
-        return x + y * COLUMNS;
+        return x() + y() * COLUMNS;
     }
     
     /**
-     * Returns the neighboring cell in given Direction. Since the Game Board is
+     * Returns the neighboring cell in given Direction. Since the game board is
      * considered a torus, this Cell always exists.
      * 
      * @param dir
@@ -76,53 +79,44 @@ public final class Cell {
     public Cell neighbor(Direction dir) {
         switch (dir) {
         case N:
-            return new Cell(x, y - 1);
+            return new Cell(x(), y() - 1);
         case S:
-            return new Cell(x, y + 1);
+            return new Cell(x(), y() + 1);
         case W:
-            return new Cell(x - 1, y);
+            return new Cell(x() - 1, y());
         case E:
-            return new Cell(x + 1, y);
+            return new Cell(x() + 1, y());
         }
         throw new Error(); // will never happen
     }
     
-    @Override
     /**
      * Compares an Object to a Cell.
      * 
      * @return true if the Object is equal to this Cell, false otherwise
      */
+    @Override
     public boolean equals(Object that) {
-        if (that == null) {
-            return false;
-        }
-        if (this == that){
-            return true;
-        }
-        // to compare two Cells it is sufficient to compare their unique indexes
-        if (getClass() == that.getClass()) {
-            return this.rowMajorIndex() == ((Cell) that).rowMajorIndex();
-        }
-        return false;
+        return (that instanceof Cell
+                && (this.rowMajorIndex() == ((Cell) that).rowMajorIndex()));
     }
     
-    @Override
     /**
      * Defines how to print a Cell.
      * 
      * @return a String representation of the Cell.
      */
+    @Override
     public String toString() {
-        return "(" + x + "," + y + ")";
+        return "(" + x() + "," + y() + ")";
     }
     
-    @Override
     /**
      * Returns the hash value of the Cell.
      * 
      * @return integer hash value
      */
+    @Override
     public int hashCode(){
        return rowMajorIndex(); 
     }
@@ -152,8 +146,8 @@ public final class Cell {
      */
     private static ArrayList<Cell> spiralOrder() {
         // Declare and fill two arrays that are useful for the ordering algorithm
-        ArrayList<Integer> ix = new ArrayList<Integer>();
-        ArrayList<Integer> iy = new ArrayList<Integer>();
+        ArrayList<Integer> ix = new ArrayList<>();
+        ArrayList<Integer> iy = new ArrayList<>();
         for (int i = 0; i < COLUMNS; i++) {
             ix.add(i);
         }
@@ -165,7 +159,7 @@ public final class Cell {
         boolean horizontal = true;
         ArrayList<Cell> spiral = new ArrayList<>();
         
-        // Ordering Algorithm
+        // Apply ordering Algorithm
         while (!ix.isEmpty() && !iy.isEmpty()) {
             ArrayList<Integer> i1 = horizontal ? ix : iy;
             ArrayList<Integer> i2 = horizontal ? iy : ix;

@@ -3,7 +3,7 @@ package ch.epfl.xblast.server;
 import java.util.NoSuchElementException;
 
 /**
- * Enum of Blocks.
+ * Enumeration of Blocks.
  * 
  * @author Loic Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -94,7 +94,8 @@ public enum Block {
      */
     public Bonus associatedBonus() {
         if (maybeAssociatedBonus == null) {
-            throw new NoSuchElementException("This Block does not contain a bonus");
+            throw new NoSuchElementException(
+                    "This Block does not contain a bonus");
         }
         return maybeAssociatedBonus;
     }
