@@ -98,7 +98,6 @@ public class CellTest {
         }
     }
     
-    
 	@Test(expected = UnsupportedOperationException.class)
 	public void isRowMajorOrderModifiable(){
 		Cell.ROW_MAJOR_ORDER.set(0, new Cell(1,0));
