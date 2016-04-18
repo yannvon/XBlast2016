@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 /**
  * Enumeration of Blocks.
  * 
- * @author Loic Vandenberghe (257742)
+ * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  */
 public enum Block {

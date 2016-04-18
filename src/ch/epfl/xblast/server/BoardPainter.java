@@ -14,7 +14,27 @@ import ch.epfl.xblast.Direction;
  *
  */
 public final class BoardPainter {
-
+    
+    
+    /** 
+     * Static method to construct a classic BoardPainter
+     * @return a classic BoardPainter
+     */
+    public static BoardPainter classicBoardPainter(){
+        Map<Block,BlockImage> palette = new HashMap<>();
+        Block[] blocks=Block.values();
+        BlockImage[] images = BlockImage.values();
+        
+        palette.put(blocks[0],images[0]);
+        for(int i=1; i<blocks.length;i++){
+            palette.put(blocks[i],images[i+1]);
+        }
+        return new BoardPainter(palette, images[1]);
+    }
+    
+    /*
+     * Attributes
+     */
     private final Map<Block,BlockImage> palette;
     private final BlockImage shadow;
     
