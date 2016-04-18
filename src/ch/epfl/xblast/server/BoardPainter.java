@@ -9,6 +9,8 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 
 /**
+ * This immutable class represents a "painter" of a board.
+ * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
@@ -44,7 +46,7 @@ public final class BoardPainter {
      *          associate each block to an image
      * @param shadow
      *          image use for a shadow
-     *      
+     * @throws //TODO     
      */
     public BoardPainter(Map<Block,BlockImage> palette, BlockImage shadow){
         this.palette = Collections.unmodifiableMap(
@@ -54,19 +56,22 @@ public final class BoardPainter {
     
     
     /**
-     * give the corresponding image number to represent the block at the given Cell on the board
+     * give the corresponding image number to represent the block at the given
+     * Cell on the board
+     * 
      * @param board
-     *          the board to paint
+     *            the board to paint
      * @param cell
-     *          the cell in board to paint
+     *            the cell in board to paint
      * @return the byte corresponding to the image representing the Cell
      */
-    public byte byteForCell(Board board, Cell cell){
-        
-        Block b= board.blockAt(cell);
-        boolean isShadow = b.isFree() && board.blockAt(cell.neighbor(Direction.W)).castsShadow();
-        BlockImage image =  isShadow? shadow : palette.get(b);
-        
+    public byte byteForCell(Board board, Cell cell) {
+
+        Block b = board.blockAt(cell);
+        boolean isShadow = b.isFree()
+                && board.blockAt(cell.neighbor(Direction.W)).castsShadow();
+        BlockImage image = isShadow ? shadow : palette.get(b);
+
         return (byte) image.ordinal();
     }
 }
