@@ -13,20 +13,19 @@ public final class PlayerPainter {
     /*
      * Constants
      */
-
+    private static final int WHITE_PLAYER_ORDINAL = 4;
     private static final int BYTE_FOR_LOSING_LIFE = 12;
     private static final int BYTE_FOR_DYING = 13;
-    private static final int INVALID_BYTE_FOR_DEAD = 15;
-    private static final int WHITE_PLAYER_ORDINAL = 4;
+    private static final int BYTE_FOR_DEAD = 15;
     private static final int NB_IMAGES_PER_PLAYER = 20;
     private static final int NB_IMAGES_PER_DIRECTION = 3;
-    private static final int WALKING_CYCLE_SIZE = 4;    //SubCell.SUBDIVISION /4;
+    private static final int WALKING_CYCLE_SIZE = 4;    //FIXME SubCell.SUBDIVISION /4;
 
     /**
-     * Returns the corresponding byte to the image representation of the player.
+     * Returns the byte corresponding to the image representation of the player at the current tick.
      * 
      * @param tick
-     *            number of ticks played
+     *            number of current tick
      * @param player
      *            player that has to be represented
      * @return byte corresponding to the current representation of the player
@@ -61,7 +60,7 @@ public final class PlayerPainter {
         }
         // 5) Player Dead
         else if (pState == State.DEAD) {
-            image += INVALID_BYTE_FOR_DEAD;
+            image += BYTE_FOR_DEAD;
         }
         return image;
     }

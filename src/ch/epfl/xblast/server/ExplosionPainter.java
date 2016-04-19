@@ -13,22 +13,26 @@ public final class ExplosionPainter {
     /*
      * Constants
      */
-    public static final byte BYTE_FOR_EMPTY = 0b10000;//16?
+    public static final byte BYTE_FOR_EMPTY = 16;
+    public static final byte BYTE_FOR_BLACK_BOMB = 20;
+    public static final byte BYTE_FOR_WHITE_BOMB = 21;
     
     /**
-     * give the image to paint a given bomb
+     * Returns the byte identifying the image that has to be chosen to represent
+     * given bomb.
      * 
      * @param bomb
      *            the bomb to paint
      * @return the byte corresponding to the image of the bomb
      */
     public static byte byteForBomb(Bomb bomb) {
+        // if the fuseLength is a power of two the bomb is represented white
         boolean white = Integer.bitCount(bomb.fuseLength()) == 1;
-        return (byte) (white ? 21 : 20);
+        return (byte) (white ? BYTE_FOR_WHITE_BOMB : BYTE_FOR_BLACK_BOMB);
     }
 
     /**
-     * Give the image of a blast according to the presence or abscence of blasts
+     * Give the image of a blast according to the presence or absence of blasts
      * in the neighboring Cells.
      * 
      * @param n
@@ -43,7 +47,7 @@ public final class ExplosionPainter {
      */
     public static byte byteForBlast(boolean n, boolean e, boolean s,
             boolean w) {
-
+        // FIXME piazza schinz said that this is not ideal
         return (byte) ((n ? 0b1000 : 0) | (e ? 0b0100 : 0) | (s ? 0b0010 : 0)
                 | (w ? 0b0001 : 0));
     }
