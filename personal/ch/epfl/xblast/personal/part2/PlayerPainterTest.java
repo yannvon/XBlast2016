@@ -28,7 +28,7 @@ public class PlayerPainterTest {
     
     private SubCell central = SubCell.centralSubCellOf(new Cell(1,1));
     private SubCell x1y0 = new SubCell(1, 0);
-    private SubCell x0y1 = new SubCell(1, 0);
+    private SubCell x0y1 = new SubCell(0, 1);
     private Sq<DirectedPosition> centralNorth= DirectedPosition.stopped(new DirectedPosition(central, Direction.N));
     private Sq<DirectedPosition> centralEast= DirectedPosition.stopped(new DirectedPosition(central, Direction.E));
     private Sq<DirectedPosition> x1y0North= DirectedPosition.stopped(new DirectedPosition(x1y0, Direction.N));//impossible
@@ -48,44 +48,75 @@ public class PlayerPainterTest {
 
                 new Player(PlayerID.PLAYER_1, invulnerable, centralNorth, 0, 0),  //6---
                 new Player(PlayerID.PLAYER_1, invulnerable, centralEast, 0, 0),
-                new Player(PlayerID.PLAYER_1, invulnerable,x1y0North , 0, 0),
                 new Player(PlayerID.PLAYER_1, invulnerable,x1y0East , 0, 0),
-                new Player(PlayerID.PLAYER_1, invulnerable, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, invulnerable, x0y1East, 0, 0),  //11---
+                new Player(PlayerID.PLAYER_1, invulnerable, x0y1North, 0, 0), //9---
 
-                new Player(PlayerID.PLAYER_1, losingLife, centralNorth, 0, 0), //12---
+                new Player(PlayerID.PLAYER_1, losingLife, centralNorth, 0, 0), //10---
                 new Player(PlayerID.PLAYER_1, losingLife, centralEast, 0, 0),
                 new Player(PlayerID.PLAYER_1, losingLife,x1y0North , 0, 0),
                 new Player(PlayerID.PLAYER_1, losingLife,x1y0East , 0, 0),
                 new Player(PlayerID.PLAYER_1, losingLife, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, losingLife, x0y1East, 0, 0),  //17---
+                new Player(PlayerID.PLAYER_1, losingLife, x0y1East, 0, 0),  //15---
 
-                new Player(PlayerID.PLAYER_1, dying, centralNorth, 0, 0),  //18---
+                new Player(PlayerID.PLAYER_1, dying, centralNorth, 0, 0),  //16---
                 new Player(PlayerID.PLAYER_1, dying, centralEast, 0, 0),
                 new Player(PlayerID.PLAYER_1, dying,x1y0North , 0, 0),
                 new Player(PlayerID.PLAYER_1, dying,x1y0East , 0, 0),
                 new Player(PlayerID.PLAYER_1, dying, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, dying, x0y1East, 0, 0),   //23---
+                new Player(PlayerID.PLAYER_1, dying, x0y1East, 0, 0),   //21---
 
-                new Player(PlayerID.PLAYER_1, dead, centralNorth, 0, 0), //24---
+                new Player(PlayerID.PLAYER_1, dead, centralNorth, 0, 0), //22---
                 new Player(PlayerID.PLAYER_1, dead, centralEast, 0, 0),
                 new Player(PlayerID.PLAYER_1, dead,x1y0North , 0, 0),
                 new Player(PlayerID.PLAYER_1, dead,x1y0East , 0, 0),
                 new Player(PlayerID.PLAYER_1, dead, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, dead, x0y1East, 0, 0));  //29---
+                new Player(PlayerID.PLAYER_1, dead, x0y1East, 0, 0));  //27---
                 
         
         
         //DEAD Player
         
-        for(int i=24; i<30;i++){
+        for(int i=22; i<players.size();i++){
             assertTrue(PlayerPainter.byteForPlayer(i, players.get(i))%20 >13);
         }
         
         //normalPlayer
+        int p= 0 *20; //à changer lorsque l'on change de player
         
-        assertEquals(000, PlayerPainter.byteForPlayer(23,players.get(0)));
-        //TODO
+        //vulnerable
+        assertEquals(000+p, PlayerPainter.byteForPlayer(23,players.get(0)));
+        assertEquals(003+p, PlayerPainter.byteForPlayer(23,players.get(1)));
+        assertEquals(000+p, PlayerPainter.byteForPlayer(23,players.get(2)));
+        assertEquals(004+p, PlayerPainter.byteForPlayer(23,players.get(3)));
+        assertEquals(001+p, PlayerPainter.byteForPlayer(23,players.get(4)));
+        assertEquals(003+p, PlayerPainter.byteForPlayer(23,players.get(5)));
+        
+        //invulnerable
+        assertEquals(80+p, PlayerPainter.byteForPlayer(23,players.get(6)));
+        assertEquals(000+p, PlayerPainter.byteForPlayer(22,players.get(6)));
+        assertEquals(83+p, PlayerPainter.byteForPlayer(23,players.get(7)));
+        assertEquals(003+p, PlayerPainter.byteForPlayer(22,players.get(7)));
+        assertEquals(84+p, PlayerPainter.byteForPlayer(23,players.get(8)));
+        assertEquals(4+p, PlayerPainter.byteForPlayer(22,players.get(8)));
+        assertEquals(81+p, PlayerPainter.byteForPlayer(23,players.get(9)));
+        assertEquals(1+p, PlayerPainter.byteForPlayer(22,players.get(9)));
+        
+        
+        //losinglife
+        for(int i=10; i<16;i++){
+
+            assertEquals(12+p, PlayerPainter.byteForPlayer(23,players.get(i)));
+            
+        }
+        
+        //dying
+        for(int i=16; i<22;i++){
+
+            assertEquals(13+p, PlayerPainter.byteForPlayer(23,players.get(i)));
+            
+        }
+        
+        
                 
     }
 
