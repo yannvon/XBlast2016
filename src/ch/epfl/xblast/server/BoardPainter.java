@@ -16,7 +16,10 @@ import ch.epfl.xblast.Direction;
  */
 public final class BoardPainter {
 
+    
     /**
+     *FIXME DELETE!!!!!!!!!!!!!!!!!!!!!!!!!
+     *
      * ADDITIONAL Static method that constructs a classic BoardPainter that uses
      * the standard images.
      * 
