@@ -39,38 +39,38 @@ public class PlayerPainterTest {
     @Test
     public void byteForPlayerTest(){
         List<Player> players =Arrays.asList(
-                new Player(PlayerID.PLAYER_1, vulnerable, centralNorth, 0, 0), //0----
-                new Player(PlayerID.PLAYER_1, vulnerable, centralEast, 0, 0),
-                new Player(PlayerID.PLAYER_1, vulnerable,x1y0North , 0, 0),
-                new Player(PlayerID.PLAYER_1, vulnerable,x1y0East , 0, 0),
-                new Player(PlayerID.PLAYER_1, vulnerable, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, vulnerable, x0y1East, 0, 0),     //5---
+                new Player(PlayerID.PLAYER_2, vulnerable, centralNorth, 0, 0), //0----
+                new Player(PlayerID.PLAYER_2, vulnerable, centralEast, 0, 0),
+                new Player(PlayerID.PLAYER_2, vulnerable,x1y0North , 0, 0),
+                new Player(PlayerID.PLAYER_2, vulnerable,x1y0East , 0, 0),
+                new Player(PlayerID.PLAYER_2, vulnerable, x0y1North, 0, 0),
+                new Player(PlayerID.PLAYER_2, vulnerable, x0y1East, 0, 0),     //5---
 
-                new Player(PlayerID.PLAYER_1, invulnerable, centralNorth, 0, 0),  //6---
-                new Player(PlayerID.PLAYER_1, invulnerable, centralEast, 0, 0),
-                new Player(PlayerID.PLAYER_1, invulnerable,x1y0East , 0, 0),
-                new Player(PlayerID.PLAYER_1, invulnerable, x0y1North, 0, 0), //9---
+                new Player(PlayerID.PLAYER_2, invulnerable, centralNorth, 0, 0),  //6---
+                new Player(PlayerID.PLAYER_2, invulnerable, centralEast, 0, 0),
+                new Player(PlayerID.PLAYER_2, invulnerable,x1y0East , 0, 0),
+                new Player(PlayerID.PLAYER_2, invulnerable, x0y1North, 0, 0), //9---
 
-                new Player(PlayerID.PLAYER_1, losingLife, centralNorth, 0, 0), //10---
-                new Player(PlayerID.PLAYER_1, losingLife, centralEast, 0, 0),
-                new Player(PlayerID.PLAYER_1, losingLife,x1y0North , 0, 0),
-                new Player(PlayerID.PLAYER_1, losingLife,x1y0East , 0, 0),
-                new Player(PlayerID.PLAYER_1, losingLife, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, losingLife, x0y1East, 0, 0),  //15---
+                new Player(PlayerID.PLAYER_2, losingLife, centralNorth, 0, 0), //10---
+                new Player(PlayerID.PLAYER_2, losingLife, centralEast, 0, 0),
+                new Player(PlayerID.PLAYER_2, losingLife,x1y0North , 0, 0),
+                new Player(PlayerID.PLAYER_2, losingLife,x1y0East , 0, 0),
+                new Player(PlayerID.PLAYER_2, losingLife, x0y1North, 0, 0),
+                new Player(PlayerID.PLAYER_2, losingLife, x0y1East, 0, 0),  //15---
 
-                new Player(PlayerID.PLAYER_1, dying, centralNorth, 0, 0),  //16---
-                new Player(PlayerID.PLAYER_1, dying, centralEast, 0, 0),
-                new Player(PlayerID.PLAYER_1, dying,x1y0North , 0, 0),
-                new Player(PlayerID.PLAYER_1, dying,x1y0East , 0, 0),
-                new Player(PlayerID.PLAYER_1, dying, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, dying, x0y1East, 0, 0),   //21---
+                new Player(PlayerID.PLAYER_2, dying, centralNorth, 0, 0),  //16---
+                new Player(PlayerID.PLAYER_2, dying, centralEast, 0, 0),
+                new Player(PlayerID.PLAYER_2, dying,x1y0North , 0, 0),
+                new Player(PlayerID.PLAYER_2, dying,x1y0East , 0, 0),
+                new Player(PlayerID.PLAYER_2, dying, x0y1North, 0, 0),
+                new Player(PlayerID.PLAYER_2, dying, x0y1East, 0, 0),   //21---
 
-                new Player(PlayerID.PLAYER_1, dead, centralNorth, 0, 0), //22---
-                new Player(PlayerID.PLAYER_1, dead, centralEast, 0, 0),
-                new Player(PlayerID.PLAYER_1, dead,x1y0North , 0, 0),
-                new Player(PlayerID.PLAYER_1, dead,x1y0East , 0, 0),
-                new Player(PlayerID.PLAYER_1, dead, x0y1North, 0, 0),
-                new Player(PlayerID.PLAYER_1, dead, x0y1East, 0, 0));  //27---
+                new Player(PlayerID.PLAYER_2, dead, centralNorth, 0, 0), //22---
+                new Player(PlayerID.PLAYER_2, dead, centralEast, 0, 0),
+                new Player(PlayerID.PLAYER_2, dead,x1y0North , 0, 0),
+                new Player(PlayerID.PLAYER_2, dead,x1y0East , 0, 0),
+                new Player(PlayerID.PLAYER_2, dead, x0y1North, 0, 0),
+                new Player(PlayerID.PLAYER_2, dead, x0y1East, 0, 0));  //27---
                 
         
         
@@ -81,7 +81,7 @@ public class PlayerPainterTest {
         }
         
         //normalPlayer
-        int p= 0 *20; //à changer lorsque l'on change de player
+        int p= 1 *20; //à changer lorsque l'on change de player
         
         //vulnerable
         assertEquals(000+p, PlayerPainter.byteForPlayer(23,players.get(0)));
@@ -92,13 +92,13 @@ public class PlayerPainterTest {
         assertEquals(003+p, PlayerPainter.byteForPlayer(23,players.get(5)));
         
         //invulnerable
-        assertEquals(80+p, PlayerPainter.byteForPlayer(23,players.get(6)));
+        assertEquals(80, PlayerPainter.byteForPlayer(23,players.get(6)));
         assertEquals(000+p, PlayerPainter.byteForPlayer(22,players.get(6)));
-        assertEquals(83+p, PlayerPainter.byteForPlayer(23,players.get(7)));
+        assertEquals(83, PlayerPainter.byteForPlayer(23,players.get(7)));
         assertEquals(003+p, PlayerPainter.byteForPlayer(22,players.get(7)));
-        assertEquals(84+p, PlayerPainter.byteForPlayer(23,players.get(8)));
+        assertEquals(84, PlayerPainter.byteForPlayer(23,players.get(8)));
         assertEquals(4+p, PlayerPainter.byteForPlayer(22,players.get(8)));
-        assertEquals(81+p, PlayerPainter.byteForPlayer(23,players.get(9)));
+        assertEquals(81, PlayerPainter.byteForPlayer(23,players.get(9)));
         assertEquals(1+p, PlayerPainter.byteForPlayer(22,players.get(9)));
         
         
