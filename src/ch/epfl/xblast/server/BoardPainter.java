@@ -25,18 +25,18 @@ public final class BoardPainter {
      * 
      * @return a classic BoardPainter
      */
-    public static BoardPainter classicBoardPainter(){
-        Map<Block,BlockImage> palette = new HashMap<>();
-        Block[] blocks=Block.values();
+    public static BoardPainter classicBoardPainter() {
+        Map<Block, BlockImage> palette = new HashMap<>();
+        Block[] blocks = Block.values();
         BlockImage[] images = BlockImage.values();
-        
-        palette.put(blocks[0],images[0]);
-        for(int i=1; i<blocks.length;i++){
-            palette.put(blocks[i],images[i+1]);
+
+        palette.put(blocks[0], images[0]);
+        for (int i = 1; i < blocks.length; i++) {
+            palette.put(blocks[i], images[i + 1]);
         }
         return new BoardPainter(palette, images[1]);
     }
-    
+
     /*
      * Constants
      */

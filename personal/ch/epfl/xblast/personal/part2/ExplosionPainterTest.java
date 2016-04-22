@@ -11,7 +11,6 @@ import ch.epfl.xblast.server.ExplosionPainter;
 import ch.epfl.xblast.server.Ticks;
 
 /**
- * This non-instanciable class offers static methods to "paint" a player.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
