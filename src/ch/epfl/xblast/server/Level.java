@@ -8,6 +8,13 @@ import java.util.Map;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 
+/**
+ * class that represent a level with a initial gameState and a BoardPainter
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ *
+ */
 public final class Level {
 
     private final BoardPainter boardPainter;
@@ -38,6 +45,10 @@ public final class Level {
         return new BoardPainter(palette, images[1]);
     }
     
+    /**
+     * ADDITIONAL Static method that construct a initial and classic Board
+     * @return a classic board
+     */
     private static  Board defaultBoard(){
         Block __ = Block.FREE;
         Block XX = Block.INDESTRUCTIBLE_WALL;
@@ -49,6 +60,12 @@ public final class Level {
 
     }
     
+    /**
+     * ADDITIONNAL static method that construct a initial list of Players for a
+     * classic game
+     * 
+     * @return a default List of Player
+     */
     private static List<Player> defaultPlayers(){
         return  Arrays.asList(
                 new Player(PlayerID.PLAYER_1,3,new Cell(1,1),2,3),
@@ -57,19 +74,32 @@ public final class Level {
                 new Player(PlayerID.PLAYER_4,3,new Cell(1,11),2,3)
                 );
     }
+    /*
+     * 
+     */
     
     
     
-    
+    /**
+     * Constructor
+     * @param boardPainter
+     * @param initialGame
+     */
     public Level(BoardPainter boardPainter, GameState initialGame) {
         this.boardPainter= boardPainter;
         this.initialGameState=initialGame;
     }
 
+    /**
+     * @return the boardPainter of the Level
+     */
     public BoardPainter boardPainter() {
         return boardPainter;
     }
 
+    /**
+     * @return the gameState at the beginning of the game 
+     */
     public GameState initialGameState() {
         return initialGameState;
     }
