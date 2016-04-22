@@ -19,6 +19,7 @@ public final class RunLengthEncoder {
      * Constants
      */
     private static int LONGEST_RUN = 130;
+    
     /**
      * TODO
      * @param l
@@ -38,22 +39,12 @@ public final class RunLengthEncoder {
                 count++;
             }
             else {
-                if (count <= 2 )
-                    output.addAll(Collections.nCopies(count, lastByte));
-                else{
-                    output.add((byte) -(count - 2));
-                    output.add(lastByte);
-                }
+                output.addAll(encodedBytes(count, lastByte));
                 lastByte = b;
                 count = 1;
             }
         }
-        if (count <= 2 )
-            output.addAll(Collections.nCopies(count, lastByte));
-        else{
-            output.add((byte) -(count - 2));
-            output.add(lastByte);
-        }
+        output.addAll(encodedBytes(count, lastByte));
         
         return output;
     }
@@ -78,6 +69,19 @@ public final class RunLengthEncoder {
         }
         return output;
     }
+    
+    private static List<Byte> encodedBytes(int count, byte lastByte){
+        List<Byte> newBytes = new ArrayList<>();
+        
+        if (count <= 2 )
+            newBytes.addAll(Collections.nCopies(count, lastByte));
+        else{
+            newBytes.add((byte) -(count - 2));
+            newBytes.add(lastByte);
+        }
+        return newBytes;
+    }
+    
 
     private RunLengthEncoder() {}
 }
