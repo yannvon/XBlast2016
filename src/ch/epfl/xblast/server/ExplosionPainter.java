@@ -14,8 +14,8 @@ public final class ExplosionPainter {
      * Constants
      */
     public static final byte BYTE_FOR_EMPTY = 16;
-    public static final byte BYTE_FOR_BLACK_BOMB = 20;
-    public static final byte BYTE_FOR_WHITE_BOMB = 21;
+    private static final byte BYTE_FOR_BLACK_BOMB = 20;
+    private static final byte BYTE_FOR_WHITE_BOMB = 21;
     
     /**
      * Returns the byte identifying the image that has to be chosen to represent
