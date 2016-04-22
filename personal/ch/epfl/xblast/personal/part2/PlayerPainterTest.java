@@ -18,6 +18,12 @@ import ch.epfl.xblast.server.Player.LifeState;
 import ch.epfl.xblast.server.Player.LifeState.State;
 import ch.epfl.xblast.server.PlayerPainter;
 
+/**
+ * This non-instanciable class offers static methods to "paint" a player.
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ */
 public class PlayerPainterTest {
      
     private Sq<LifeState>  dying= Sq.constant(new LifeState(1, State.DYING));

@@ -1,8 +1,3 @@
-/*
- *	Author:      Yann Vonlanthen
- *	Date:        19.04.2016
- */
-
 package ch.epfl.xblast.personal.part2;
 
 import static org.junit.Assert.assertEquals;
@@ -15,6 +10,12 @@ import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.ExplosionPainter;
 import ch.epfl.xblast.server.Ticks;
 
+/**
+ * This non-instanciable class offers static methods to "paint" a player.
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ */
 public class ExplosionPainterTest {
 
     @Test

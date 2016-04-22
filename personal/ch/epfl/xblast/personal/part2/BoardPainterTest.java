@@ -11,6 +11,13 @@ import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.BoardPainter;
 
+/**
+ * Describe class here.
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ *
+ */
 public class BoardPainterTest {
     
 

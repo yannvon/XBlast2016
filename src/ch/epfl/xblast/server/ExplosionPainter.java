@@ -47,7 +47,6 @@ public final class ExplosionPainter {
      */
     public static byte byteForBlast(boolean n, boolean e, boolean s,
             boolean w) {
-        // FIXME piazza schinz said that this is not ideal
         return (byte) ((n ? 0b1000 : 0) | (e ? 0b0100 : 0) | (s ? 0b0010 : 0)
                 | (w ? 0b0001 : 0));
     }
