@@ -15,8 +15,10 @@ import java.util.List;
  */
 public final class RunLengthEncoder {
 
-    private RunLengthEncoder() {}
-
+    /*
+     * Constants
+     */
+    private static int LONGEST_RUN = 130;
     /**
      * TODO
      * @param l
@@ -26,19 +28,19 @@ public final class RunLengthEncoder {
         List<Byte> output = new ArrayList<>();
         
         byte lastByte = 0;
-        byte count = 0;
+        int count = 0;
         
         for(Byte b : l){
             if(b < 0)
-                throw new IllegalArgumentException("Cannot encode negative byte!");
+                throw new IllegalArgumentException("Cannot encode a negative byte!");
             
-            if(b == lastByte){
+            if(b == lastByte && count < LONGEST_RUN){
                 count++;
             }
             else {
-                if (count <= 2)
+                if (count <= 2 )
                     output.addAll(Collections.nCopies(count, lastByte));
-                else {
+                else{
                     output.add((byte) -(count - 2));
                     output.add(lastByte);
                 }
@@ -69,4 +71,6 @@ public final class RunLengthEncoder {
         }
         return output;
     }
+
+    private RunLengthEncoder() {}
 }
