@@ -19,7 +19,9 @@ import ch.epfl.xblast.PlayerID;
  */
 public class Test {
     public static void main(String[] args) {
-        printPermutations();
+        List<Byte> c = Collections.nCopies(0, new Byte((byte) 2));
+        System.out.println(c);
+        
     }
     
     /**

@@ -35,14 +35,14 @@ public final class Level {
      */
     private static BoardPainter defaultBoardPainter(){
         Map<Block,BlockImage> palette = new HashMap<>();
-        Block[] blocks=Block.values();
-        BlockImage[] images = BlockImage.values();
-        
-        palette.put(blocks[0],images[0]);
-        for(int i=1; i<blocks.length;i++){
-            palette.put(blocks[i],images[i+1]);
-        }
-        return new BoardPainter(palette, images[1]);
+        palette.put(Block.INDESTRUCTIBLE_WALL,BlockImage.DARK_BLOCK);
+        palette.put(Block.FREE,BlockImage.IRON_FLOOR);
+        palette.put(Block.DESTRUCTIBLE_WALL,BlockImage.EXTRA);
+        palette.put(Block.CRUMBLING_WALL,BlockImage.EXTRA_O);
+        palette.put(Block.BONUS_RANGE,BlockImage.BONUS_RANGE);
+        palette.put(Block.BONUS_BOMB,BlockImage.BONUS_BOMB);
+
+        return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
     }
     
     /**
