@@ -48,6 +48,13 @@ public final class RunLengthEncoder {
                 count = 1;
             }
         }
+        if (count <= 2 )
+            output.addAll(Collections.nCopies(count, lastByte));
+        else{
+            output.add((byte) -(count - 2));
+            output.add(lastByte);
+        }
+        
         return output;
     }
     
