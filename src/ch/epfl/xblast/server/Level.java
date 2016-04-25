@@ -16,16 +16,12 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public final class Level {
-
-    private final BoardPainter boardPainter;
-    private final GameState initialGameState;
-    
     
     /*
      * DEFAULT LEVEL
      */
     public static final Level DEFAULT_LEVEL = new Level(
-            defaultBoardPainter(), new GameState(defaultBoard(), defaultPlayers()));
+            defaultBoardPainter(), defaultGameState());
     
     /**
      * ADDITIONAL Static method that constructs a classic BoardPainter that uses
@@ -46,39 +42,37 @@ public final class Level {
     }
     
     /**
-     * ADDITIONAL Static method that construct a initial and classic Board
-     * @return a classic board
+     * ADDITIONAL Static method that constructs the default initial GameState.
+     * @return a default initial GameState
      */
-    private static  Board defaultBoard(){
+    private static  GameState defaultGameState(){
         Block __ = Block.FREE;
         Block XX = Block.INDESTRUCTIBLE_WALL;
         Block xx = Block.DESTRUCTIBLE_WALL;
-        return Board.ofQuadrantNWBlocksWalled(Arrays.asList(Arrays.asList(__, __, __, __, __, xx, __),
-                Arrays.asList(__, XX, xx, XX, xx, XX, xx), Arrays.asList(__, xx, __, __, __, xx, __),
-                Arrays.asList(xx, XX, __, XX, XX, XX, XX), Arrays.asList(__, xx, __, xx, __, __, __),
+        
+        Board board = Board.ofQuadrantNWBlocksWalled(Arrays.asList(
+                Arrays.asList(__, __, __, __, __, xx, __),
+                Arrays.asList(__, XX, xx, XX, xx, XX, xx), 
+                Arrays.asList(__, xx, __, __, __, xx, __),
+                Arrays.asList(xx, XX, __, XX, XX, XX, XX), 
+                Arrays.asList(__, xx, __, xx, __, __, __),
                 Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
-
-    }
-    
-    /**
-     * ADDITIONNAL static method that construct a initial list of Players for a
-     * classic game
-     * 
-     * @return a default List of Player
-     */
-    private static List<Player> defaultPlayers(){
-        return  Arrays.asList(
+        
+        List<Player> players = Arrays.asList(
                 new Player(PlayerID.PLAYER_1,3,new Cell(1,1),2,3),
                 new Player(PlayerID.PLAYER_2,3,new Cell(13,1),2,3),
                 new Player(PlayerID.PLAYER_3,3,new Cell(13,11),2,3),
                 new Player(PlayerID.PLAYER_4,3,new Cell(1,11),2,3)
                 );
+        
+        return new GameState(board, players);
     }
+    
     /*
-     * 
+     * Attributes
      */
-    
-    
+    private final BoardPainter boardPainter;
+    private final GameState initialGameState;
     
     /**
      * Constructor
@@ -103,9 +97,4 @@ public final class Level {
     public GameState initialGameState() {
         return initialGameState;
     }
-    
-    
-    
-    
-
 }
