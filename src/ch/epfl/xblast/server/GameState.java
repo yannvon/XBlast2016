@@ -86,9 +86,10 @@ public final class GameState {
 
         // 2) check ticks, players and board requirements
         this.ticks = ArgumentChecker.requireNonNegative(ticks);
-        if (players.size() != 4) {
+        if (players.size() != PlayerID.values().length) {
             throw new IllegalArgumentException(
-                    "The Game requires 4 players instead of " + players.size());
+                    "The Game requires " + PlayerID.values().length
+                            + " players instead of " + players.size());
         }
         this.board = Objects.requireNonNull(board);
     }

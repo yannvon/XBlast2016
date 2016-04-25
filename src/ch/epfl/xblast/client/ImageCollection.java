@@ -23,31 +23,21 @@ public final class ImageCollection {
      * @param repository
      * @throws URISyntaxException 
      */
-    public ImageCollection(String repository){
-        //don't modify
-        Map<Byte,Image> images = new HashMap<>();
-        try{//FIXME exception?
-            File directory = new File(ImageCollection.class
-                    .getClassLoader()
-                    .getResource(repository)
-                    .toURI());
+    public ImageCollection(String repository) throws URISyntaxException{    //FIXME throw or try/catch?
+        // don't modify
+        Map<Byte, Image> images = new HashMap<>();
+        File directory = new File(ImageCollection.class.getClassLoader()
+                .getResource(repository).toURI());
 
-
-            for(File f: directory.listFiles()){
-                try{
-                    Byte b = Byte.parseByte(f.getName().substring(0, 3));
-                    images.put(b, ImageIO.read(f));
-                }
-                catch(Exception e){
-                    //do nothing
-                }
+        for (File f : directory.listFiles()) {
+            try {
+                Byte b = Byte.parseByte(f.getName().substring(0, 3));
+                images.put(b, ImageIO.read(f));
+            } catch (Exception e) {
+                // do nothing
             }
-        }catch(Exception e){
-
-            //do nothing
         }
         this.images = Collections.unmodifiableMap(images);
-        
         
     }
     
