@@ -51,6 +51,7 @@ public final class ImageCollection {
             throw new Error(
                     "The directory named " + repository + " doesn't exist!");
         }
+        // we treat the images like they were immutable
         this.images = Collections.unmodifiableMap(images);
     }
 
@@ -58,7 +59,7 @@ public final class ImageCollection {
      * Method allowing to get an image for a specific byte value.
      * 
      * @param imageNumber
-     *            byte value characterising an image
+     *            byte value characterizing an image
      * @return the image that corresponds to the byte value
      * @throws NoSuchElementException
      *             if no image corresponds to given index.
@@ -74,12 +75,11 @@ public final class ImageCollection {
      * Method allowing to get an image for a specific byte value.
      * 
      * @param imageNumber
-     *            byte value characterising an image
+     *            byte value characterizing an image
      * @return the image that corresponds to the byte value or null if no image
      *         corresponds to given index.
      */
     public Image imageOrNull(byte imageNumber) {
-
         return images.get(imageNumber);
     }
 }
