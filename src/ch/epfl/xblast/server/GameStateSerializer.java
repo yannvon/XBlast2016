@@ -10,38 +10,47 @@ import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.RunLengthEncoder;
 
 /**
- * non instantiable class TODO
+ * This public, final and non intantiable class offers a unique static method
+ * that is capable of serializing a GameState.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
- *
  */
 public final class GameStateSerializer {
-
     private GameStateSerializer(){}
-    
-    public static List<Byte> serialize(BoardPainter boardPainter,GameState game){
+
+    /**
+     * Given a BoardPainter and a GameState this method returns a serialized
+     * version of the GameState.
+     * 
+     * @param boardPainter
+     *            that is used
+     * @param gameState
+     *            that has to be serialized
+     * @return a list of bytes representing the serialized GameState
+     */
+    public static List<Byte> serialize(BoardPainter boardPainter,GameState gameState){  //FIXME use private methods?
+
         /*
-         * BOARD
+         * SERIALIZING BOARD
          */
         List<Byte> serialisedBoard = new ArrayList<>();
 
         for (Cell c : Cell.SPIRAL_ORDER)
-            serialisedBoard.add(boardPainter.byteForCell(game.board(), c));
+            serialisedBoard.add(boardPainter.byteForCell(gameState.board(), c));
 
         // encode board
         serialisedBoard = RunLengthEncoder.encode(serialisedBoard);
 
         /*
-         * EXPLOSIONS & BOMBS
+         * SERIALIZING EXPLOSIONS & BOMBS
          */
         List<Byte> serialisedExplosions = new ArrayList<>();
-        Map<Cell, Bomb> bombedCells = game.bombedCells();
-        Set<Cell> blastedCells = game.blastedCells();
+        Map<Cell, Bomb> bombedCells = gameState.bombedCells();
+        Set<Cell> blastedCells = gameState.blastedCells();
 
         for (Cell c : Cell.ROW_MAJOR_ORDER) {
-
-            if (!game.board().blockAt(c).isFree())
+            if (!gameState.board().blockAt(c).isFree())
                 serialisedExplosions.add(ExplosionPainter.BYTE_FOR_EMPTY);
             else if (bombedCells.containsKey(c))
                 serialisedExplosions
@@ -60,33 +69,32 @@ public final class GameStateSerializer {
         serialisedExplosions = RunLengthEncoder.encode(serialisedExplosions);
 
         /*
-         * PLAYERS
+         * SERIALIZNG PLAYERS
          */
         List<Byte> serialisedPlayers = new ArrayList<>();
-        for (Player p : game.players()) {
+        for (Player p : gameState.players()) {
             serialisedPlayers.add((byte) p.lives());
             serialisedPlayers.add((byte) p.position().x());
             serialisedPlayers.add((byte) p.position().y());
-            serialisedPlayers.add(PlayerPainter.byteForPlayer(game.ticks(), p));
+            serialisedPlayers
+                    .add(PlayerPainter.byteForPlayer(gameState.ticks(), p));
         }
 
         /*
-         * REMAINING TIME
+         * SERIALIZING REMAINING TIME
          */
-        byte serialisedTime = (byte) Math.ceil(game.remainingTime() / 2);
+        byte serialisedTime = (byte) Math.ceil(gameState.remainingTime() / 2);
 
         /*
-         * Construct output
+         * CONSTRUCT OUTPUT
          */
         List<Byte> output = new ArrayList<>();
-
         output.add((byte) serialisedBoard.size());
         output.addAll(serialisedBoard);
         output.add((byte) serialisedExplosions.size());
         output.addAll(serialisedExplosions);
         output.addAll(serialisedPlayers);
         output.add(serialisedTime);
-
         return output;
     }
 }
