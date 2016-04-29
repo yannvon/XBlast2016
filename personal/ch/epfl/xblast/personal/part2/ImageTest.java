@@ -29,5 +29,13 @@ public class ImageTest {
         Image c= images.imageOrNull((byte) 74);
         assertEquals(null,c);
     }
+    
+    @Test
+    public void image() {
+        ImageCollection images= new ImageCollection("player");
+        Image c= images.imageOrNull((byte) 0);
+        assertEquals(images.imageOrNull((byte) 0),c);
+    }
+    
 
 }
