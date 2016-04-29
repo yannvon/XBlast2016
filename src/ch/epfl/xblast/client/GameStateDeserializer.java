@@ -75,7 +75,7 @@ public final class GameStateDeserializer {
          * Deserialize Players
          */
         List<Player> dePlayers = deserializedPlayers(
-                serialized.subList(explosionDelimiter + 1, lastIndex));
+                serialized.subList(explosionDelimiter, lastIndex));
 
         /*
          * Construct Score line
