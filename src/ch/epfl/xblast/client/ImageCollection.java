@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 import javax.imageio.ImageIO;
 
 /**
- * This immutable class represents a collection of images that are provided by
+ * This immutable class represents a collection of images that are provided by a
  * repository and indexed by an integer value.
  * 
  * @author Loïc Vandenberghe (257742)
@@ -19,7 +19,10 @@ import javax.imageio.ImageIO;
  *
  */
 public final class ImageCollection {
-    
+   
+    /*
+    * Attributes 
+    */
     private final Map<Integer,Image> images;
 
     /**
@@ -29,7 +32,7 @@ public final class ImageCollection {
      * @param repository
      *            name of the repository where the images are saved
      */
-    public ImageCollection(String repository) { // FIXME error handling!
+    public ImageCollection(String repository) {
 
         Map<Integer, Image> images = new HashMap<>();
         try {
@@ -56,11 +59,11 @@ public final class ImageCollection {
     }
 
     /**
-     * Method allowing to get an image for a specific int value.
+     * Method allowing to get an image for a specific integer value.
      * 
      * @param imageNumber
-     *            int value characterizing an image
-     * @return the image that corresponds to the int value
+     *            integer value characterizing an image
+     * @return the image that corresponds to the integer value
      * @throws NoSuchElementException
      *             if no image corresponds to given index.
      */
@@ -72,11 +75,11 @@ public final class ImageCollection {
     }
 
     /**
-     * Method allowing to get an image for a specific byte value.
+     * Method allowing to get an image for a specific integer value.
      * 
      * @param imageNumber
-     *            byte value characterizing an image
-     * @return the image that corresponds to the byte value or null if no image
+     *            integer value characterizing an image
+     * @return the image that corresponds to the integer value or null if no image
      *         corresponds to given index.
      */
     public Image imageOrNull(int imageNumber) {
