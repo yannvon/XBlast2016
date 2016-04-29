@@ -33,6 +33,27 @@ public final class GameState {
             this.image = image;// TODO requireNonNull?
         }
 
+        /**
+         * TODO additional
+         * @return the playerId
+         */
+        public PlayerID playerId() {
+            return playerId;
+        }
+
+        /**
+         * @return the lives
+         */
+        public int lives() {
+            return lives;
+        }
+
+        /**
+         * @return the position
+         */
+        public SubCell position() {
+            return position;
+        }
     }
 
     /*
