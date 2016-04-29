@@ -20,7 +20,7 @@ import javax.imageio.ImageIO;
  */
 public final class ImageCollection {
     
-    private final Map<Byte,Image> images;
+    private final Map<Integer,Image> images;
 
     /**
      * Only Constructor, taking the name of the repository that contains the
@@ -31,7 +31,7 @@ public final class ImageCollection {
      */
     public ImageCollection(String repository) { // FIXME error handling!
 
-        Map<Byte, Image> images = new HashMap<>();
+        Map<Integer, Image> images = new HashMap<>();
         try {
             // don't modify the following line!
             File directory = new File(ImageCollection.class
@@ -41,8 +41,8 @@ public final class ImageCollection {
 
             for (File f : directory.listFiles()) {
                 try {
-                    Byte b = Byte.parseByte(f.getName().substring(0, 3));
-                    images.put(b, ImageIO.read(f));
+                    Integer i = Integer.parseInt(f.getName().substring(0, 3));
+                    images.put(i, ImageIO.read(f));
                 } catch (Exception e) {
                     // do nothing, we don't want to abort the operation if one image fails to load.
                 }
@@ -56,15 +56,15 @@ public final class ImageCollection {
     }
 
     /**
-     * Method allowing to get an image for a specific byte value.
+     * Method allowing to get an image for a specific int value.
      * 
      * @param imageNumber
-     *            byte value characterizing an image
-     * @return the image that corresponds to the byte value
+     *            int value characterizing an image
+     * @return the image that corresponds to the int value
      * @throws NoSuchElementException
      *             if no image corresponds to given index.
      */
-    public Image image(byte imageNumber) {
+    public Image image(int imageNumber) {
         Image i = imageOrNull(imageNumber);
         if (i == null)
             throw new NoSuchElementException();
@@ -79,7 +79,7 @@ public final class ImageCollection {
      * @return the image that corresponds to the byte value or null if no image
      *         corresponds to given index.
      */
-    public Image imageOrNull(byte imageNumber) {
+    public Image imageOrNull(int imageNumber) {
         return images.get(imageNumber);
     }
 }
