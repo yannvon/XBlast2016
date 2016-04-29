@@ -74,7 +74,7 @@ public final class RunLengthEncoder {
      *             if the last element of given list is negative
      */
     public static List<Byte> decode(List<Byte> l) {
-        if(l.get(l.size()) > 0)                         //FIXME on avait oublié!
+        if(l.get(l.size()-1) < 0)                         //FIXME on avait oublié!
             throw new IllegalArgumentException();
         
         List<Byte> output = new ArrayList<>();
