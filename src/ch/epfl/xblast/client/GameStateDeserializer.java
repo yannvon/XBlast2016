@@ -14,31 +14,28 @@ import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.client.GameState.Player;
 
 /**
- * Non-instanciable class offering static method to deserialize the GameSate to
- * the client.
+ * Non-instantiable class offering one static method that allows the client to deserialize a GameSate.
+ * This class in some way does the opposite class of GameStateSerializer.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */
 public final class GameStateDeserializer {
-    private GameStateDeserializer() {
-    }
+    private GameStateDeserializer() {}
 
     /*
      * Constants
      */
-    private static final int PLAYER_BYTES_LENGTH = PlayerID.values().length * 4; // FIXME
-                                                                                 // utile?
-    private static final ImageCollection BLOCK_COLLECTION = 
-                                         new ImageCollection("block");
-    private static final ImageCollection EXPLOSION_COLLECTION = 
-                                         new ImageCollection("player");
-    private static final ImageCollection PLAYER_COLLECTION = 
-                                         new ImageCollection("player");
-    private static final ImageCollection SCORE_COLLECTION = 
-                                         new ImageCollection("score");
-    private static final int MIDDLE_GAP = 8;
+    private static final ImageCollection BLOCK_COLLECTION = new ImageCollection(
+            "block");
+    private static final ImageCollection EXPLOSION_COLLECTION = new ImageCollection(
+            "player");
+    private static final ImageCollection PLAYER_COLLECTION = new ImageCollection(
+            "player");
+    private static final ImageCollection SCORE_COLLECTION = new ImageCollection(
+            "score");
+    private static final int MIDDLE_GAP_LENGTH = 8;
     private static final int TIMELINE_LENGTH = 60;
     private static final byte TEXT_MIDDLE = 10;
     private static final byte TEXT_RIGHT = 11;
@@ -47,6 +44,7 @@ public final class GameStateDeserializer {
     private static final byte LED_OFF = 21;
 
     /**
+     * 
      * @param serialized
      * @return
      */
@@ -150,10 +148,10 @@ public final class GameStateDeserializer {
     private static List<Image> constructScoreLine(List<Player> dePlayers) {
         List<Image> scoreLine = new ArrayList<>();
         for (Player p : dePlayers) {
-            int id = p.playerId().ordinal();
+            int id = p.id().ordinal();
             // add void tiles in the centre of the score line
             if (id == 2) {
-                scoreLine.addAll(Collections.nCopies(MIDDLE_GAP,
+                scoreLine.addAll(Collections.nCopies(MIDDLE_GAP_LENGTH,
                         SCORE_COLLECTION.image((byte) TILE_VOID)));
             }
             byte imageNumber = (byte) (id * 2 + ((p.lives() > 0) ? 1 : 0));
