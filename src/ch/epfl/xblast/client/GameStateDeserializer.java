@@ -92,8 +92,9 @@ public final class GameStateDeserializer {
     }
 
     /**
+     * Additional method that decode the list of byte and construct the imaged board
      * @param encodedBoard
-     * @return
+     * @return the list of image that represent the board
      */
     private static List<Image> deserializeBoard(List<Byte> encodedBoard) {
         List<Byte> decodedBoard = RunLengthEncoder.decode(encodedBoard);
