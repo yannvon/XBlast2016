@@ -83,4 +83,21 @@ public final class GameState {
         this.time = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(time)));
     }
+    
+    
+    //FIXME DELETE LATER-----------
+    @Override
+    /**
+     * @param other
+     * @return
+     */
+    public boolean equals(Object that){
+        
+        return (that instanceof GameState)
+                && players.equals(((GameState) that).players)
+                && board.equals(((GameState) that).board)
+                && explosions.equals(((GameState) that).explosions)
+                && scores.equals(((GameState) that).scores)
+                && time.equals(((GameState) that).time);
+    }
 }
