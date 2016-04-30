@@ -40,7 +40,7 @@ public final class GameStateDeserializer {
      */
     private static final int MIDDLE_GAP_LENGTH = 8;
     private static final int TIMELINE_LENGTH = 60;
-    private static final int TEXT_MIDDLE = 10;  //FIXME int or byte?
+    private static final int TEXT_MIDDLE = 10; 
     private static final int TEXT_RIGHT = 11;
     private static final int TILE_VOID = 12;
     private static final int LED_ON = 20;
@@ -186,9 +186,9 @@ public final class GameStateDeserializer {
             // add void tiles in the centre of the score line
             if (id == 2) {
                 scoreLine.addAll(Collections.nCopies(MIDDLE_GAP_LENGTH,
-                        SCORE_COLLECTION.image((byte) TILE_VOID)));
+                        SCORE_COLLECTION.image(TILE_VOID)));
             }
-            byte imageNumber = (byte) (id * 2 + ((p.lives() > 0) ? 1 : 0));
+            int imageNumber =  id * 2 + ((p.lives() > 0) ? 1 : 0);
             scoreLine.add(SCORE_COLLECTION.image(imageNumber));
             scoreLine.add(SCORE_COLLECTION.image(TEXT_MIDDLE));
             scoreLine.add(SCORE_COLLECTION.image(TEXT_RIGHT));
