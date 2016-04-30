@@ -25,7 +25,7 @@ public final class GameStateDeserializer {
     private GameStateDeserializer() {}
 
     /*
-     * Constants
+     * ImageCollections used to retrieve the images.
      */
     private static final ImageCollection BLOCK_COLLECTION = new ImageCollection(
             "block");
@@ -35,20 +35,27 @@ public final class GameStateDeserializer {
             "player");
     private static final ImageCollection SCORE_COLLECTION = new ImageCollection(
             "score");
+    /*
+     * Constants
+     */
     private static final int MIDDLE_GAP_LENGTH = 8;
     private static final int TIMELINE_LENGTH = 60;
-    private static final byte TEXT_MIDDLE = 10;
-    private static final byte TEXT_RIGHT = 11;
-    private static final byte TILE_VOID = 12;
-    private static final byte LED_ON = 20;
-    private static final byte LED_OFF = 21;
+    private static final int TEXT_MIDDLE = 10;  //FIXME int or byte?
+    private static final int TEXT_RIGHT = 11;
+    private static final int TILE_VOID = 12;
+    private static final int LED_ON = 20;
+    private static final int LED_OFF = 21;
 
     /**
+     * Static method that given a serialised GameState (list of bytes) can
+     * compute and return the corresponding GameState.
      * 
      * @param serialized
-     * @return
+     *            List of bytes that represent a GameState
+     * @return the GameState corresponding to the received list of bytes
      */
     public static GameState deserializeGameState(List<Byte> serialized) {
+
         /*
          * Get Sublists Indices
          */
@@ -64,7 +71,7 @@ public final class GameStateDeserializer {
                 serialized.subList(1, boardDelimiter));
 
         /*
-         * Deserialize explosions and bombs
+         * Deserialize Explosions and Bombs
          */
         List<Image> deExplosions = deserializedExplosions(
                 serialized.subList(boardDelimiter + 1, explosionDelimiter));
@@ -90,9 +97,14 @@ public final class GameStateDeserializer {
     }
 
     /**
-     * Additional method that decode the list of byte and construct the imaged board
+     * Additional static method that decodes the list of bytes corresponding to
+     * a serialized board, decodes it and returns a list of images corresponding
+     * to every block. The original list is ordered following the spiral order,
+     * but this method returns a list ordered in reading order.
+     * 
      * @param encodedBoard
-     * @return the list of image that represent the board
+     *            list of bytes representing the encoded board in spiral order
+     * @return the list of images that represent the board in reading order
      */
     private static List<Image> deserializeBoard(List<Byte> encodedBoard) {
         List<Byte> decodedBoard = RunLengthEncoder.decode(encodedBoard);
@@ -105,12 +117,18 @@ public final class GameStateDeserializer {
                     .rowMajorIndex()] = BLOCK_COLLECTION
                             .image(boardIterator.next());
         }
-        return Arrays.asList(boardRepresentation); // FIXME
+        return Arrays.asList(boardRepresentation); // FIXME directly use List?
     }
 
     /**
+     * Additional static method that given a list of bytes representing the
+     * serialized Explosions and Bombs, decodes it and returns a list of the
+     * corresponding images.
+     * 
      * @param encodedExplosions
-     * @return
+     *            list of bytes representing serialized Explosions and Bombs in
+     *            reading order
+     * @return list of images in reading order
      */
     private static List<Image> deserializedExplosions(
             List<Byte> encodedExplosions) {
@@ -125,8 +143,16 @@ public final class GameStateDeserializer {
     }
 
     /**
+     * Additional static method in charge of deserializing the players. The
+     * given list contains 4 bytes for each player, representing their amount of
+     * lives, their position (on the x and y axis) and their corresponding
+     * image. These bytes have to be interpreted as unsigned bytes! The method
+     * returns a list containing the according players (client version).
+     * 
      * @param encodedPlayers
-     * @return
+     *            list of bytes representing the players, to be interpreted as
+     *            unsigned bytes
+     * @return a list of the corresponding players
      */
     private static List<Player> deserializedPlayers(List<Byte> encodedPlayers) {
         List<Player> players = new ArrayList<>();
@@ -142,8 +168,16 @@ public final class GameStateDeserializer {
     }
 
     /**
+     * Additional static method in charge of constructing the ScoreLine. It
+     * takes the previously deserialized players as argument and is in charge of
+     * correctly filling a list with the images displaying the correct images
+     * that represent the players on the Score line. The representation of the
+     * amount of lives left is not done here.
+     * 
      * @param dePlayers
-     * @return
+     *            list of the deserialized players for the current tick
+     * @return list of images corresponding that represent the scoreline from
+     *         left to right
      */
     private static List<Image> constructScoreLine(List<Player> dePlayers) {
         List<Image> scoreLine = new ArrayList<>();
@@ -163,8 +197,14 @@ public final class GameStateDeserializer {
     }
 
     /**
+     * Additional static method in charge of constructing the TimeLine given a
+     * byte value. The byte value corresponds to half of the time left, which
+     * exactly matches the amount of Led's of the TimeLine that have to be ON:
+     * the game lasts a maximum of 120 while there are 60 Led's to be displayed.
+     * 
      * @param time
-     * @return
+     *            byte representing the amount of leds that have to be on
+     * @return list of 60 images of on/off leds representing the TimeLine
      */
     private static List<Image> constructTimeLine(Byte time) {
         List<Image> scoreLine = new ArrayList<>();
