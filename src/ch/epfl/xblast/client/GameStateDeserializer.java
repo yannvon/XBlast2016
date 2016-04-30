@@ -176,7 +176,7 @@ public final class GameStateDeserializer {
      * 
      * @param dePlayers
      *            list of the deserialized players for the current tick
-     * @return list of images corresponding that represent the scoreline from
+     * @return list of images corresponding that represent the ScoreLine from
      *         left to right
      */
     private static List<Image> constructScoreLine(List<Player> dePlayers) {
@@ -203,8 +203,8 @@ public final class GameStateDeserializer {
      * the game lasts a maximum of 120 while there are 60 Led's to be displayed.
      * 
      * @param time
-     *            byte representing the amount of leds that have to be on
-     * @return list of 60 images of on/off leds representing the TimeLine
+     *            byte representing the amount of Led's that have to be on
+     * @return list of 60 images of on/off Led's representing the TimeLine
      */
     private static List<Image> constructTimeLine(Byte time) {
         List<Image> scoreLine = new ArrayList<>();
