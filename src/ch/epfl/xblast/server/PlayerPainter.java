@@ -10,6 +10,8 @@ import ch.epfl.xblast.server.Player.LifeState.State;
  */
 public final class PlayerPainter {
 
+    private PlayerPainter(){}
+
     /*
      * Constants
      */
@@ -19,7 +21,7 @@ public final class PlayerPainter {
     private static final int BYTE_FOR_DEAD = 15;
     private static final int NB_IMAGES_PER_PLAYER = 20;
     private static final int NB_IMAGES_PER_DIRECTION = 3;
-    private static final int WALKING_CYCLE_SIZE = 4;    //FIXME SubCell.SUBDIVISION /4;
+    private static final int WALKING_CYCLE_SIZE = 4;
 
     /**
      * Returns the byte corresponding to the image representation of the player at the current tick.
@@ -64,6 +66,4 @@ public final class PlayerPainter {
         }
         return image;
     }
-
-    private PlayerPainter(){}
 }
