@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
 
+import ch.epfl.xblast.PlayerID;
+
 
 /**
  * @author Loïc Vandenberghe (257742)
@@ -18,7 +20,24 @@ public final class XBlastComponent extends JComponent {
     private static final int PREFERRED_HEIGHT = 688;
     private static final int PREFERRED_WIDTH = 960;
     
+    private GameState gameState;
     
+    /**
+     * 
+     */
+    public XBlastComponent() {
+        gameState=null;
+    }
+  
+    /**
+     * @param g
+     * @param p
+     */
+    public void setGameState(GameState g,PlayerID p){
+        //TODO
+        gameState=g;
+        repaint();
+    }
     
     @Override
     public Dimension getPreferredSize(){
@@ -29,6 +48,5 @@ public final class XBlastComponent extends JComponent {
     @Override
     protected void paintComponent(Graphics g0){
         Graphics2D g = (Graphics2D)g0;
-        //TODO
     }
 }
