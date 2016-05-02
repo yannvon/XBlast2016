@@ -1,6 +1,7 @@
 
 package ch.epfl.DONT_SUBMIT;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +20,9 @@ import ch.epfl.xblast.PlayerID;
  */
 public class Test {
     public static void main(String[] args) {
-        List<Byte> c = Collections.nCopies(0, new Byte((byte) 2));
-        System.out.println(c);
+        List<Byte> c = new ArrayList<>();
+        c.add(null);
+        System.out.println(c.size());
         
     }
     
