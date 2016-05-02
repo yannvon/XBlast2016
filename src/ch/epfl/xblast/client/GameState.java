@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ch.epfl.xblast.ArgumentChecker;
+import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 
@@ -57,7 +58,7 @@ public final class GameState {
             this.id = Objects.requireNonNull(playerId);
             this.lives = ArgumentChecker.requireNonNegative(lives);
             this.position = Objects.requireNonNull(position);
-            this.image = image;// TODO requireNonNull?
+            this.image = image;     //can have a null image (if the player is dead)
         }
 
         /**
@@ -86,6 +87,15 @@ public final class GameState {
         public SubCell position() {
             return position;
         }
+
+        /**
+         * Returns the image of the player.
+         * 
+         * @return the image of the player
+         */
+        public Image image() {
+            return image;
+        }
     }
 
     /*
@@ -94,9 +104,9 @@ public final class GameState {
     private final List<Player> players;
     private final List<Image> board;
     private final List<Image> explosions;
-    private final List<Image> scores;
-    private final List<Image> time;
-
+    private final List<Image> scoreLine;
+    private final List<Image> timeLine;
+    
     /**
      * Constructs a GameState given the five lists that define a GameState in
      * the clients perspective.
@@ -108,42 +118,81 @@ public final class GameState {
      *            order!
      * @param explosions
      *            list of the images of the explosions and bombs in reading
-     *            order, contains null if a block doesn not have any of them.
-     * @param scores
-     *            list of the images representing the score line
-     * @param time
-     *            list of the images representing the time line (60 LED's)
+     *            order, contains null if a cell does not host a bomb or an
+     *            explosion.
+     * @param scoreLine
+     *            list of the images representing the score line.
+     * @param timeLine
+     *            list of the images representing the time line (60 LED's).
      * @throws NullPointerException
-     *             if one of the arguments was null
+     *             if one of the arguments is null
+     * @throws IllegalArgumentException
+     *             if one of the lists does not have the correct size
      */
     public GameState(List<Player> players, List<Image> board,
-            List<Image> explosions, List<Image> scores, List<Image> time) {
+            List<Image> explosions, List<Image> scoreLine, List<Image> timeLine) {
+    
+        if (players.size() != PlayerID.values().length
+                || board.size() != Cell.COUNT 
+                || explosions.size() != Cell.COUNT
+                || timeLine.size() != GameStateDeserializer.TIMELINE_LENGTH
+                || scoreLine.size() != GameStateDeserializer.SCORELINE_LENGTH)
+            throw new IllegalArgumentException("Incorrect list size.");
+    
         this.players = Collections.unmodifiableList(
-                new ArrayList<>(Objects.requireNonNull(players)));
+                new ArrayList<>(players));
         this.board = Collections.unmodifiableList(
-                new ArrayList<>(Objects.requireNonNull(board)));
+                new ArrayList<>(board));
         this.explosions = Collections.unmodifiableList(
-                new ArrayList<>(Objects.requireNonNull(explosions)));
-        this.scores = Collections.unmodifiableList(
-                new ArrayList<>(Objects.requireNonNull(scores)));
-        this.time = Collections.unmodifiableList(
-                new ArrayList<>(Objects.requireNonNull(time)));
+                new ArrayList<>(explosions));
+        this.scoreLine = Collections.unmodifiableList(
+                new ArrayList<>(scoreLine));
+        this.timeLine = Collections.unmodifiableList(
+                new ArrayList<>(timeLine));
     }
-    
-    
-    //FIXME DELETE LATER-----------
-    @Override
+
     /**
-     * @param other
-     * @return
+     * Returns the list of players.
+     * 
+     * @return list of players
      */
-    public boolean equals(Object that){
-        
-        return (that instanceof GameState)
-                && players.equals(((GameState) that).players)
-                && board.equals(((GameState) that).board)
-                && explosions.equals(((GameState) that).explosions)
-                && scores.equals(((GameState) that).scores)
-                && time.equals(((GameState) that).time);
+    public List<Player> players() {
+        return players;
+    }
+
+    /**
+     * Returns the list of images used to represent the board.
+     * 
+     * @return the board images
+     */
+    public List<Image> board() {
+        return board;
+    }
+
+    /**
+     * Returns the list of images used to represent the explosions.
+     * 
+     * @return the explosions images
+     */
+    public List<Image> explosions() {
+        return explosions;
+    }
+
+    /**
+     * Returns the list of images used to represent the ScorLine.
+     * 
+     * @return the scoreLine images
+     */
+    public List<Image> scoreLine() {
+        return scoreLine;
+    }
+
+    /**
+     * Returns the list of images used to represent the TimeLine.
+     * 
+     * @return the timeLine images
+     */
+    public List<Image> timeLine() {
+        return timeLine;
     }
 }
