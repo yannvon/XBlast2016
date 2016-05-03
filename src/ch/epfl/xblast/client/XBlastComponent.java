@@ -4,9 +4,12 @@ package ch.epfl.xblast.client;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.util.Iterator;
 
 import javax.swing.JComponent;
 
+import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 
 
@@ -21,6 +24,7 @@ public final class XBlastComponent extends JComponent {
     private static final int PREFERRED_WIDTH = 960;
     
     private GameState gameState;
+    //TODO
     
     /**
      * 
@@ -48,5 +52,24 @@ public final class XBlastComponent extends JComponent {
     @Override
     protected void paintComponent(Graphics g0){
         Graphics2D g = (Graphics2D)g0;
+        
+        Iterator<Image> bloc = gameState.board().iterator();
+        Iterator<Image> explosion = gameState.explosions().iterator();
+        int imageWidth = gameState.explosions().get(0).getWidth(null);
+        int imageHeigth= gameState.explosions().get(0).getHeight(null);
+        
+        
+        for(int y=0; y<Cell.ROWS; y++ ){
+            for(int x=0; x<Cell.COLUMNS;x++){
+                Image b = bloc.next();
+                
+                g.drawImage(b,xCoordinate,yCoordinate,null);
+                g.drawImage(explosion.next(), xCoordinate, yCoordinate, null);
+                xCoordinate += b.getWidth(null);
+                
+            }
+            
+        }
+        
     }
 }
