@@ -24,21 +24,23 @@ public final class XBlastComponent extends JComponent {
     private static final int PREFERRED_WIDTH = 960;
     
     private GameState gameState;
-    //TODO
+    private PlayerID playerId;
     
     /**
      * 
      */
     public XBlastComponent() {
         gameState=null;
+        playerId=null;
     }
   
     /**
      * @param g
      * @param p
+     * @param playerId 
      */
     public void setGameState(GameState g,PlayerID p){
-        //TODO
+        playerId=p;
         gameState=g;
         repaint();
     }
@@ -59,17 +61,15 @@ public final class XBlastComponent extends JComponent {
         int imageHeigth= gameState.explosions().get(0).getHeight(null);
         
         
-        for(int y=0; y<Cell.ROWS; y++ ){
-            for(int x=0; x<Cell.COLUMNS;x++){
+        for(int y=0; y<Cell.ROWS*imageHeigth; y+=imageHeigth ){
+            for(int x=0; x<Cell.COLUMNS*imageWidth;x+=imageWidth){
                 Image b = bloc.next();
-                
-                g.drawImage(b,xCoordinate,yCoordinate,null);
-                g.drawImage(explosion.next(), xCoordinate, yCoordinate, null);
-                xCoordinate += b.getWidth(null);
-                
+                g.drawImage(b,x,y,null);
+                g.drawImage(explosion.next(), x, y, null);
             }
-            
-        }
+         }
+        
+        
         
     }
 }
