@@ -1,6 +1,7 @@
 package ch.epfl.xblast.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -134,7 +135,7 @@ public final class Bomb {
         for (Direction dir : Direction.values()) {
             explosion.add(explosionArmTowards(dir));
         }
-        return explosion;
+        return Collections.unmodifiableList(explosion);
     }
 
     /**

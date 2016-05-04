@@ -314,7 +314,7 @@ public final class GameState {
         for (Sq<Sq<Cell>> arm : explosions0) {
             blasts1.add(arm.head());
         }
-        return blasts1;
+        return Collections.unmodifiableList(blasts1);
     }
 
     /**
@@ -417,7 +417,7 @@ public final class GameState {
                 explosions1.add(newExplosionArm);
             }
         }
-        return explosions1;
+        return Collections.unmodifiableList(explosions1);
     }
 
     /**
@@ -467,7 +467,7 @@ public final class GameState {
                 newlyDroppedBombs.add(p.newBomb());
             }
         }
-        return newlyDroppedBombs;
+        return Collections.unmodifiableList(newlyDroppedBombs);
     }
         
     /**
@@ -511,7 +511,7 @@ public final class GameState {
          * 4) add potential picked up bonuses to the players
          *     and return players1.
          */
-        return nextUpgradedPlayers(evolvedStatePlayers, playerBonuses);
+        return Collections.unmodifiableList(nextUpgradedPlayers(evolvedStatePlayers, playerBonuses));
     }
 
     /**
@@ -578,7 +578,7 @@ public final class GameState {
             players1.add(new Player(p.id(), p.lifeStates(), directedPositions1,
                     p.maxBombs(), p.bombRange()));
         }
-        return players1;
+        return Collections.unmodifiableList(players1);
     }
     
     /**
@@ -664,7 +664,7 @@ public final class GameState {
             newStatePlayer.add(new Player(p.id(), lifeStates1,
                     p.directedPositions(), p.maxBombs(), p.bombRange()));
         }
-        return newStatePlayer;
+        return Collections.unmodifiableList(newStatePlayer);
     }
 
     /**
@@ -688,7 +688,7 @@ public final class GameState {
             players1.add(playerBonuses.containsKey(p.id())
                     ? playerBonuses.get(p.id()).applyTo(p) : p);
         }
-        return players1;
+        return Collections.unmodifiableList(players1);
     }
 
     /**
@@ -705,7 +705,7 @@ public final class GameState {
         for (Bomb bomb : bombs) {
             bombedCells.put(bomb.position(), bomb);
         }
-        return bombedCells;
+        return Collections.unmodifiableMap(bombedCells);
     }
 
     /**
@@ -722,7 +722,7 @@ public final class GameState {
         for (Sq<Cell> blast : blasts) {
             blastedCells.add(blast.head());
         }
-        return blastedCells;
+        return Collections.unmodifiableSet(blastedCells);
     }
 
     /**
@@ -743,6 +743,6 @@ public final class GameState {
                 .compare(idSorted.indexOf(p1.id()), idSorted.indexOf(p2.id())));
         Collections.sort(sortedPlayers, c);
 
-        return sortedPlayers;
+        return Collections.unmodifiableList(sortedPlayers);
     }
 }
