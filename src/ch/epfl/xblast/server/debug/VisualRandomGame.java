@@ -38,7 +38,7 @@ public class VisualRandomGame {
         f.setVisible(true);
         Iterator<List<Byte>> it =games.iterator();
         
-            Timer t= new Timer(200,(a)->{
+            Timer t= new Timer(100,(a)->{
                 
                 if(it.hasNext()) {
                     List<Byte> ser = it.next();

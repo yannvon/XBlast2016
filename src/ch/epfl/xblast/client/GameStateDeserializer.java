@@ -43,7 +43,7 @@ public final class GameStateDeserializer {
     private static final ImageCollection BLOCK_COLLECTION = new ImageCollection(
             "block");
     private static final ImageCollection EXPLOSION_COLLECTION = new ImageCollection(
-            "player");
+            "explosion");
     private static final ImageCollection PLAYER_COLLECTION = new ImageCollection(
             "player");
     private static final ImageCollection SCORE_COLLECTION = new ImageCollection(
