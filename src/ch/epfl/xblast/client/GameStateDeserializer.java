@@ -129,7 +129,7 @@ public final class GameStateDeserializer {
             boardRepresentation[c.rowMajorIndex()] = BLOCK_COLLECTION
                     .image(boardIterator.next());
         }
-        return Arrays.asList(boardRepresentation);
+        return Collections.unmodifiableList(Arrays.asList(boardRepresentation)); //FIXME unmodifiable
     }
 
     /**
@@ -151,7 +151,7 @@ public final class GameStateDeserializer {
         for (Byte b : decodedExplosions)
             explosionsRepresentation.add(EXPLOSION_COLLECTION.imageOrNull(b));
 
-        return explosionsRepresentation;
+        return Collections.unmodifiableList(explosionsRepresentation);
     }
 
     /**
@@ -192,7 +192,7 @@ public final class GameStateDeserializer {
             
             players.add(new Player(PlayerID.values()[i], lives, position, image));
         }
-        return players;
+        return Collections.unmodifiableList(players);
     }
 
     /**
@@ -222,7 +222,7 @@ public final class GameStateDeserializer {
             scoreLine.add(SCORE_COLLECTION.image(TEXT_MIDDLE));
             scoreLine.add(SCORE_COLLECTION.image(TEXT_RIGHT));
         }
-        return scoreLine;
+        return Collections.unmodifiableList(scoreLine);
     }
 
     /**
@@ -243,6 +243,6 @@ public final class GameStateDeserializer {
                 SCORE_COLLECTION.image(LED_ON)));
         scoreLine.addAll(Collections.nCopies(TIMELINE_LENGTH - unsignedTime,
                 SCORE_COLLECTION.image(LED_OFF)));
-        return scoreLine;
+        return Collections.unmodifiableList(scoreLine);
     }
 }
