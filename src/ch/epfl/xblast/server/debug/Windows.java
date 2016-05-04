@@ -30,9 +30,7 @@ public class Windows {
         List<Byte> ser= GameStateSerializer.serialize(lvl.boardPainter(),lvl.initialGameState());
         GameState gameState = GameStateDeserializer.deserializeGameState(ser);
         game.setGameState(gameState, PlayerID.PLAYER_1);
-        
-        f.setSize(game.preferredSize());
-        f.add(game);
+        f.getContentPane().add(game);;
         f.setVisible(true);
     }
 

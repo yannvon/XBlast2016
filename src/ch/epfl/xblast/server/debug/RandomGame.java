@@ -1,13 +1,17 @@
 package ch.epfl.xblast.server.debug;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.client.GameStateDeserializer;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.GameState;
+import ch.epfl.xblast.server.GameStateSerializer;
+import ch.epfl.xblast.server.Level;
 import ch.epfl.xblast.server.Player;
 
 /**
@@ -70,5 +74,19 @@ public class RandomGame {
         }
         GameStatePrinter.printGameState(game);
         System.out.println(game.winner().get());
+    }
+    
+    public static List<List<Byte>> randomGame(){
+        Level lvl=Level.DEFAULT_LEVEL;
+        
+        GameState game =lvl.initialGameState();
+        List<List<Byte>> games=new ArrayList<>();
+        games.add(GameStateSerializer.serialize(lvl.boardPainter(),game));
+        while(!game.isGameOver()){
+            game = game.next(RANDOM.randomSpeedChangeEvents(), RANDOM.randomBombDropEvents());
+            games.add(GameStateSerializer.serialize(lvl.boardPainter(),game));
+        }
+        return games;
+        
     }
 }
