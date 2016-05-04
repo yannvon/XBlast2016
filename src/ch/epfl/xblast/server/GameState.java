@@ -249,7 +249,7 @@ public final class GameState {
         Board board1 = nextBoard(board(), consumedBonuses, blastedCells1);
 
         // 3) evolve explosion
-        List<Sq<Sq<Cell>>> explosions1 = new ArrayList<>(explosions);
+        List<Sq<Sq<Cell>>> explosions1 = new ArrayList<>(nextExplosions(explosions));
 
         // 4) evolve bombs
         List<Bomb> bombs0 = new ArrayList<>(bombs);
