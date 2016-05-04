@@ -54,8 +54,8 @@ public final class GameStateDeserializer {
     private static final int TEXT_MIDDLE = 10; 
     private static final int TEXT_RIGHT = 11;
     private static final int TILE_VOID = 12;
-    private static final int LED_ON = 20;
-    private static final int LED_OFF = 21;
+    private static final int LED_ON = 21;
+    private static final int LED_OFF = 20;
 
     /**
      * Static method that given a serialised GameState (list of bytes) can
@@ -216,7 +216,7 @@ public final class GameStateDeserializer {
                         SCORE_COLLECTION.image(TILE_VOID)));
             }
             int imageNumber = p.id().ordinal() * SCORE_IMAGES_PER_PLAYER
-                    + ((p.lives() > 0) ? 1 : 0);
+                    + ((p.lives() > 0) ? 0 : 1);
             // for every player add the 3 corresponding images
             scoreLine.add(SCORE_COLLECTION.image(imageNumber));
             scoreLine.add(SCORE_COLLECTION.image(TEXT_MIDDLE));
