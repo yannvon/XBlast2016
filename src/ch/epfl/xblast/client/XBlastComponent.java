@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import javax.swing.JComponent;
 
@@ -34,6 +35,10 @@ public final class XBlastComponent extends JComponent {
     private static final int X_PLAYER2_SCORE = 240;
     private static final int X_PLAYER3_SCORE = 768;
     private static final int X_PLAYER4_SCORE = 912;
+    
+    private static final UnaryOperator<Integer> X_FUNCTION = (x) -> 4*x - 24;
+    private static final UnaryOperator<Integer> Y_FUNCTION = (y) -> 3*y - 52;
+
     
     private GameState gameState;
     private PlayerID playerId;
@@ -124,6 +129,10 @@ public final class XBlastComponent extends JComponent {
         List<Player> orderedPlayers=new ArrayList<>(gameState.players());
 
         Collections.sort(orderedPlayers,comparator);
+        
+        for(Player p : orderedPlayers){
+            g.drawImage(p.image(), X_FUNCTION.apply((p.position().x())) , Y_FUNCTION.apply((p.position().y())), null);
+        }
         
         
     }
