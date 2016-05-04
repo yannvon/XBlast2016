@@ -62,14 +62,15 @@ public final class Lists {
         }
             
         //if list contains one element or more, remove one and start recursive call.
-        T deleted = input.remove(0);
-        List<List<T>> permuted = permutations(input);
+        T element = input.get(0);
+        List<T> subList = input.subList(1, input.size());
+        List<List<T>> permuted = permutations(subList);
 
         //add removed element at every position and save the new list in the output list        
         for(List<T> list : permuted){
             for(int i = 0; i < l.size(); i++){
                 List<T> complete = new LinkedList<>(list);
-                complete.add(i, deleted);
+                complete.add(i, element);
                 output.add(complete);
             }
         }
