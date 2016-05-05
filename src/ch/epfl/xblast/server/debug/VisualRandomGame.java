@@ -24,10 +24,10 @@ public class VisualRandomGame {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         
-        SwingUtilities.invokeLater(() -> createUI());
+        SwingUtilities.invokeLater(() -> createUIRandomGame());
     }
     
-    public static void createUI(){
+    public static void createUIRandomGame(){
         JFrame f = new JFrame("TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setBounds(0, 0, XBlastComponent.PREFERRED_WIDTH, XBlastComponent.PREFERRED_HEIGHT);//FIXME adjust
@@ -39,20 +39,19 @@ public class VisualRandomGame {
         f.getContentPane().add(game);
         f.setVisible(true);
         Iterator<List<Byte>> it =games.iterator();
-        
-            Timer t= new Timer(Ticks.TICK_NANOSECOND_DURATION/Time.NS_PER_S,(a)->{
-                
-                if(it.hasNext()) {
-                    List<Byte> ser = it.next();
-                GameState gameState = GameStateDeserializer.deserializeGameState(ser);
-                game.setGameState(gameState, PlayerID.PLAYER_1);}
-            });
-            t.setRepeats(true);
-            t.start();
-          
-        
-        
-        
+
+        Timer t = new Timer(Ticks.TICK_NANOSECOND_DURATION / Time.NS_PER_S,
+                (a) -> {
+
+                    if (it.hasNext()) {
+                        List<Byte> ser = it.next();
+                        GameState gameState = GameStateDeserializer
+                                .deserializeGameState(ser);
+                        game.setGameState(gameState, PlayerID.PLAYER_1);
+                    }
+                });
+        t.setRepeats(true);
+        t.start();        
         
     }
 }
