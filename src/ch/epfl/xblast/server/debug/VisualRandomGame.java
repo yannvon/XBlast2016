@@ -22,10 +22,10 @@ public class VisualRandomGame {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         
-        SwingUtilities.invokeLater(() -> createUI());
+        SwingUtilities.invokeLater(() -> createUIRandomGame());
     }
     
-    public static void createUI(){
+    public static void createUIRandomGame(){
         JFrame f = new JFrame("TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -38,7 +38,7 @@ public class VisualRandomGame {
         f.setVisible(true);
         Iterator<List<Byte>> it =games.iterator();
         
-            Timer t= new Timer(100,(a)->{
+            Timer t= new Timer(50,(a)->{
                 
                 if(it.hasNext()) {
                     List<Byte> ser = it.next();
