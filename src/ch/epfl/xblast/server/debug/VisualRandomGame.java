@@ -9,9 +9,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.Time;
 import ch.epfl.xblast.client.GameState;
 import ch.epfl.xblast.client.GameStateDeserializer;
 import ch.epfl.xblast.client.XBlastComponent;
+import ch.epfl.xblast.server.Ticks;
 
 public class VisualRandomGame {
     
@@ -28,7 +30,7 @@ public class VisualRandomGame {
     public static void createUI(){
         JFrame f = new JFrame("TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+        f.setBounds(0, 0, XBlastComponent.PREFERRED_WIDTH, XBlastComponent.PREFERRED_HEIGHT);//FIXME adjust
         
 
         XBlastComponent game = new XBlastComponent();
@@ -38,7 +40,7 @@ public class VisualRandomGame {
         f.setVisible(true);
         Iterator<List<Byte>> it =games.iterator();
         
-            Timer t= new Timer(100,(a)->{
+            Timer t= new Timer(Ticks.TICK_NANOSECOND_DURATION/Time.NS_PER_S,(a)->{
                 
                 if(it.hasNext()) {
                     List<Byte> ser = it.next();

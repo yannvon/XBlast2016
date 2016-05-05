@@ -28,8 +28,8 @@ import ch.epfl.xblast.client.GameState.Player;
  */
 public final class XBlastComponent extends JComponent {
 
-    private static final int PREFERRED_HEIGHT = 688;
-    private static final int PREFERRED_WIDTH = 960;
+    public static final int PREFERRED_HEIGHT = 688; //FIXME public?
+    public static final int PREFERRED_WIDTH = 960;
     private static final int Y_SCORELINE = 659;
     private static final int X_PLAYER1_SCORE = 96;
     private static final int X_PLAYER2_SCORE = 240;
