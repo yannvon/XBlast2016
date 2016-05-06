@@ -105,6 +105,10 @@ public final class XBlastComponent extends JComponent {
      * Method called by Swing to redraw the content of the XBlastComponent.
      */
     protected void paintComponent(Graphics g0) {
+        // don't do anything if 
+        if (gameState == null || playerId == null)
+            return;
+        
         Graphics2D g = (Graphics2D) g0;
         
         /*
