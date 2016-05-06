@@ -17,9 +17,7 @@ import ch.epfl.xblast.server.Ticks;
 
 public class VisualRandomGame {
     
-    
-    private static final RandomEventGenerator RANDOM = new RandomEventGenerator(2016, 30, 100);
-
+   
     private VisualRandomGame() {}
 
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -30,7 +28,7 @@ public class VisualRandomGame {
     public static void createUIRandomGame(){
         JFrame f = new JFrame("TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setBounds(0, 0, XBlastComponent.PREFERRED_WIDTH, XBlastComponent.PREFERRED_HEIGHT);//FIXME adjust
+        f.setBounds(0, 0, XBlastComponent.PREFERRED_WIDTH+18, XBlastComponent.PREFERRED_HEIGHT+45);//FIXME adjust
         
 
         XBlastComponent game = new XBlastComponent();
@@ -40,7 +38,7 @@ public class VisualRandomGame {
         f.setVisible(true);
         Iterator<List<Byte>> it =games.iterator();
 
-        Timer t = new Timer(Ticks.TICK_NANOSECOND_DURATION / Time.NS_PER_S,
+        Timer t = new Timer(50,
                 (a) -> {
 
                     if (it.hasNext()) {
@@ -51,7 +49,7 @@ public class VisualRandomGame {
                     }
                 });
         t.setRepeats(true);
-        t.start();        
+        t.start(); 
         
     }
 }
