@@ -22,118 +22,158 @@ import ch.epfl.xblast.client.GameState.Player;
 
 
 /**
+ * XBlastComponent is a (non-immutable) Swing component displaying a GameState.
+ * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */
 public final class XBlastComponent extends JComponent {
 
-    public static final int PREFERRED_HEIGHT = 688; //FIXME public?
+    /*
+     * Constants
+     */
+    public static final int PREFERRED_HEIGHT = 688; // FIXME public?
     public static final int PREFERRED_WIDTH = 960;
+    
+    // --- blocks
+    private static final int BLOCK_HEIGHT = 48;
+    private static final int BLOCK_WIDTH = PREFERRED_WIDTH / Cell.COLUMNS;
+    private static final int BOARD_HEIGHT = Cell.ROWS * BLOCK_HEIGHT;
+    private static final int BOARD_WIDTH = Cell.COLUMNS * BLOCK_WIDTH;
+    
+    // --- players
+    private static final UnaryOperator<Integer> X_FUNCTION = (x) -> 4 * x - 24;
+    private static final UnaryOperator<Integer> Y_FUNCTION = (y) -> 3 * y - 52;
+    
+    // --- scorLine
+    private static final int SCORELINE_HEIGHT = 48;
+    private static final int SCORELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.SCORELINE_LENGTH;   //FIXME needed?
+    private static final Font SCORE_FONT = new Font("Arial", Font.BOLD, 25);
     private static final int Y_SCORELINE = 659;
     private static final int X_PLAYER1_SCORE = 96;
     private static final int X_PLAYER2_SCORE = 240;
     private static final int X_PLAYER3_SCORE = 768;
     private static final int X_PLAYER4_SCORE = 912;
     
-    private static final UnaryOperator<Integer> X_FUNCTION = (x) -> 4*x - 24;
-    private static final UnaryOperator<Integer> Y_FUNCTION = (y) -> 3*y - 52;
-
+    // --- timeLine
+    private static final int TIMELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.TIMELINE_LENGTH;
     
+    
+    /*
+     * Attributes
+     */
+
     private GameState gameState;
     private PlayerID playerId;
-    
+
     /**
-     * 
+     * Constructor initialising all attributes to null.
      */
     public XBlastComponent() {
-        gameState=null;
-        playerId=null;
+        gameState = null;
+        playerId = null;
     }
-  
+
     /**
-     * @param g
-     * @param p
-     * @param playerId 
+     * Allows to display a new GameState, and refreshes the Display accordingly.
+     * 
+     * @param gameState
+     *            new GameSate to display
+     * @param playerId
+     *            playerId of the player who's client it is
      */
-    public void setGameState(GameState g,PlayerID p){
-        playerId=p;
-        gameState=g;
+    public void setGameState(GameState gameState, PlayerID playerId) {
+        this.gameState = gameState;
+        this.playerId = playerId;
         repaint();
     }
+
     
     @Override
-    public Dimension getPreferredSize(){
-        return new Dimension(PREFERRED_WIDTH,PREFERRED_HEIGHT);
+    /**
+     * Returns the Dimension of the preferred size of the Component.
+     * 
+     * @returns prefferedSize of the Component
+     */
+    public Dimension getPreferredSize() {
+        return new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT);
     }
-    
-    
+
     @Override
-    protected void paintComponent(Graphics g0){
-        Graphics2D g = (Graphics2D)g0;
+    /**
+     * Method called by Swing to redraw the content of the XBlastComponent.
+     */
+    protected void paintComponent(Graphics g0) {
+        Graphics2D g = (Graphics2D) g0;
+        
         /*
          * Draw Board
          */
         Iterator<Image> bloc = gameState.board().iterator();
         Iterator<Image> explosion = gameState.explosions().iterator();
-        int imageWidth = gameState.board().get(0).getWidth(null); 
-        int imageHeigth= gameState.board().get(0).getHeight(null); 
-        int heigthBoard = Cell.ROWS * imageHeigth;
         
-        for(int y=0; y<heigthBoard; y+=imageHeigth ){
-            for(int x=0; x<Cell.COLUMNS*imageWidth;x+=imageWidth){
-                g.drawImage(bloc.next(),x,y,null);
+        
+        for (int y = 0; y < BOARD_HEIGHT; y += BLOCK_HEIGHT) {
+            for (int x = 0; x < BOARD_WIDTH; x += BLOCK_WIDTH) {
+                g.drawImage(bloc.next(), x, y, null);
                 g.drawImage(explosion.next(), x, y, null);
             }
-         }
+        }
+        
         /*
          * Draw ScoreLine and TimeLine
          */
-        int x=0;
-        
-        for(Image i: gameState.scoreLine()){
-            g.drawImage(i, x, heigthBoard, null);
-            x+=i.getWidth(null);
+        int x = 0;
+
+        for (Image i : gameState.scoreLine()) {
+            g.drawImage(i, x, BOARD_HEIGHT, null);
+            x += SCORELINE_IMAGE_WIDTH;
         }
-        x=0;
-        for(Image i: gameState.timeLine()){
-            g.drawImage(i, x, heigthBoard+48, null);//FIXME
-            x+=i.getWidth(null);
+        x = 0;
+        for (Image i : gameState.timeLine()) {
+            g.drawImage(i, x, BOARD_HEIGHT + SCORELINE_HEIGHT, null);
+            x += TIMELINE_IMAGE_WIDTH;
         }
-        
+
         /*
          * Draw Score
          */
-        Font font = new Font("Arial", Font.BOLD, 25);
         g.setColor(Color.WHITE);
-        g.setFont(font);
-        
-        g.drawString(Integer.toString(gameState.players().get(0).lives()),X_PLAYER1_SCORE,Y_SCORELINE );
-        g.drawString(Integer.toString(gameState.players().get(1).lives()), X_PLAYER2_SCORE, Y_SCORELINE);
-        g.drawString(Integer.toString(gameState.players().get(2).lives()), X_PLAYER3_SCORE, Y_SCORELINE);
-        g.drawString(Integer.toString(gameState.players().get(3).lives()), X_PLAYER4_SCORE, Y_SCORELINE);
-        
+        g.setFont(SCORE_FONT);
+
+        g.drawString(Integer.toString(gameState.players().get(0).lives()),
+                X_PLAYER1_SCORE, Y_SCORELINE);
+        g.drawString(Integer.toString(gameState.players().get(1).lives()),
+                X_PLAYER2_SCORE, Y_SCORELINE);
+        g.drawString(Integer.toString(gameState.players().get(2).lives()),
+                X_PLAYER3_SCORE, Y_SCORELINE);
+        g.drawString(Integer.toString(gameState.players().get(3).lives()),
+                X_PLAYER4_SCORE, Y_SCORELINE);
+
         /*
          * DrawPlayer
          */
-        Comparator<Player> c1 = (p1,p2) ->Integer.compare(p1.position().y(), p2.position().y());
-        int ordinal= playerId.ordinal();
+        Comparator<Player> c1 = (p1, p2) -> Integer.compare(p1.position().y(),
+                p2.position().y());
+        
+        int ordinal = playerId.ordinal();
+        
         Comparator<Player> c2 = (p1, p2) -> Integer.compare(
                 Math.floorMod(ordinal + p2.id().ordinal(),
                         PlayerID.values().length),
                 Math.floorMod(ordinal + p1.id().ordinal(),
-                        PlayerID.values().length));    
-        
-        Comparator<Player> comparator= c1.thenComparing(c2);
-        
-        List<Player> orderedPlayers=new ArrayList<>(gameState.players());
+                        PlayerID.values().length));
 
-        Collections.sort(orderedPlayers,comparator);
-        
-        for(Player p : orderedPlayers){
-            g.drawImage(p.image(), X_FUNCTION.apply((p.position().x())) , Y_FUNCTION.apply((p.position().y())), null);
+        Comparator<Player> comparator = c1.thenComparing(c2);
+
+        List<Player> orderedPlayers = new ArrayList<>(gameState.players());
+
+        Collections.sort(orderedPlayers, comparator);
+
+        for (Player p : orderedPlayers) {
+            g.drawImage(p.image(), X_FUNCTION.apply((p.position().x())),
+                    Y_FUNCTION.apply((p.position().y())), null);
         }
-        
-        
     }
 }
