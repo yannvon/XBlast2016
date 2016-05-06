@@ -9,11 +9,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import ch.epfl.xblast.PlayerID;
-import ch.epfl.xblast.Time;
 import ch.epfl.xblast.client.GameState;
 import ch.epfl.xblast.client.GameStateDeserializer;
 import ch.epfl.xblast.client.XBlastComponent;
-import ch.epfl.xblast.server.Ticks;
 
 public class VisualRandomGame {
     
@@ -34,11 +32,13 @@ public class VisualRandomGame {
         XBlastComponent game = new XBlastComponent();
         List<List<Byte>> games = RandomGame.randomGame();
         game.setGameState(GameStateDeserializer.deserializeGameState(games.get(0)), PlayerID.PLAYER_1);
+        
+        
         f.getContentPane().add(game);
         f.setVisible(true);
         Iterator<List<Byte>> it =games.iterator();
 
-        Timer t = new Timer(50,
+        Timer t = new Timer(200,
                 (a) -> {
 
                     if (it.hasNext()) {
