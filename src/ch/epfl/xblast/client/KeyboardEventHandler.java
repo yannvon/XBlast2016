@@ -55,5 +55,4 @@ public final class KeyboardEventHandler extends KeyAdapter
         if(controls.containsKey(keyCode))
             consumer.accept(controls.get(keyCode));
     }
-
 }

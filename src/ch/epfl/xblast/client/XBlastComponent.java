@@ -33,12 +33,12 @@ public final class XBlastComponent extends JComponent {
     /*
      * Constants
      */
-    public static final int PREFERRED_HEIGHT = 688; // FIXME public?
-    public static final int PREFERRED_WIDTH = 960;
+    private static final int PREFERRED_HEIGHT = 688;
+    private static final int PREFERRED_WIDTH = 960;
     
     // --- blocks
     private static final int BLOCK_HEIGHT = 48;
-    private static final int BLOCK_WIDTH = PREFERRED_WIDTH / Cell.COLUMNS;
+    private static final int BLOCK_WIDTH = 60;
     private static final int BOARD_HEIGHT = Cell.ROWS * BLOCK_HEIGHT;
     private static final int BOARD_WIDTH = Cell.COLUMNS * BLOCK_WIDTH;
     
