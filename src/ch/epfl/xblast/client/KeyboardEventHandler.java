@@ -2,6 +2,10 @@ package ch.epfl.xblast.client;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyListener;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import ch.epfl.xblast.PlayerAction;
 
 /**
  * This class represents a Listener of Keyboard events.
@@ -11,7 +15,11 @@ import java.awt.event.KeyListener;
  *
  */
 public final class KeyboardEventHandler extends KeyAdapter
-        implements KeyListener {    //FIXME final?
+        implements KeyListener {    
     
+    public KeyboardEventHandler(Map<Integer, PlayerAction> controls,
+            Consumer<PlayerAction> o) {
+        
+    }
 
 }
