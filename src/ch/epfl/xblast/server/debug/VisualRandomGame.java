@@ -34,7 +34,6 @@ public class VisualRandomGame {
         List<List<Byte>> games = RandomGame.randomGame();
         game.setGameState(GameStateDeserializer.deserializeGameState(games.get(0)), PlayerID.PLAYER_1);
 
-        //f.getContentPane().setPreferredSize(game.getPreferredSize());
         f.getContentPane().add(game);
         f.setResizable(false);
         f.pack();

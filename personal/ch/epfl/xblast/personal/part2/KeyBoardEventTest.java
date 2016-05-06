@@ -30,7 +30,6 @@ public class KeyBoardEventTest {
     public static void createUIRandomGame(){
         JFrame f = new JFrame("TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setBounds(0, 0, XBlastComponent.PREFERRED_WIDTH+18, XBlastComponent.PREFERRED_HEIGHT+45);//FIXME adjust
         
 
         XBlastComponent game = new XBlastComponent();
@@ -48,6 +47,7 @@ public class KeyBoardEventTest {
         Consumer<PlayerAction> c = System.out::println;
         game.addKeyListener(new KeyboardEventHandler(kb, c));
         f.getContentPane().add(game);
+        f.pack();
         f.setVisible(true);
         game.requestFocusInWindow();
        

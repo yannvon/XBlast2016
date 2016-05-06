@@ -38,7 +38,7 @@ public final class XBlastComponent extends JComponent {
     
     // --- blocks
     private static final int BLOCK_HEIGHT = 48;
-    private static final int BLOCK_WIDTH = 60;
+    private static final int BLOCK_WIDTH = 64;
     private static final int BOARD_HEIGHT = Cell.ROWS * BLOCK_HEIGHT;
     private static final int BOARD_WIDTH = Cell.COLUMNS * BLOCK_WIDTH;
     
@@ -50,11 +50,8 @@ public final class XBlastComponent extends JComponent {
     private static final int SCORELINE_HEIGHT = 48;
     private static final int SCORELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.SCORELINE_LENGTH;   //FIXME needed?
     private static final Font SCORE_FONT = new Font("Arial", Font.BOLD, 25);
-    private static final int Y_SCORELINE = 659;
-    private static final int X_PLAYER1_SCORE = 96;
-    private static final int X_PLAYER2_SCORE = 240;
-    private static final int X_PLAYER3_SCORE = 768;
-    private static final int X_PLAYER4_SCORE = 912;
+    private static final int SCORELINE_Y = 659;
+    private static final int[] SCORELINE_X = {96, 240, 768, 912};
     
     // --- timeLine
     private static final int TIMELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.TIMELINE_LENGTH;
@@ -105,7 +102,7 @@ public final class XBlastComponent extends JComponent {
      * Method called by Swing to redraw the content of the XBlastComponent.
      */
     protected void paintComponent(Graphics g0) {
-        // don't do anything if 
+        // don't do anything if the attributes are not yet initialised.
         if (gameState == null || playerId == null)
             return;
         
@@ -117,7 +114,6 @@ public final class XBlastComponent extends JComponent {
         Iterator<Image> bloc = gameState.board().iterator();
         Iterator<Image> explosion = gameState.explosions().iterator();
         
-        
         for (int y = 0; y < BOARD_HEIGHT; y += BLOCK_HEIGHT) {
             for (int x = 0; x < BOARD_WIDTH; x += BLOCK_WIDTH) {
                 g.drawImage(bloc.next(), x, y, null);
@@ -126,18 +122,21 @@ public final class XBlastComponent extends JComponent {
         }
         
         /*
-         * Draw ScoreLine and TimeLine
+         * Draw ScoreLine
          */
-        int x = 0;
-
+        int xCoordinate = 0;
         for (Image i : gameState.scoreLine()) {
-            g.drawImage(i, x, BOARD_HEIGHT, null);
-            x += SCORELINE_IMAGE_WIDTH;
+            g.drawImage(i, xCoordinate, BOARD_HEIGHT, null);
+            xCoordinate += SCORELINE_IMAGE_WIDTH;
         }
-        x = 0;
+        
+        /*
+         * Draw TimeLine
+         */
+        xCoordinate = 0;
         for (Image i : gameState.timeLine()) {
-            g.drawImage(i, x, BOARD_HEIGHT + SCORELINE_HEIGHT, null);
-            x += TIMELINE_IMAGE_WIDTH;
+            g.drawImage(i, xCoordinate, BOARD_HEIGHT + SCORELINE_HEIGHT, null);
+            xCoordinate += TIMELINE_IMAGE_WIDTH;
         }
 
         /*
@@ -146,33 +145,25 @@ public final class XBlastComponent extends JComponent {
         g.setColor(Color.WHITE);
         g.setFont(SCORE_FONT);
 
-        g.drawString(Integer.toString(gameState.players().get(0).lives()),
-                X_PLAYER1_SCORE, Y_SCORELINE);
-        g.drawString(Integer.toString(gameState.players().get(1).lives()),
-                X_PLAYER2_SCORE, Y_SCORELINE);
-        g.drawString(Integer.toString(gameState.players().get(2).lives()),
-                X_PLAYER3_SCORE, Y_SCORELINE);
-        g.drawString(Integer.toString(gameState.players().get(3).lives()),
-                X_PLAYER4_SCORE, Y_SCORELINE);
-
+        for(int i = 0; i < PlayerID.values().length; i++) {
+            g.drawString(Integer.toString(gameState.players().get(i).lives()),
+                    SCORELINE_X[i], SCORELINE_Y);
+        }
+        
         /*
          * DrawPlayer
          */
         Comparator<Player> c1 = (p1, p2) -> Integer.compare(p1.position().y(),
                 p2.position().y());
-        
-        int ordinal = playerId.ordinal();
-        
+                
         Comparator<Player> c2 = (p1, p2) -> Integer.compare(
-                Math.floorMod(ordinal + p2.id().ordinal(),
+                Math.floorMod(playerId.ordinal() + p2.id().ordinal(),
                         PlayerID.values().length),
-                Math.floorMod(ordinal + p1.id().ordinal(),
+                Math.floorMod(playerId.ordinal() + p1.id().ordinal(),
                         PlayerID.values().length));
 
         Comparator<Player> comparator = c1.thenComparing(c2);
-
         List<Player> orderedPlayers = new ArrayList<>(gameState.players());
-
         Collections.sort(orderedPlayers, comparator);
 
         for (Player p : orderedPlayers) {
