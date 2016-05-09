@@ -76,6 +76,11 @@ public class RandomGame {
         System.out.println(game.winner().get());
     }
     
+    /**
+     * ADDIITIONAL METHOD
+     * allows to use randomGame in VisualRandomGame.
+     * @return
+     */
     public static List<List<Byte>> randomGame(){
         Level lvl=Level.DEFAULT_LEVEL;
         

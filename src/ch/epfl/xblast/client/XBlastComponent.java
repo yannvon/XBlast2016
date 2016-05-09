@@ -158,9 +158,9 @@ public final class XBlastComponent extends JComponent {
                 p2.position().y());
                 
         Comparator<Player> c2 = (p1, p2) -> Integer.compare(
-                Math.floorMod(playerId.ordinal() + p2.id().ordinal(),
+                Math.floorMod(p2.id().ordinal() + playerId.ordinal(),
                         NUMBER_OF_PLAYERS),
-                Math.floorMod(playerId.ordinal() + p1.id().ordinal(),
+                Math.floorMod(p1.id().ordinal() + playerId.ordinal(),
                         NUMBER_OF_PLAYERS));
 
         Comparator<Player> comparator = c1.thenComparing(c2);
