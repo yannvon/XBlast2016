@@ -52,7 +52,7 @@ public class VisualRandomGame {
                     }
                 });
         t.setRepeats(true);
-        t.start(); 
+        t.start();
         
     }
 }
