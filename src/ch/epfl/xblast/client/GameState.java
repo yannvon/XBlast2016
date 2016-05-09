@@ -3,6 +3,7 @@ package ch.epfl.xblast.client;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +30,7 @@ public final class GameState {
      * 
      */
     public static final class Player {
-
+        
         /*
          * Attributes
          */
@@ -97,6 +98,11 @@ public final class GameState {
             return image;
         }
     }
+    
+    /*
+     * Constants 
+     */
+    private final static int NUMBER_OF_PLAYERS = PlayerID.values().length;
 
     /*
      * Attributes
@@ -132,13 +138,20 @@ public final class GameState {
     public GameState(List<Player> players, List<Image> board,
             List<Image> explosions, List<Image> scoreLine, List<Image> timeLine) {
     
-        if (players.size() != PlayerID.values().length
+        //1) verify that all the lists have the correct size
+        if (players.size() != NUMBER_OF_PLAYERS
                 || board.size() != Cell.COUNT 
                 || explosions.size() != Cell.COUNT
                 || timeLine.size() != GameStateDeserializer.TIMELINE_LENGTH
                 || scoreLine.size() != GameStateDeserializer.SCORELINE_LENGTH)
             throw new IllegalArgumentException("Incorrect list size.");
     
+        //2) verify that the players are ordered correctly (natural order)
+        for(int i = 0; i < NUMBER_OF_PLAYERS; i++){
+            if(players.get(i).id().ordinal() != i)
+                throw new IllegalArgumentException("The players are not correctly sorted.");
+        }
+        
         this.players = Collections.unmodifiableList(
                 new ArrayList<>(players));
         this.board = Collections.unmodifiableList(
