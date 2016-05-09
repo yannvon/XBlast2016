@@ -43,6 +43,7 @@ public final class XBlastComponent extends JComponent {
     private static final int BOARD_WIDTH = Cell.COLUMNS * BLOCK_WIDTH;
     
     // --- players
+    private final static int NUMBER_OF_PLAYERS = PlayerID.values().length;  //FIXME search for occurrences!
     private static final UnaryOperator<Integer> X_FUNCTION = (x) -> 4 * x - 24;
     private static final UnaryOperator<Integer> Y_FUNCTION = (y) -> 3 * y - 52;
     
@@ -145,7 +146,7 @@ public final class XBlastComponent extends JComponent {
         g.setColor(Color.WHITE);
         g.setFont(SCORE_FONT);
 
-        for(int i = 0; i < PlayerID.values().length; i++) {
+        for(int i = 0; i < NUMBER_OF_PLAYERS; i++) {
             g.drawString(Integer.toString(gameState.players().get(i).lives()),
                     SCORELINE_X[i], SCORELINE_Y);
         }
@@ -158,9 +159,9 @@ public final class XBlastComponent extends JComponent {
                 
         Comparator<Player> c2 = (p1, p2) -> Integer.compare(
                 Math.floorMod(playerId.ordinal() + p2.id().ordinal(),
-                        PlayerID.values().length),
+                        NUMBER_OF_PLAYERS),
                 Math.floorMod(playerId.ordinal() + p1.id().ordinal(),
-                        PlayerID.values().length));
+                        NUMBER_OF_PLAYERS));
 
         Comparator<Player> comparator = c1.thenComparing(c2);
         List<Player> orderedPlayers = new ArrayList<>(gameState.players());
