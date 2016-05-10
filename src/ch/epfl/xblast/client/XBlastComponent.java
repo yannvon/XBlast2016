@@ -152,7 +152,7 @@ public final class XBlastComponent extends JComponent {
         }
         
         /*
-         * Draw Player TODO test order!!
+         * Draw Players
          */
         Comparator<Player> c1 = (p1, p2) -> Integer.compare(p1.position().y(),
                 p2.position().y());
