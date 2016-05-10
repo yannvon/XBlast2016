@@ -26,7 +26,7 @@ public class PlayerDisplayingVisualTest {
      * Constants
      */
 
-    private static final PlayerID CLIENT_PLAYERID = PlayerID.PLAYER_4;
+    private static final PlayerID CLIENT_PLAYERID = PlayerID.PLAYER_1;
     
     private static final Block __ = Block.FREE;
     private static final Block XX = Block.INDESTRUCTIBLE_WALL;
@@ -77,7 +77,7 @@ public class PlayerDisplayingVisualTest {
                         GameStateDeserializer.deserializeGameState(
                                 GameStateSerializer.serialize(
                                         Level.DEFAULT_LEVEL.boardPainter(),
-                                        new ch.epfl.xblast.server.GameState(board, playersSameSpot))),
+                                        new ch.epfl.xblast.server.GameState(board, playersOnTop))),
                 CLIENT_PLAYERID);
 
         f.getContentPane().add(xblastComponent);
