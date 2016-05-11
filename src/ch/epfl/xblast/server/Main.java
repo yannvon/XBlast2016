@@ -107,7 +107,7 @@ public class Main {
             
         }
         Optional<PlayerID> winner = game.winner();
-        System.out.println(winner.isPresent()? winner : "no winner");
+        System.out.println(winner.isPresent()? winner.get() : "no winner");
         
         
     }
