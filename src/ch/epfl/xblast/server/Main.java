@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerAction;
@@ -32,15 +33,16 @@ public class Main {
     private static final Level LEVEL = Level.DEFAULT_LEVEL;//FIXME or level?    
     private static final int DEFAULT_NUMBER_OF_CLIENT = 4;    
     private static final SocketAddress PORT_ADDRESS= new InetSocketAddress(2016);
-    
+    private static final UnaryOperator<Integer> MOVE_ACTION_TO_DIRECTION_ORDINAL = x-> x+1; 
     
     /**
      * Main method of the server
      * @param args
      *          Determine the number of client to connect before the game begins.
      * @throws IOException 
+     * @throws InterruptedException 
      */
-    public static void main(String[] args) throws IOException { //FIXME exception?
+    public static void main(String[] args) throws IOException, InterruptedException { //FIXME exception?
         
         /*
          * Phase 1
@@ -75,6 +77,7 @@ public class Main {
          */
         GameState game = LEVEL.initialGameState();
         channel.configureBlocking(false);       //TODO comment
+        long startingTime = System.nanoTime();
         
         while(!game.isGameOver()){
             // 1) send current GameState to clients
@@ -83,7 +86,8 @@ public class Main {
             ByteBuffer gameStateBuffer = ByteBuffer.allocate(serialized.size());
             gameStateBuffer.put((byte) 0);  //TODO explain 
             serialized.forEach(gameStateBuffer::put);
-
+            
+            //1.2) send gameState to each client
             for(Entry<SocketAddress, PlayerID> e : clientAdresses.entrySet()){
                 gameStateBuffer.put(0, (byte) e.getValue().ordinal());  //FIXME move tampon?
                 gameStateBuffer.flip(); //FIXME if possible put out of loop
@@ -91,36 +95,45 @@ public class Main {
             }
 
             
-            Map<PlayerID,PlayerAction> actions= new HashMap<>();
-            while(channel.receive(oneByteBuffer)!=null){
-                //TODO?????
+            //2)Wait a tick duration
+            long timeForNextTick = startingTime + game.ticks()*Ticks.TICK_NANOSECOND_DURATION;
+            long waitingTime =timeForNextTick-System.nanoTime();
+            if(waitingTime>0)
+                Thread.sleep(waitingTime);
+            
+            
+            
+            //3) get client input
+            Map<PlayerID,Optional<Direction>> speedChangeEvents =new  HashMap<>();
+            Set<PlayerID> bombDrpEvent = new HashSet<>();
+            SocketAddress senderAddress;
+            while((senderAddress = channel.receive(oneByteBuffer)) != null){
+                PlayerID id = clientAdresses.get(senderAddress);
+                PlayerAction action= PlayerAction.values()[oneByteBuffer.get()];
+                if(id != null){
+                    switch(action){
+                    case DROP_BOMB:
+                        bombDrpEvent.add(id);
+                        break;
+                    case MOVE_S:
+                    case MOVE_N:
+                    case MOVE_W:
+                    case MOVE_E:
+                        int dirOrdinal = MOVE_ACTION_TO_DIRECTION_ORDINAL
+                                .apply(action.ordinal());
+                        speedChangeEvents.put(id,
+                                Optional.of(Direction.values()[dirOrdinal]));
+                        break;
+                    case STOP:
+                        speedChangeEvents.put(id,Optional.empty());
+                    }
+                }
+                oneByteBuffer.clear();
             }
             
-            // 2) get client input
-            Map<PlayerID,Optional<Direction>> mouvements= new HashMap<>();
-            Set<PlayerID> bombDrpEvent = new HashSet<>();
-            
-            actions.forEach((p,a)->{
-                if(a==PlayerAction.DROP_BOMB)
-                    bombDrpEvent.add(p);
-                
-                switch(a){
-                case MOVE_N:
-                case MOVE_S:
-                case MOVE_E:
-                case MOVE_W:
-                    mouvements.put(p,
-                            Optional.of(Direction.values()[a.ordinal() - 1]));
-                    // FIXME add attribute (or function) to PlayerAction
-                break;
-                case STOP:
-                    mouvements.put(p,Optional.empty());
-                }
-            });//FIXME use stream?
-            
-            
-            
-            game.next(mouvements,bombDrpEvent);
+           
+            //4) evolve GameState
+            game.next(speedChangeEvents,bombDrpEvent);
             
             
         }
