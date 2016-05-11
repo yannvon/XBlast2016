@@ -126,6 +126,8 @@ public class Main {
                         break;
                     case STOP:
                         speedChangeEvents.put(id,Optional.empty());
+                    case JOIN_GAME:
+                        break;  //FIXME throw error?
                     }
                 }
                 oneByteBuffer.clear();
@@ -139,6 +141,7 @@ public class Main {
         }
         Optional<PlayerID> winner = game.winner();
         System.out.println(winner.isPresent()? winner : "no winner");   //FIXME
+        channel.close();
     }
 
 }
