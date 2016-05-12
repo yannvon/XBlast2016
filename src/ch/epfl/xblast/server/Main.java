@@ -67,7 +67,7 @@ public class Main {
                 clientAdresses.put(senderAddress,
                         PlayerID.values()[clientAdresses.size()]);
             }
-            oneByteBuffer.reset();
+            oneByteBuffer.clear();
         }
         
         
@@ -83,14 +83,14 @@ public class Main {
             // 1) send current GameState to clients
             // 1.1) serialize GameState
             List<Byte> serialized = GameStateSerializer.serialize(LEVEL.boardPainter(), game);
-            ByteBuffer gameStateBuffer = ByteBuffer.allocate(serialized.size());
+            ByteBuffer gameStateBuffer = ByteBuffer.allocate(serialized.size() + 1);
             gameStateBuffer.put((byte) 0);  //TODO explain 
             serialized.forEach(gameStateBuffer::put);
-            
+            gameStateBuffer.flip();
             //1.2) send gameState to each client
             for(Entry<SocketAddress, PlayerID> e : clientAdresses.entrySet()){
                 gameStateBuffer.put(0, (byte) e.getValue().ordinal());  //FIXME move tampon?
-                gameStateBuffer.flip(); //FIXME if possible put out of loop
+                 //FIXME if possible put out of loop
                 channel.send(gameStateBuffer, e.getKey());
             }
 

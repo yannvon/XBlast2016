@@ -48,7 +48,6 @@ public class Main {
         SocketAddress address = new InetSocketAddress(hostName, PORT);
         
         DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET);
-        channel.bind(address);
         channel.configureBlocking(false);
         
         //1.2)) send request to join game
@@ -67,7 +66,7 @@ public class Main {
         
 
         do{
-            receiveByteBuffer.flip();
+            //receiveByteBuffer.flip();
             id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
             List<Byte> serialized = new ArrayList<>();
             while(receiveByteBuffer.hasRemaining()){
