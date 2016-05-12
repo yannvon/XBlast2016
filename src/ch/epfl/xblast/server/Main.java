@@ -85,17 +85,13 @@ public class Main {
             List<Byte> serialized = GameStateSerializer.serialize(LEVEL.boardPainter(), game);
             ByteBuffer gameStateBuffer = ByteBuffer.allocate(serialized.size() + 1);
             gameStateBuffer.put((byte) 0);  //TODO explain 
-            //serialized.forEach(gameStateBuffer::put);
-            
-            for(Byte b : serialized)
-                gameStateBuffer.put(b);
-            
+            serialized.forEach(gameStateBuffer::put);
             gameStateBuffer.flip();
+
             //1.2) send gameState to each client
             for(Entry<SocketAddress, PlayerID> e : clientAdresses.entrySet()){
-                gameStateBuffer.put(0, (byte) e.getValue().ordinal());  //FIXME move tampon?
-
-                //FIXME if possible put out of loop
+                //gameStateBuffer.put(0, (byte) e.getValue().ordinal());  //FIXME move tampon?
+                //gameStateBuffer.rewind();
                 channel.send(gameStateBuffer, e.getKey());
             }
 
@@ -106,12 +102,16 @@ public class Main {
             if(waitingTime>0)
                 Thread.sleep(waitingTime);
             
-            
+            channel.configureBlocking(true);       //TODO comment
+
             
             //3) get client input
             Map<PlayerID,Optional<Direction>> speedChangeEvents =new  HashMap<>();
             Set<PlayerID> bombDrpEvent = new HashSet<>();
             SocketAddress senderAddress;
+            
+            channel.configureBlocking(true);       //FIXME correct?
+
             while((senderAddress = channel.receive(oneByteBuffer)) != null){
                 PlayerID id = clientAdresses.get(senderAddress);
                 PlayerAction action= PlayerAction.values()[oneByteBuffer.get()];

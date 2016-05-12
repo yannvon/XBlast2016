@@ -40,6 +40,8 @@ public class Main {
     private static XBlastComponent xbc;
 
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {//FIXME
+        SwingUtilities.invokeAndWait(() -> createUI()); //FIXME why not invokeLater?
+        
         //1) send server the intention to join a game.
         //1.1) retrieve Ip-adress and open channel FIXME
         String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
@@ -52,6 +54,7 @@ public class Main {
         ByteBuffer sendByteBuffer = ByteBuffer.allocate(1);
         ByteBuffer receiveByteBuffer = ByteBuffer.allocate(MAX_BYTES);
         sendByteBuffer.put((byte) 0);   // place to later put PlayerID
+        sendByteBuffer.flip();
         do{
             channel.send(sendByteBuffer, address);
             Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
@@ -62,9 +65,8 @@ public class Main {
         //2) after receiving the initial GameState the Clients and waits for the next one
         channel.configureBlocking(true);
         
-        SwingUtilities.invokeAndWait(() -> createUI()); //FIXME why not invokeLater?
         do{
-            //receiveByteBuffer.flip();
+            receiveByteBuffer.rewind();
             PlayerID id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
             List<Byte> serialized = new ArrayList<>();
             while(receiveByteBuffer.hasRemaining()){
