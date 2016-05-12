@@ -70,7 +70,7 @@ public class Main {
             oneByteBuffer.clear();
         }
         
-        
+        System.out.println("All players connected");
         
         /*
          * Phase 2
@@ -85,12 +85,17 @@ public class Main {
             List<Byte> serialized = GameStateSerializer.serialize(LEVEL.boardPainter(), game);
             ByteBuffer gameStateBuffer = ByteBuffer.allocate(serialized.size() + 1);
             gameStateBuffer.put((byte) 0);  //TODO explain 
-            serialized.forEach(gameStateBuffer::put);
+            //serialized.forEach(gameStateBuffer::put);
+            
+            for(Byte b : serialized)
+                gameStateBuffer.put(b);
+            
             gameStateBuffer.flip();
             //1.2) send gameState to each client
             for(Entry<SocketAddress, PlayerID> e : clientAdresses.entrySet()){
                 gameStateBuffer.put(0, (byte) e.getValue().ordinal());  //FIXME move tampon?
-                 //FIXME if possible put out of loop
+
+                //FIXME if possible put out of loop
                 channel.send(gameStateBuffer, e.getKey());
             }
 
@@ -136,9 +141,8 @@ public class Main {
            
             //4) evolve GameState
             game.next(speedChangeEvents,bombDrpEvent);
-            
-            
         }
+        
         Optional<PlayerID> winner = game.winner();
         System.out.println(winner.isPresent()? winner : "no winner");   //FIXME
         channel.close();

@@ -38,8 +38,6 @@ public class Main {
      * Attributes
      */
     private static XBlastComponent xbc;
-    private static GameState gameState;
-    private static PlayerID id;   //FIXME should never change?
 
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {//FIXME
         //1) send server the intention to join a game.
@@ -64,20 +62,19 @@ public class Main {
         //2) after receiving the initial GameState the Clients and waits for the next one
         channel.configureBlocking(true);
         
-
+        SwingUtilities.invokeAndWait(() -> createUI()); //FIXME why not invokeLater?
         do{
             //receiveByteBuffer.flip();
-            id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
+            PlayerID id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
             List<Byte> serialized = new ArrayList<>();
             while(receiveByteBuffer.hasRemaining()){
                 serialized.add(receiveByteBuffer.get());
             }
             receiveByteBuffer.clear();
-            gameState = GameStateDeserializer.deserializeGameState(serialized);
-            
-            SwingUtilities.invokeAndWait(() -> createUI()); //FIXME why not invokeLater?
+            GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
+            xbc.setGameState(gameState, id);  //FIXME
 
-           //FIXME gameState as attribute?
+            //FIXME gameState as attribute?
             channel.receive(receiveByteBuffer);
        }while(true); //FIXME add game.isOver() condition!
            //FIXME dont forget close channel!
@@ -93,7 +90,6 @@ public class Main {
         JFrame f = new JFrame("TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         xbc = new XBlastComponent();    //FIXME create everytime??
-        xbc.setGameState(gameState, id);  //FIXME
 
         f.getContentPane().add(xbc);
         f.setResizable(false);
