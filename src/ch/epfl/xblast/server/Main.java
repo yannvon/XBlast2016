@@ -90,19 +90,19 @@ public class Main {
 
             //1.2) send gameState to each client
             for(Entry<SocketAddress, PlayerID> e : clientAdresses.entrySet()){
-                //gameStateBuffer.put(0, (byte) e.getValue().ordinal());  //FIXME move tampon?
-                //gameStateBuffer.rewind();
+                gameStateBuffer.put(0, (byte) e.getValue().ordinal());
                 channel.send(gameStateBuffer, e.getKey());
             }
 
             
             //2)Wait a tick duration
+            
             long timeForNextTick = startingTime + game.ticks()*Ticks.TICK_NANOSECOND_DURATION;
-            long waitingTime =timeForNextTick-System.nanoTime();
+            long waitingTime = timeForNextTick-System.nanoTime();
             if(waitingTime>0)
                 Thread.sleep(waitingTime);
             
-            channel.configureBlocking(true);       //TODO comment
+            
 
             
             //3) get client input
@@ -138,9 +138,9 @@ public class Main {
                 oneByteBuffer.clear();
             }
             
-           
+           System.out.println("tick " + game.ticks());
             //4) evolve GameState
-            game.next(speedChangeEvents,bombDrpEvent);
+            game = game.next(speedChangeEvents,bombDrpEvent);       //lol!
         }
         
         Optional<PlayerID> winner = game.winner();

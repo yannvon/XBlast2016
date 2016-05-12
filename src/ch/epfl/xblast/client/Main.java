@@ -66,7 +66,7 @@ public class Main {
         channel.configureBlocking(true);
         
         do{
-            receiveByteBuffer.rewind();
+            receiveByteBuffer.flip();
             PlayerID id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
             List<Byte> serialized = new ArrayList<>();
             while(receiveByteBuffer.hasRemaining()){
@@ -75,6 +75,9 @@ public class Main {
             receiveByteBuffer.clear();
             GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
             xbc.setGameState(gameState, id);  //FIXME
+            
+            System.out.println("server tick");
+
 
             //FIXME gameState as attribute?
             channel.receive(receiveByteBuffer);
