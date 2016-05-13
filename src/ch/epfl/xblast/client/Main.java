@@ -46,10 +46,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {//FIXME
         
-        /*
-         * Start by invoking the parallel thread
-         */
-        SwingUtilities.invokeAndWait(() -> createUI());
+       
         
         /*
          * 1) send server the intention to join a game.
@@ -72,7 +69,10 @@ public class Main {
             Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
         }while((channel.receive(receiveByteBuffer)) == null);   //FIXME i don't save the senderAdress, should we check that
                                                                 // the server is always the same?
-        
+        /*
+         * Start by invoking the parallel thread
+         */
+        SwingUtilities.invokeAndWait(() -> createUI());
         
         /*
          * 2) after receiving the initial GameState the Clients and waits for the next one
