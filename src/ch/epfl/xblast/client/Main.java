@@ -84,8 +84,6 @@ public class Main {
             GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
             xbc.setGameState(gameState, id);  //FIXME
             
-            System.out.println("client tick");
-
             receiveByteBuffer.clear();
             //FIXME gameState as attribute?
             channel.receive(receiveByteBuffer);

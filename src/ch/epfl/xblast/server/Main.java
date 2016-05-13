@@ -70,9 +70,7 @@ public class Main {
             }
             oneByteBuffer.clear();
         }
-        
-        System.out.println("All players connected");
-        
+                
         /*
          * Phase 2
          */
@@ -134,8 +132,7 @@ public class Main {
                 }
                 oneByteBuffer.clear();
             }
-            
-           System.out.println("tick " + game.ticks());
+
             //4) evolve GameState
             game = game.next(speedChangeEvents,bombDrpEvent);       //lol!
         }
