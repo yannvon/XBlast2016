@@ -108,6 +108,8 @@ public class Main {
         f.setResizable(false);
         f.pack();
         f.setVisible(true);
+        xbc.requestFocusInWindow(); //FIXME useful?
+
         
         /*
          * Manage the Keyboard input
@@ -122,8 +124,5 @@ public class Main {
             }
         };
         xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));
-        xbc.requestFocusInWindow();
-       
-        
     }
 }
