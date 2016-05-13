@@ -21,11 +21,31 @@ import ch.epfl.xblast.PlayerAction;
 public final class KeyboardEventHandler extends KeyAdapter
         implements KeyListener { 
     /*
+     * Constants
+     */
+    public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls(); //FIXME correct?
+    
+    /*
      * Attributes
      */
     private final Map<Integer, PlayerAction> controls;
     private final Consumer<PlayerAction> consumer;
 
+    /**
+     * TODO
+     * @return
+     */
+    private static Map<Integer, PlayerAction> defaultControls(){
+        Map<Integer, PlayerAction> keyboardEvents = new HashMap<>();
+        keyboardEvents.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
+        keyboardEvents.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
+        keyboardEvents.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
+        keyboardEvents.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
+        keyboardEvents.put(KeyEvent.VK_SPACE, PlayerAction.DROP_BOMB);
+        keyboardEvents.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
+        return Collections.unmodifiableMap(keyboardEvents);
+    }
+    
     /**
      * Sole constructor taking the mapping between a key pressed and the action
      * to take, and a consumer as parameter.

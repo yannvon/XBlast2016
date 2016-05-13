@@ -34,7 +34,7 @@ public class Main {
     private static final Level LEVEL = Level.DEFAULT_LEVEL;  
     private static final int DEFAULT_NUMBER_OF_CLIENT = 4;    
     private static final SocketAddress PORT_ADDRESS= new InetSocketAddress(2016);
-    private static final UnaryOperator<Integer> MOVE_ACTION_TO_DIRECTION_ORDINAL = x-> x+1; 
+    private static final UnaryOperator<Integer> MOVE_ACTION_TO_DIRECTION_ORDINAL = x-> x-1; 
     
     /**
      * Main method of the server
@@ -108,6 +108,7 @@ public class Main {
             SocketAddress senderAddress;
             
             while((senderAddress = channel.receive(oneByteBuffer)) != null){
+                oneByteBuffer.flip();
                 PlayerID id = clientAdresses.get(senderAddress);
                 PlayerAction action= PlayerAction.values()[oneByteBuffer.get()];
                 if(id != null){

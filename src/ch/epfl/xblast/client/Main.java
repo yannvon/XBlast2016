@@ -9,11 +9,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.PlayerAction;
 import ch.epfl.xblast.PlayerID;
 
 /**
@@ -33,11 +35,14 @@ public class Main {
     private static final int MAX_BYTES = 2*(Cell.COUNT + 1) + 16 + 1 + 1;   //FIXME
     private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
-
+    //FIXME KeyBoard Control map here?
+    
     /*
      * Attributes
      */
     private static XBlastComponent xbc;
+    private static DatagramChannel channel;
+    private static SocketAddress address;
 
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {//FIXME
         
@@ -52,9 +57,9 @@ public class Main {
         
         //1.1) retrieve Ip-adress and open channel FIXME
         String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
-        SocketAddress address = new InetSocketAddress(hostName, PORT);
+        address = new InetSocketAddress(hostName, PORT);
         
-        DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET);
+        channel = DatagramChannel.open(StandardProtocolFamily.INET);
         channel.configureBlocking(false);
         
         //1.2)) send request to join game
@@ -88,7 +93,6 @@ public class Main {
             //FIXME gameState as attribute?
             channel.receive(receiveByteBuffer);
        }while(true);
-
     }
 
     public static void createUI(){
@@ -96,7 +100,6 @@ public class Main {
         /*
          * Display given GameState
          */
-        
         JFrame f = new JFrame("TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         xbc = new XBlastComponent();    //FIXME create everytime??
@@ -109,5 +112,18 @@ public class Main {
         /*
          * Manage the Keyboard input
          */
+        Consumer<PlayerAction> c = (playerAction) -> {
+            ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);
+            oneByteBuffer.put((byte) playerAction.ordinal());
+            oneByteBuffer.flip();
+            try {
+                channel.send(oneByteBuffer, address);
+            } catch (Exception e) {
+            }
+        };
+        xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));
+        xbc.requestFocusInWindow();
+       
+        
     }
 }
