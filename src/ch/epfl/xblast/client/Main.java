@@ -40,9 +40,16 @@ public class Main {
     private static XBlastComponent xbc;
 
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {//FIXME
-        SwingUtilities.invokeAndWait(() -> createUI()); //FIXME why not invokeLater?
         
-        //1) send server the intention to join a game.
+        /*
+         * Start by invoking the parallel thread
+         */
+        SwingUtilities.invokeAndWait(() -> createUI());
+        
+        /*
+         * 1) send server the intention to join a game.
+         */
+        
         //1.1) retrieve Ip-adress and open channel FIXME
         String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
         SocketAddress address = new InetSocketAddress(hostName, PORT);
@@ -58,11 +65,13 @@ public class Main {
         do{
             channel.send(sendByteBuffer, address);
             Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
-        }while((channel.receive(receiveByteBuffer)) != null);   //FIXME i don't save the senderAdress, should we check that
+        }while((channel.receive(receiveByteBuffer)) == null);   //FIXME i don't save the senderAdress, should we check that
                                                                 // the server is always the same?
         
         
-        //2) after receiving the initial GameState the Clients and waits for the next one
+        /*
+         * 2) after receiving the initial GameState the Clients and waits for the next one
+         */
         channel.configureBlocking(true);
         
         do{
@@ -72,17 +81,15 @@ public class Main {
             while(receiveByteBuffer.hasRemaining()){
                 serialized.add(receiveByteBuffer.get());
             }
-            receiveByteBuffer.clear();
             GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
             xbc.setGameState(gameState, id);  //FIXME
             
-            System.out.println("server tick");
+            System.out.println("client tick");
 
-
+            receiveByteBuffer.clear();
             //FIXME gameState as attribute?
             channel.receive(receiveByteBuffer);
-       }while(true); //FIXME add game.isOver() condition!
-           //FIXME dont forget close channel!
+       }while(true);
 
     }
 

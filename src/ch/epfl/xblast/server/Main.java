@@ -18,6 +18,7 @@ import java.util.function.UnaryOperator;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerAction;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.Time;
 
 /**
  * Main class of the server. Manage a game and TODO with the client
@@ -30,7 +31,7 @@ public class Main {
     /*
      * Constants
      */
-    private static final Level LEVEL = Level.DEFAULT_LEVEL;//FIXME or level?    
+    private static final Level LEVEL = Level.DEFAULT_LEVEL;  
     private static final int DEFAULT_NUMBER_OF_CLIENT = 4;    
     private static final SocketAddress PORT_ADDRESS= new InetSocketAddress(2016);
     private static final UnaryOperator<Integer> MOVE_ACTION_TO_DIRECTION_ORDINAL = x-> x+1; 
@@ -95,23 +96,19 @@ public class Main {
             }
 
             
-            //2)Wait a tick duration
-            
-            long timeForNextTick = startingTime + game.ticks()*Ticks.TICK_NANOSECOND_DURATION;
-            long waitingTime = timeForNextTick-System.nanoTime();
-            if(waitingTime>0)
-                Thread.sleep(waitingTime);
-            
+            //2)Wait a tick duration            
+            long timeForNextTick = (long) startingTime
+                    + ((long) game.ticks() + 1) * ((long) Ticks.TICK_NANOSECOND_DURATION);
+            long waitingTime = timeForNextTick - System.nanoTime();
+            if (waitingTime > 0)
+                Thread.sleep(waitingTime/ Time.US_PER_S);            
             
 
-            
-            //3) get client input
-            Map<PlayerID,Optional<Direction>> speedChangeEvents =new  HashMap<>();
+            // 3) get client input
+            Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
             Set<PlayerID> bombDrpEvent = new HashSet<>();
             SocketAddress senderAddress;
             
-            channel.configureBlocking(true);       //FIXME correct?
-
             while((senderAddress = channel.receive(oneByteBuffer)) != null){
                 PlayerID id = clientAdresses.get(senderAddress);
                 PlayerAction action= PlayerAction.values()[oneByteBuffer.get()];
