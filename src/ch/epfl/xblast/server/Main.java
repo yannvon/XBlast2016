@@ -64,7 +64,7 @@ public class Main {
          */
         while (clientAdresses.size() != numberOfClients) {
             SocketAddress senderAddress = channel.receive(oneByteBuffer);
-            if (oneByteBuffer.get(0) == PlayerAction.JOIN_GAME.ordinal()) {    //get()
+            if (!clientAdresses.containsKey(senderAddress) && oneByteBuffer.get(0) == PlayerAction.JOIN_GAME.ordinal()) {    //get()
                 clientAdresses.put(senderAddress,
                         PlayerID.values()[clientAdresses.size()]);
             }
