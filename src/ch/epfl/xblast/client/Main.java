@@ -66,6 +66,7 @@ public class Main {
         sendByteBuffer.flip();
         do{
             channel.send(sendByteBuffer, address);
+            sendByteBuffer.rewind();
             Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
         }while((channel.receive(receiveByteBuffer)) == null);   //FIXME i don't save the senderAdress, should we check that
                                                                 // the server is always the same?
