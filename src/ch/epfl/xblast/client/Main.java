@@ -1,7 +1,5 @@
 package ch.epfl.xblast.client;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -19,67 +17,75 @@ import ch.epfl.xblast.PlayerAction;
 import ch.epfl.xblast.PlayerID;
 
 /**
- * Main class in charge of communicating with the server and displaying the
- * current GameState.
+ * Main class of the Client. In charge of communicating with the server and
+ * displaying the current GameState.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen(258857)
  *
  */
 public class Main {
-    
+
     /*
      * Constants
      */
     private static final int PORT = 2016;
-    private static final int MAX_BYTES = 2*(Cell.COUNT + 1) + 16 + 1 + 1;   //FIXME
+    private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
+            + 4 * PlayerID.values().length + 1 + 1; // FIXME
     private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
-    //FIXME KeyBoard Control map here?
-    
+    // FIXME KeyBoard Control map here?
+
     /*
      * Attributes
      */
     private static XBlastComponent xbc;
     private static DatagramChannel channel;
-    private static SocketAddress address;
+    private static SocketAddress serverAddress;
 
-    public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {//FIXME
-        
-       
+    public static void main(String[] args) throws Exception{    //FIXME error handling!!
         
         /*
-         * 1) send server the intention to join a game.
+         * PHASE 1
+         * 1.1) retrieve IP-address and open channel
          */
-        
-        //1.1) retrieve Ip-adress and open channel FIXME
         String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
-        address = new InetSocketAddress(hostName, PORT);
+        serverAddress = new InetSocketAddress(hostName, PORT);
         
+        //FIXME try with resources. HOW?
         channel = DatagramChannel.open(StandardProtocolFamily.INET);
-        channel.configureBlocking(false);
         
-        //1.2)) send request to join game
+        //TODO comments
+        channel.configureBlocking(false);
+
+        /*
+         * 1.2) Send request to join game to Server as long as the server
+         * doesn't send the initial GameState.
+         */
         ByteBuffer sendByteBuffer = ByteBuffer.allocate(1);
-        ByteBuffer receiveByteBuffer = ByteBuffer.allocate(MAX_BYTES);
-        sendByteBuffer.put((byte) 0);   // place to later put PlayerID
+        ByteBuffer receiveByteBuffer = ByteBuffer.allocate(MAX_RECEIVING_BYTES);
+        sendByteBuffer.put((byte) PlayerAction.JOIN_GAME.ordinal());
         sendByteBuffer.flip();
         do{
-            channel.send(sendByteBuffer, address);
+            channel.send(sendByteBuffer, serverAddress);
             sendByteBuffer.rewind();
             Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
-        }while((channel.receive(receiveByteBuffer)) == null);   //FIXME i don't save the senderAdress, should we check that
-                                                                // the server is always the same?
+        }while((channel.receive(receiveByteBuffer)) == null);
+        
         /*
-         * Start by invoking the parallel thread
+         * PHASE 2
+         * 2.1) Start by invoking the parallel EDT Swing thread.
          */
         SwingUtilities.invokeAndWait(() -> createUI());
         
-        /*
-         * 2) after receiving the initial GameState the Clients and waits for the next one
-         */
-        channel.configureBlocking(true);
         
+        // From now one the client will wait to get the next GameState from the server.
+        channel.configureBlocking(true);
+
+        /*
+         * 2.2) As long as the program runs the client waits for a new GameState
+         * and shares it with the parallel Swing thread.
+         */
         do{
             receiveByteBuffer.flip();
             PlayerID id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
@@ -88,32 +94,31 @@ public class Main {
                 serialized.add(receiveByteBuffer.get());
             }
             GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
-            xbc.setGameState(gameState, id);  //FIXME
-            
+            xbc.setGameState(gameState, id);
             receiveByteBuffer.clear();
-            //FIXME gameState as attribute?
             channel.receive(receiveByteBuffer);
-       }while(true);
+        } while (true);
     }
 
     public static void createUI(){
         
         /*
-         * Display given GameState
+         * Open new Window.
          */
-        JFrame f = new JFrame("TEST");
+        JFrame f = new JFrame("XBlast 2016");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        xbc = new XBlastComponent();    //FIXME create everytime??
-
+        xbc = new XBlastComponent();
+        
         f.getContentPane().add(xbc);
         f.setResizable(false);
         f.pack();
         f.setVisible(true);
-        xbc.requestFocusInWindow(); //FIXME useful?
+        xbc.requestFocusInWindow();
 
-        
         /*
-         * Manage the Keyboard input
+         * Manage the Keyboard input by adding a keyListener to the
+         * XBlastComponent that sends a message to the server when a relevant
+         * key was pressed.
          */
         //FIXME Constant?
         Consumer<PlayerAction> c = (playerAction) -> {
@@ -121,8 +126,9 @@ public class Main {
             oneByteBuffer.put((byte) playerAction.ordinal());
             oneByteBuffer.flip();
             try {
-                channel.send(oneByteBuffer, address);
+                channel.send(oneByteBuffer, serverAddress);
             } catch (Exception e) {
+                //FIXME what shall we do here?
             }
         };
         xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));
