@@ -115,6 +115,7 @@ public class Main {
         /*
          * Manage the Keyboard input
          */
+        //FIXME Constant?
         Consumer<PlayerAction> c = (playerAction) -> {
             ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);
             oneByteBuffer.put((byte) playerAction.ordinal());
