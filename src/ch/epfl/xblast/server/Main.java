@@ -1,6 +1,5 @@
 package ch.epfl.xblast.server;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -36,11 +35,10 @@ public class Main {
     private static final Level LEVEL = Level.DEFAULT_LEVEL;
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final int DEFAULT_NUMBER_OF_CLIENTS = NUMBER_OF_PLAYERS;
-    private static final int MAX_BYTES = 2*(Cell.COUNT + 1) + 16 + 1 + 1;   //FIXME
-    private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(
-            2016);
-    private static final UnaryOperator<Integer> MOVE_ACTION_TO_DIRECTION_ORDINAL = x -> x
-            - 1;
+    private static final int MAX_SERIIALIZED_SIZE = 2 * (Cell.COUNT + 1)
+            + 4 * NUMBER_OF_PLAYERS + 1;
+    private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(2016);
+    private static final UnaryOperator<Integer> ACTION_TO_DIR_ORDINAL = x -> x - 1;
 
     /**
      * Main method of the XBlast 2016 Server.
@@ -54,7 +52,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         /*
-         * Phase 1:
+         * PHASE 1
          * 1.1) Determine how many player will be playing.
          */
         int numberOfClients = (args.length != 0) ? Integer.parseInt(args[0])
@@ -97,23 +95,26 @@ public class Main {
              * Phase 2:
              * 2.1) Start the game and save the starting time for later time management.
              */
-            GameState game = LEVEL.initialGameState();
+            GameState gameState = LEVEL.initialGameState();
             long startingTime = System.nanoTime();
-            
-            // Disable blocking mode since in Phase 2 the clients don't have to send anything.
-            channel.configureBlocking(false);
-            
-            // Prepare Buffer in order to send the GameState
-            ByteBuffer gameStateBuffer = ByteBuffer.allocate(MAX_BYTES);
 
-            while (!game.isGameOver()) {
+            // Disable blocking mode since in Phase 2 the clients are not
+            // required to send anything.
+            channel.configureBlocking(false);
+
+            // Prepare Buffer in order to send the GameState. The maximal
+            // transmission size equals the max GameState size + 1 byte for the playerID.
+            ByteBuffer gameStateBuffer = ByteBuffer
+                    .allocate(MAX_SERIIALIZED_SIZE + 1);
+
+            while (!gameState.isGameOver()) {
                 
                 /*
                  *  2.2) Serialize the current GameState and prepare buffer.
                  */
                 List<Byte> serialized = GameStateSerializer
-                        .serialize(LEVEL.boardPainter(), game);
-                gameStateBuffer.put((byte) 0); // TODO explain
+                        .serialize(LEVEL.boardPainter(), gameState);
+                gameStateBuffer.put((byte) 0);
                 serialized.forEach(gameStateBuffer::put);
                 gameStateBuffer.flip();
 
@@ -134,14 +135,16 @@ public class Main {
                  *      correct.
                  */
                 long timeForNextTick = startingTime
-                        + ((long) game.ticks() + 1)
+                        + ((long) gameState.ticks() + 1)
                                 * ((long) Ticks.TICK_NANOSECOND_DURATION);
                 long waitingTime = timeForNextTick - System.nanoTime();
                 if (waitingTime > 0)
                     Thread.sleep(waitingTime / Time.US_PER_S);
 
                 /*
-                 *  2.4) Check if the clients sent an action they want to execute.
+                 * 2.4) Check if the clients sent an action they want to
+                 *      execute. This is done by receiving the messages until
+                 *      there are none left.
                  */
                 Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
                 Set<PlayerID> bombDrpEvent = new HashSet<>();
@@ -153,7 +156,7 @@ public class Main {
                     PlayerID id = clientAdresses.get(senderAddress);
                     PlayerAction action = PlayerAction.values()[oneByteBuffer
                             .get()];
-                    if (id != null) {
+                    if (id != null) {   //FIXME check if id belongs to a valid player?
                         switch (action) {
                         case DROP_BOMB:
                             bombDrpEvent.add(id);
@@ -162,7 +165,7 @@ public class Main {
                         case MOVE_N:
                         case MOVE_W:
                         case MOVE_E:
-                            int dirOrdinal = MOVE_ACTION_TO_DIRECTION_ORDINAL
+                            int dirOrdinal = ACTION_TO_DIR_ORDINAL
                                     .apply(action.ordinal());
                             speedChangeEvents.put(id, Optional
                                     .of(Direction.values()[dirOrdinal]));
@@ -179,10 +182,10 @@ public class Main {
                 /*
                  * 2.4) Evolve GameState to the next Tick.
                  */
-                game = game.next(speedChangeEvents, bombDrpEvent);
+                gameState = gameState.next(speedChangeEvents, bombDrpEvent);
             }
 
-            Optional<PlayerID> winner = game.winner();
+            Optional<PlayerID> winner = gameState.winner();
             System.out.println(winner.isPresent() ? winner.get() : "There was no winner.");
             channel.close(); // FIXME correct?
             
