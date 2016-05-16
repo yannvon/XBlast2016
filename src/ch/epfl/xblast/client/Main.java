@@ -1,7 +1,5 @@
 package ch.epfl.xblast.client;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -27,17 +25,17 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public class Main {
-    
+
     /*
      * Constants
      */
     private static final int PORT = 2016;
-    private static final int MAX_RECEIVING_BYTES =  2 * (Cell.COUNT + 1)
-            + 4 * PlayerID.values().length + 1 + 1; //FIXME
+    private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
+            + 4 * PlayerID.values().length + 1 + 1; // FIXME
     private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
-    //FIXME KeyBoard Control map here?
-    
+    // FIXME KeyBoard Control map here?
+
     /*
      * Attributes
      */
@@ -45,7 +43,7 @@ public class Main {
     private static DatagramChannel channel;
     private static SocketAddress serverAddress;
 
-    public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {//FIXME
+    public static void main(String[] args) throws Exception{    //FIXME error handling!!
         
         /*
          * PHASE 1
@@ -54,6 +52,7 @@ public class Main {
         String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
         serverAddress = new InetSocketAddress(hostName, PORT);
         
+        //FIXME try with resources. HOW?
         channel = DatagramChannel.open(StandardProtocolFamily.INET);
         
         //TODO comments
@@ -98,7 +97,7 @@ public class Main {
             xbc.setGameState(gameState, id);
             receiveByteBuffer.clear();
             channel.receive(receiveByteBuffer);
-       }while(true);
+        } while (true);
     }
 
     public static void createUI(){
@@ -114,7 +113,7 @@ public class Main {
         f.setResizable(false);
         f.pack();
         f.setVisible(true);
-        xbc.requestFocusInWindow(); //FIXME useful?
+        xbc.requestFocusInWindow();
 
         /*
          * Manage the Keyboard input by adding a keyListener to the
