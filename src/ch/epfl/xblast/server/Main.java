@@ -35,8 +35,8 @@ public class Main {
     private static final Level LEVEL = Level.DEFAULT_LEVEL;
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final int DEFAULT_NUMBER_OF_CLIENTS = NUMBER_OF_PLAYERS;
-    private static final int MAX_SERIIALIZED_SIZE = 2 * (Cell.COUNT + 1)
-            + 4 * NUMBER_OF_PLAYERS + 1;
+    private static final int MAX_SENDING_BYTES = 2 * (Cell.COUNT + 1)
+            + 4 * NUMBER_OF_PLAYERS + 1 + 1;
     private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(2016);
     private static final UnaryOperator<Integer> ACTION_TO_DIR_ORDINAL = x -> x - 1;
 
@@ -105,7 +105,7 @@ public class Main {
             // Prepare Buffer in order to send the GameState. The maximal
             // transmission size equals the max GameState size + 1 byte for the playerID.
             ByteBuffer gameStateBuffer = ByteBuffer
-                    .allocate(MAX_SERIIALIZED_SIZE + 1);
+                    .allocate(MAX_SENDING_BYTES);
 
             while (!gameState.isGameOver()) {
                 
@@ -114,7 +114,7 @@ public class Main {
                  */
                 List<Byte> serialized = GameStateSerializer
                         .serialize(LEVEL.boardPainter(), gameState);
-                gameStateBuffer.put((byte) 0);
+                gameStateBuffer.put((byte) 0);    // Placeholder where PlayerID belongs
                 serialized.forEach(gameStateBuffer::put);
                 gameStateBuffer.flip();
 
