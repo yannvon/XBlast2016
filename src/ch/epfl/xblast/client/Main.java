@@ -43,6 +43,14 @@ public class Main {
     private static DatagramChannel channel;
     private static SocketAddress serverAddress;
 
+    /**
+     * Main method of the XBlast 2016 Client.
+     * 
+     * @param args
+     *            IP-address of the Server. If none localhost is used as default
+     *            address.
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception{    //FIXME error handling!!
         
         /*
@@ -98,6 +106,7 @@ public class Main {
             receiveByteBuffer.clear();
             channel.receive(receiveByteBuffer);
         } while (true);
+        //FIXME close channel?
     }
 
     public static void createUI(){
@@ -120,7 +129,6 @@ public class Main {
          * XBlastComponent that sends a message to the server when a relevant
          * key was pressed.
          */
-        //FIXME Constant?
         Consumer<PlayerAction> c = (playerAction) -> {
             ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);
             oneByteBuffer.put((byte) playerAction.ordinal());
@@ -128,7 +136,7 @@ public class Main {
             try {
                 channel.send(oneByteBuffer, serverAddress);
             } catch (Exception e) {
-                //FIXME what shall we do here?
+                //Do nothing.
             }
         };
         xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));

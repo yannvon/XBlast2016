@@ -156,7 +156,7 @@ public class Main {
                     PlayerID id = clientAdresses.get(senderAddress);
                     PlayerAction action = PlayerAction.values()[oneByteBuffer
                             .get()];
-                    if (id != null) {   //FIXME check if id belongs to a valid player?
+                    if (id != null) {
                         switch (action) {
                         case DROP_BOMB:
                             bombDrpEvent.add(id);
@@ -172,8 +172,8 @@ public class Main {
                             break;
                         case STOP:
                             speedChangeEvents.put(id, Optional.empty());
-                        case JOIN_GAME:
-                            break; // FIXME throw error?
+                        default:
+                            break;
                         }
                     }
                     oneByteBuffer.clear();
