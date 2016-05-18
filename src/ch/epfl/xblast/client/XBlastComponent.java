@@ -20,7 +20,6 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.client.GameState.Player;
 
-
 /**
  * XBlastComponent is a (non-immutable) Swing component displaying a GameState.
  * 
@@ -28,6 +27,7 @@ import ch.epfl.xblast.client.GameState.Player;
  * @author Yann Vonlanthen (258857)
  *
  */
+@SuppressWarnings("serial")
 public final class XBlastComponent extends JComponent {
 
     /*
@@ -43,13 +43,13 @@ public final class XBlastComponent extends JComponent {
     private static final int BOARD_WIDTH = Cell.COLUMNS * BLOCK_WIDTH;
     
     // --- players
-    private final static int NUMBER_OF_PLAYERS = PlayerID.values().length;  //FIXME search for occurrences!
+    private final static int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final UnaryOperator<Integer> X_FUNCTION = (x) -> 4 * x - 24;
     private static final UnaryOperator<Integer> Y_FUNCTION = (y) -> 3 * y - 52;
     
     // --- scorLine
     private static final int SCORELINE_HEIGHT = 48;
-    private static final int SCORELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.SCORELINE_LENGTH;   //FIXME needed?
+    private static final int SCORELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.SCORELINE_LENGTH;
     private static final Font SCORE_FONT = new Font("Arial", Font.BOLD, 25);
     private static final int SCORELINE_Y = 659;
     private static final int[] SCORELINE_X = {96, 240, 768, 912};
