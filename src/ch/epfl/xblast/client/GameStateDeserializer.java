@@ -58,7 +58,7 @@ public final class GameStateDeserializer {
     private static final int LED_OFF = 20;
 
     /**
-     * Static method that given a serialised GameState (list of bytes) can
+     * Static method that given a serialized GameState (list of bytes) can
      * compute and return the corresponding GameState.
      * 
      * @param serialized

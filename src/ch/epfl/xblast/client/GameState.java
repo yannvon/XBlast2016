@@ -93,7 +93,7 @@ public final class GameState {
          * 
          * @return the image of the player
          */
-        public Image image() {
+        public Image image() {//FIXME immutable?
             return image;
         }
     }

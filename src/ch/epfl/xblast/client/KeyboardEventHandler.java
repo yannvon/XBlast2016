@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import ch.epfl.xblast.PlayerAction;
 
 /**
- * This class represents a Listener of Keyboard events.
+ * This class represents a Listener of Keyboard events and interpret them as PlayerAction
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -32,8 +32,8 @@ public final class KeyboardEventHandler extends KeyAdapter
     private final Consumer<PlayerAction> consumer;
 
     /**
-     * TODO
-     * @return
+     * Additional method that construct a map to associate key to a classic player action
+     * @return a map of default keyboardEvents
      */
     private static Map<Integer, PlayerAction> defaultControls(){
         Map<Integer, PlayerAction> keyboardEvents = new HashMap<>();
