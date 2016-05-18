@@ -3,13 +3,17 @@ package ch.epfl.xblast.personal.part2;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.server.Block;
+import ch.epfl.xblast.server.BlockImage;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.BoardPainter;
+import ch.epfl.xblast.server.Level;
 
 /**
  * 
@@ -37,7 +41,8 @@ public class BoardPainterTest {
     
     @Test
     public void ClassicByteForCellTest() {
-        BoardPainter painter = BoardPainter.classicBoardPainter();
+        BoardPainter painter = Level.DEFAULT_LEVEL.boardPainter();
+        
         
         assertEquals(1,painter.byteForCell(board,new Cell(1,1)));
         assertEquals(0,painter.byteForCell(board,new Cell(2,1)));
