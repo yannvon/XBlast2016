@@ -9,7 +9,7 @@ package ch.epfl.xblast.server;
  *
  */
 public final class ExplosionPainter {
-    
+
     /*
      * Constants
      */
@@ -17,6 +17,11 @@ public final class ExplosionPainter {
     private static final byte BYTE_FOR_BLACK_BOMB = 20;
     private static final byte BYTE_FOR_WHITE_BOMB = 21;
     
+    /**
+     *  Private Constructor: non instantiable class.
+     */
+    private ExplosionPainter(){}
+
     /**
      * Returns the byte identifying the image that has to be chosen to represent
      * given bomb.
@@ -50,6 +55,4 @@ public final class ExplosionPainter {
         return (byte) ((n ? 0b1000 : 0) | (e ? 0b0100 : 0) | (s ? 0b0010 : 0)
                 | (w ? 0b0001 : 0));
     }
-
-    private ExplosionPainter(){}
 }

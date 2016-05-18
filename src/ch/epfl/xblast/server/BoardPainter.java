@@ -16,31 +16,11 @@ import ch.epfl.xblast.Direction;
  */
 public final class BoardPainter {
 
-    
-    /**
-     *FIXME DELETE!!!!!!!!!!!!!!!!!!!!!!!!!
-     *
-     * ADDITIONAL Static method that constructs a classic BoardPainter that uses
-     * the standard images.
-     * 
-     * @return a classic BoardPainter
-     */
-    public static BoardPainter classicBoardPainter() {
-        Map<Block,BlockImage> palette = new HashMap<>();
-        palette.put(Block.INDESTRUCTIBLE_WALL,BlockImage.DARK_BLOCK);
-        palette.put(Block.FREE,BlockImage.IRON_FLOOR);
-        palette.put(Block.DESTRUCTIBLE_WALL,BlockImage.EXTRA);
-        palette.put(Block.CRUMBLING_WALL,BlockImage.EXTRA_O);
-        palette.put(Block.BONUS_RANGE,BlockImage.BONUS_RANGE);
-        palette.put(Block.BONUS_BOMB,BlockImage.BONUS_BOMB);
-
-        return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
-    }
-
     /*
      * Constants
      */
     private static final Direction LIGHT_DIRECTION = Direction.W;
+    
     /*
      * Attributes
      */
@@ -51,10 +31,11 @@ public final class BoardPainter {
      * Constructor of a BoardPainter.
      * 
      * @param palette
-     *          map describing the image used for each block
+     *            map describing the image used for each block
      * @param shadow
-     *          image used to represent the shadow on the floor
-     * @throws //TODO     
+     *            image used to represent the shadow on the floor
+     * @throws NullPointerException
+     *             if one of the arguments was null.
      */
     public BoardPainter(Map<Block,BlockImage> palette, BlockImage shadow){
         this.palette = Collections.unmodifiableMap(
@@ -75,9 +56,9 @@ public final class BoardPainter {
     public byte byteForCell(Board board, Cell cell) {
 
         Block b = board.blockAt(cell);
-        boolean isShadow = b.isFree()
+        boolean hasShadow = b.isFree()
                 && board.blockAt(cell.neighbor(LIGHT_DIRECTION)).castsShadow();
-        BlockImage image = isShadow ? shadow : palette.get(b);
+        BlockImage image = hasShadow ? shadow : palette.get(b);
 
         return (byte) image.ordinal();
     }

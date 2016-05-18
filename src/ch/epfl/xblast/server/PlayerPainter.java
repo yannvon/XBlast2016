@@ -10,8 +10,6 @@ import ch.epfl.xblast.server.Player.LifeState.State;
  */
 public final class PlayerPainter {
 
-    private PlayerPainter(){}
-
     /*
      * Constants
      */
@@ -24,7 +22,13 @@ public final class PlayerPainter {
     private static final int WALKING_CYCLE_SIZE = 4;
 
     /**
-     * Returns the byte corresponding to the image representation of the player at the current tick.
+     *  Private Constructor: non instantiable class.
+     */
+    private PlayerPainter(){}
+
+    /**
+     * Returns the byte corresponding to the image representation of the player
+     * at the current tick.
      * 
      * @param tick
      *            number of current tick
@@ -33,37 +37,49 @@ public final class PlayerPainter {
      * @return byte corresponding to the current representation of the player
      */
     public static byte byteForPlayer(int tick, Player player) {
-        byte image = 0;
-        State pState = player.lifeState().state();
-        // 1) Player
-        boolean white = pState == State.INVULNERABLE
-                && tick % 2 == 1;
-        image += (white ? WHITE_PLAYER_ORDINAL : player.id().ordinal())
+        byte imageByte = 0;
+        State playerState = player.lifeState().state();
+
+        /*
+         * 1) We start by choosing the correct range of images, by looking at
+         * the player's id and their state.
+         */
+        boolean white = (playerState == State.INVULNERABLE)
+                && (tick % 2 == 1);
+        imageByte += (white ? WHITE_PLAYER_ORDINAL : player.id().ordinal())
                 * NB_IMAGES_PER_PLAYER;
 
         if (player.lifeState().canMove()) {
-            // 2) Player Direction
-            image += player.direction().ordinal() * NB_IMAGES_PER_DIRECTION;
-            // 3) Player Position (walking animation)
+
+            /*
+             * 2) The range of images to chose from is shortened, by looking at
+             * the player's direction.
+             */
+            imageByte += player.direction().ordinal() * NB_IMAGES_PER_DIRECTION;
+
+            /*
+             * 3) Finally we check in which part of the "moving cycle" the
+             * player is in, which allows us to find the final image.
+             */
             int pos = player.direction().isHorizontal() ? player.position().x()
                     : player.position().y();
             switch (pos % WALKING_CYCLE_SIZE) {
             case 1:
-                image += 1;
+                imageByte += 1;
                 break;
             case 3:
-                image += 2;
+                imageByte += 2;
             }
         }
         // 4) Player Dying/ Losing Life
-        else if (pState == State.DYING) {
-            image += player.lives() == 1 ? BYTE_FOR_DYING
+        else if (playerState == State.DYING) {
+            imageByte += player.lives() == 1 ? BYTE_FOR_DYING
                     : BYTE_FOR_LOSING_LIFE;
         }
         // 5) Player Dead
-        else if (pState == State.DEAD) {
-            image += BYTE_FOR_DEAD;
+        else if (playerState == State.DEAD) {
+            imageByte += BYTE_FOR_DEAD;
         }
-        return image;
+        return imageByte;
     }
 }
