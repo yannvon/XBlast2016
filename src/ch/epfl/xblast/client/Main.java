@@ -109,6 +109,11 @@ public class Main {
         //FIXME close channel?
     }
 
+    /**
+     * Method invoked by main in a other thread that create an Windows to print
+     * the game
+     * 
+     */
     public static void createUI(){
         
         /*
