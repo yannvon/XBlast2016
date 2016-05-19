@@ -56,7 +56,7 @@ public final class PlayerPainter {
             imageByte += BYTE_FOR_DEAD;
             break;
         default:
-            throw new Error("A State has not been defined in PlayerPainter!");
+            throw new Error("This state has not been defined in PlayerPainter!");
         }
         
         imageByte += (white ? WHITE_PLAYER_ORDINAL : player.id().ordinal()) //FIXME
