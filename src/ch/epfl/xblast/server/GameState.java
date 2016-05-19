@@ -183,13 +183,8 @@ public final class GameState {
      * @return a List containing the players that are alive
      */
     public List<Player> alivePlayers() {
-        List<Player> alivePlayers = new ArrayList<>();
-        for (Player p : players()) {
-            if (p.isAlive()) {
-                alivePlayers.add(p);
-            }
-        }
-        return alivePlayers;
+        return players().stream().filter(Player::isAlive)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -702,7 +697,8 @@ public final class GameState {
      * @return a map associating the bombs to their cell
      */
     private static Map<Cell, Bomb> bombedCells(List<Bomb> bombs) {
-        Map<Cell, Bomb> bombedCells = bombs.stream().collect(Collectors.toMap(b->b.position(), b->b));
+        Map<Cell, Bomb> bombedCells = bombs.stream()
+                .collect(Collectors.toMap(Bomb::position, b -> b));
         return Collections.unmodifiableMap(bombedCells);
     }
 
@@ -715,7 +711,8 @@ public final class GameState {
      * @return set with all blasted Cells
      */
     private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
-        Set<Cell> blastedCells =blasts.stream().map(sq->sq.head()).collect(Collectors.toSet());
+        Set<Cell> blastedCells = blasts.stream().map(Sq::head)
+                .collect(Collectors.toSet());
         return Collections.unmodifiableSet(blastedCells);
     }
 
