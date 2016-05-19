@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
@@ -717,11 +718,7 @@ public final class GameState {
      * @return set with all blasted Cells
      */
     private static Set<Cell> blastedCells(List<Sq<Cell>> blasts) {
-
-        Set<Cell> blastedCells = new HashSet<>();
-        for (Sq<Cell> blast : blasts) {
-            blastedCells.add(blast.head());
-        }
+        Set<Cell> blastedCells =blasts.stream().map(sq->sq.head()).collect(Collectors.toSet());
         return Collections.unmodifiableSet(blastedCells);
     }
 

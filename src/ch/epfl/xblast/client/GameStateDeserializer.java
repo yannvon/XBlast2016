@@ -111,9 +111,9 @@ public final class GameStateDeserializer {
 
     /**
      * Additional static method that decodes the list of bytes corresponding to
-     * a serialized board, decodes it and returns a list of images corresponding
-     * to every block. The original list is ordered following the spiral order,
-     * but this method returns a list ordered in reading order.
+     * a serialized board and returns a list of images corresponding to every
+     * block. The original list is ordered following the spiral order, but this
+     * method returns a list ordered in reading order.
      * 
      * @param encodedBoard
      *            list of bytes representing the encoded board in spiral order
@@ -129,7 +129,7 @@ public final class GameStateDeserializer {
             boardRepresentation[c.rowMajorIndex()] = BLOCK_COLLECTION
                     .image(boardIterator.next());
         }
-        return Collections.unmodifiableList(Arrays.asList(boardRepresentation)); //FIXME unmodifiable
+        return Collections.unmodifiableList(Arrays.asList(boardRepresentation));
     }
 
     /**
