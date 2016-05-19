@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import ch.epfl.cs108.Sq;
@@ -701,11 +702,7 @@ public final class GameState {
      * @return a map associating the bombs to their cell
      */
     private static Map<Cell, Bomb> bombedCells(List<Bomb> bombs) {
-
-        Map<Cell, Bomb> bombedCells = new HashMap<>();
-        for (Bomb bomb : bombs) {
-            bombedCells.put(bomb.position(), bomb);
-        }
+        Map<Cell, Bomb> bombedCells = bombs.stream().collect(Collectors.toMap(b->b.position(), b->b));
         return Collections.unmodifiableMap(bombedCells);
     }
 
