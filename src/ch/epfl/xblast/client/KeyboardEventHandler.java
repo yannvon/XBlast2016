@@ -3,8 +3,10 @@ package ch.epfl.xblast.client;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -24,7 +26,7 @@ public final class KeyboardEventHandler extends KeyAdapter
      * Constants
      */
     public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls(); //FIXME correct?
-    
+    public static final List<Map<Integer, PlayerAction>> CONTROL_MAP_MULTI = controlsMulti();
     /*
      * Attributes
      */
@@ -46,6 +48,53 @@ public final class KeyboardEventHandler extends KeyAdapter
         return Collections.unmodifiableMap(keyboardEvents);
     }
     
+    private static List<Map<Integer, PlayerAction>> controlsMulti() {
+        List<Map<Integer, PlayerAction>> controls= new ArrayList<>();
+       
+        //P1
+        Map<Integer, PlayerAction> controlsP1 = new HashMap<>();
+        controlsP1.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
+        controlsP1.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
+        controlsP1.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
+        controlsP1.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
+        controlsP1.put(KeyEvent.VK_ENTER, PlayerAction.DROP_BOMB);
+        controlsP1.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
+        controls.add(controlsP1);
+        
+      //P2
+        Map<Integer, PlayerAction> controlsP2 = new HashMap<>();
+        controlsP2.put(KeyEvent.VK_W, PlayerAction.MOVE_N);
+        controlsP2.put(KeyEvent.VK_S, PlayerAction.MOVE_S);
+        controlsP2.put(KeyEvent.VK_A, PlayerAction.MOVE_W);
+        controlsP2.put(KeyEvent.VK_D, PlayerAction.MOVE_E);
+        controlsP2.put(KeyEvent.VK_E, PlayerAction.DROP_BOMB);
+        controlsP2.put(KeyEvent.VK_Q, PlayerAction.STOP);
+        controls.add(controlsP2);
+       
+        /*TODO
+        //P3
+        Map<Integer, PlayerAction> controlsP3 = new HashMap<>();
+        controlsP3.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
+        controlsP3.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
+        controlsP3.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
+        controlsP3.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
+        controlsP3.put(KeyEvent.VK_SPACE, PlayerAction.DROP_BOMB);
+        controlsP3.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
+        controls.add(controlsP3);
+        
+        // P4
+        Map<Integer, PlayerAction> controlsP4 = new HashMap<>();
+        controlsP4.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
+        controlsP4.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
+        controlsP4.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
+        controlsP4.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
+        controlsP4.put(KeyEvent.VK_SPACE, PlayerAction.DROP_BOMB);
+        controlsP4.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
+        controls.add(controlsP4);
+        */
+        return Collections.unmodifiableList(controls);
+    }
+
     /**
      * Sole constructor taking the mapping between a key pressed and the action
      * to take, and a consumer as parameter.
