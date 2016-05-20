@@ -53,7 +53,7 @@ public class LocalGame {
          *      Select the Level TODO
          */
 
-        Level lvl = Level.DEFAULT_LEVEL;
+        Level lvl = Level.TWO_PLAYER_LEVEL;
         //TODO
         
         GameState gameState =  lvl.initialGameState();

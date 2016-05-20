@@ -17,12 +17,21 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public final class Level {
+
+    /*
+     * CONSTANT
+     */
+    private static final Block __ = Block.FREE;
+    private static final Block XX = Block.INDESTRUCTIBLE_WALL;
+    private static final Block xx = Block.DESTRUCTIBLE_WALL;
     
     /*
      * DEFAULT LEVEL
      */
     public static final Level DEFAULT_LEVEL = new Level(defaultBoardPainter(),
             defaultGameState());
+    public static final Level TWO_PLAYER_LEVEL = new Level(defaultBoardPainter(),
+            localGameState());
 
     /**
      * ADDITIONAL Static method that constructs a classic BoardPainter that uses
@@ -54,9 +63,6 @@ public final class Level {
      * @return a default initial GameState
      */
     private static  GameState defaultGameState(){
-        Block __ = Block.FREE;
-        Block XX = Block.INDESTRUCTIBLE_WALL;
-        Block xx = Block.DESTRUCTIBLE_WALL;
         
         Board board = Board.ofQuadrantNWBlocksWalled(Arrays.asList(
                 Arrays.asList(__, __, __, __, __, xx, __),
@@ -71,6 +77,34 @@ public final class Level {
                 new Player(PlayerID.PLAYER_2, 3, new Cell(13, 1), 2, 3),
                 new Player(PlayerID.PLAYER_3, 3, new Cell(13,11), 2, 3),
                 new Player(PlayerID.PLAYER_4, 3, new Cell( 1,11), 2, 3));
+        
+        return new GameState(board, players);
+    }
+    
+    /**
+     * ADDITIONAL Static method that constructs the default initial GameState,
+     * consisting of the default Board and the default player configuration.
+     * 
+     * The default player configuration places all players in the corner and the
+     * players start with 3 lives, a bomb range of 3 and 2 maximal bombs.
+     * 
+     * @return a default initial GameState
+     */
+    private static  GameState localGameState(){
+        
+        Board board = Board.ofQuadrantNWBlocksWalled(Arrays.asList(
+                Arrays.asList(XX, XX, XX, XX, XX, XX, XX),
+                Arrays.asList(XX, __, __, __, XX, __, xx), 
+                Arrays.asList(XX, xx, XX, __, __, __, XX),
+                Arrays.asList(XX, __, XX, XX, xx, XX, __), 
+                Arrays.asList(XX, __, __, xx, __, xx, __),
+                Arrays.asList(XX, __, XX, XX, __, __, XX)));
+        
+        List<Player> players = Arrays.asList(
+                new Player(PlayerID.PLAYER_1, 3, new Cell( 2, 6), 2, 3),
+                new Player(PlayerID.PLAYER_2, 3, new Cell(12, 6), 2, 3),
+                new Player(PlayerID.PLAYER_3, 0, new Cell(13,11), 2, 3),
+                new Player(PlayerID.PLAYER_4, 0, new Cell( 1,11), 2, 3));
         
         return new GameState(board, players);
     }
