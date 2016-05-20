@@ -26,7 +26,6 @@ public final class GameState {
      * This immutable, statically embedded class represents a Player from the
      * point of view of the client. Therefore it is way less sophisticated than
      * the server version.
-     * 
      */
     public static final class Player {
         
@@ -58,7 +57,8 @@ public final class GameState {
             this.id = Objects.requireNonNull(playerId);
             this.lives = ArgumentChecker.requireNonNegative(lives);
             this.position = Objects.requireNonNull(position);
-            this.image = image;     //can have a null image (if the player is dead)
+            // a player can have a null image (if he is dead for example)
+            this.image = image;
         }
 
         /**
@@ -93,7 +93,7 @@ public final class GameState {
          * 
          * @return the image of the player
          */
-        public Image image() {//FIXME immutable?
+        public Image image() {
             return image;
         }
     }

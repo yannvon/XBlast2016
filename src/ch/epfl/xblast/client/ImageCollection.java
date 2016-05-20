@@ -54,7 +54,7 @@ public final class ImageCollection {
             throw new Error(
                     "The directory named " + repository + " doesn't exist!");
         }
-        // we treat the images like they were immutable
+        // we treat the images like they were immutable (even if they are not really)
         this.images = Collections.unmodifiableMap(images);
     }
 
@@ -70,7 +70,8 @@ public final class ImageCollection {
     public Image image(int imageNumber) {
         Image i = imageOrNull(imageNumber);
         if (i == null)
-            throw new NoSuchElementException();
+            throw new NoSuchElementException(
+                    "No image corresponds to given integer.");
         return i;
     }
 

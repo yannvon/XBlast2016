@@ -18,30 +18,36 @@ import ch.epfl.xblast.RunLengthEncoder;
  * @author Yann Vonlanthen (258857)
  */
 public final class GameStateSerializer {
-    private GameStateSerializer(){}
+
+    /**
+     * Private Constructor: non instantiable class.
+     */
+    private GameStateSerializer() {
+    }
 
     /**
      * Given a BoardPainter and a GameState this method returns a serialized
      * version of the GameState.
      * 
      * @param boardPainter
-     *            that is used
+     *            that is used to represent the board
      * @param gameState
      *            that has to be serialized
      * @return a list of bytes representing the serialized GameState
      */
-    public static List<Byte> serialize(BoardPainter boardPainter,GameState gameState){ 
+    public static List<Byte> serialize(BoardPainter boardPainter,
+            GameState gameState) {
 
         /*
          * SERIALIZING BOARD
          */
-        List<Byte> serialisedBoard = new ArrayList<>();
+        List<Byte> serializedBoard = new ArrayList<>();
 
         for (Cell c : Cell.SPIRAL_ORDER)
-            serialisedBoard.add(boardPainter.byteForCell(gameState.board(), c));
+            serializedBoard.add(boardPainter.byteForCell(gameState.board(), c));
 
         // encode board
-        serialisedBoard = RunLengthEncoder.encode(serialisedBoard);
+        serializedBoard = RunLengthEncoder.encode(serializedBoard);
 
         /*
          * SERIALIZING EXPLOSIONS & BOMBS
@@ -88,10 +94,11 @@ public final class GameStateSerializer {
 
         /*
          * CONSTRUCT OUTPUT
+         * Add the size of the variable length lists in front of them.
          */
         List<Byte> output = new ArrayList<>();
-        output.add((byte) serialisedBoard.size());
-        output.addAll(serialisedBoard);
+        output.add((byte) serializedBoard.size());
+        output.addAll(serializedBoard);
         output.add((byte) serialisedExplosions.size());
         output.addAll(serialisedExplosions);
         output.addAll(serialisedPlayers);
