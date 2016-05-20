@@ -3,7 +3,6 @@ package ch.epfl.xblast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.UnaryOperator;
 
 /**
  * Non instantiable class that represents a run length encoder and offers two
