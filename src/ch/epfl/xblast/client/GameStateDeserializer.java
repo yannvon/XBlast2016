@@ -27,9 +27,7 @@ public final class GameStateDeserializer {
     /*
      * General constants
      */
-    
-    //public because used for argument testing in GameState
-    public static final int TIMELINE_LENGTH = 60;   
+    public static final int TIMELINE_LENGTH = 60;   //FIXME public for GameState
     public static final int SCORELINE_LENGTH = 20;
     
     private static final int BYTES_PER_PLAYER = 4;
@@ -122,10 +120,8 @@ public final class GameStateDeserializer {
      * @return the list of images that represent the board in reading order
      */
     private static List<Image> deserializeBoard(List<Byte> encodedBoard) {
-        //decode the compressed List
         List<Byte> decodedBoard = RunLengthEncoder.decode(encodedBoard);
 
-        //deserialize bytes into images in the rowMajorOrder
         Iterator<Byte> boardIterator = decodedBoard.iterator();
         Image[] boardRepresentation = new Image[Cell.COUNT];
 
@@ -148,11 +144,8 @@ public final class GameStateDeserializer {
      */
     private static List<Image> deserializeExplosions(
             List<Byte> encodedExplosions) {
-        //decode the compressed List
         List<Byte> decodedExplosions = RunLengthEncoder
                 .decode(encodedExplosions);
-        
-        //deserialize bytes into images
         List<Image> explosionsRepresentation = new ArrayList<>();
 
         for (Byte b : decodedExplosions)
@@ -185,19 +178,19 @@ public final class GameStateDeserializer {
                             + " bytes were used instead of "
                             + BYTES_PER_PLAYER * NUMBER_OF_PLAYERS);
 
-        List<Player> players = new ArrayList<>();
-        Iterator<Byte> encoded = encodedPlayers.iterator();
-        
         /*
          * For every player retrieve the unsigned bytes and create instance of player
          */
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        List<Player> players = new ArrayList<>();
+        Iterator<Byte> encoded = encodedPlayers.iterator();
+        
+        for (PlayerID id : PlayerID.values()) {
             int lives = Byte.toUnsignedInt(encoded.next());
             SubCell position = new SubCell(Byte.toUnsignedInt(encoded.next()),
                     Byte.toUnsignedInt(encoded.next()));
             Image image = PLAYER_COLLECTION.imageOrNull(Byte.toUnsignedInt(encoded.next()));
             
-            players.add(new Player(PlayerID.values()[i], lives, position, image));
+            players.add(new Player(id, lives, position, image));
         }
         return Collections.unmodifiableList(players);
     }
@@ -217,7 +210,7 @@ public final class GameStateDeserializer {
     private static List<Image> constructScoreLine(List<Player> dePlayers) {
         List<Image> scoreLine = new ArrayList<>();
         for (Player p : dePlayers) {
-            // add void tiles in the center of the score line
+            // add void tiles in the centre of the score line
             if (p.id() == PlayerID.PLAYER_3) {
                 scoreLine.addAll(Collections.nCopies(MIDDLE_GAP_LENGTH,
                         SCORE_COLLECTION.image(TILE_VOID)));
