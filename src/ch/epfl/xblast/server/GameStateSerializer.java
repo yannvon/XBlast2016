@@ -29,7 +29,7 @@ public final class GameStateSerializer {
      *            that has to be serialized
      * @return a list of bytes representing the serialized GameState
      */
-    public static List<Byte> serialize(BoardPainter boardPainter,GameState gameState){  //FIXME use private methods?
+    public static List<Byte> serialize(BoardPainter boardPainter,GameState gameState){
 
         /*
          * SERIALIZING BOARD
