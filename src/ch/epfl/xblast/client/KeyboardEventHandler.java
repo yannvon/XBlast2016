@@ -63,10 +63,9 @@ public final class KeyboardEventHandler extends KeyAdapter
             Consumer<PlayerAction> consumer) {
         this.controls = Collections.unmodifiableMap(
                 new HashMap<>(Objects.requireNonNull(controls)));
-        this.consumer=Objects.requireNonNull(consumer);
+        this.consumer = Objects.requireNonNull(consumer);
     }
-    
-    
+
     @Override
     /**
      * If a key that is present in the map is pressed, the consumer receives the
@@ -74,7 +73,7 @@ public final class KeyboardEventHandler extends KeyAdapter
      */
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        if(controls.containsKey(keyCode))
+        if (controls.containsKey(keyCode))
             consumer.accept(controls.get(keyCode));
     }
 }

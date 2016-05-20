@@ -3,6 +3,7 @@ package ch.epfl.xblast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 /**
  * Non instantiable class that represents a run length encoder and offers two
@@ -19,6 +20,7 @@ public final class RunLengthEncoder {
      * Constants
      */
     private static final int LONGEST_RUN = 130;
+    private static final int MAX_NON_ENCODED_RUN = 2;
 
     /**
      *  Private Constructor: non instantiable class.
@@ -64,7 +66,7 @@ public final class RunLengthEncoder {
         }
         output.addAll(encodedBytes(count, lastByte));
 
-        return output;
+        return Collections.unmodifiableList(output);
     }
 
     /**
@@ -78,20 +80,27 @@ public final class RunLengthEncoder {
      *             if the last element of given list is negative
      */
     public static List<Byte> decode(List<Byte> l) {
-        if(l.get(l.size()-1) < 0)                         //FIXME on avait oublié!
-            throw new IllegalArgumentException("Last element can't be negative!");
         
+        /*
+         * Throw illegalArgumentException if last element is negative.
+         */
+        ArgumentChecker.requireNonNegative(l.get(l.size() - 1));
+
+        /*
+         * By saving a negative number as the occurrence count we later re-add
+         * the correct amount of the next positive element to an output list.
+         */
         List<Byte> output = new ArrayList<>();
-        int n = 1;
+        int ocount = 1;
         for (Byte b : l) {
             if (b >= 0) {
-                output.addAll(Collections.nCopies(n, b));
-                n = 1;
+                output.addAll(Collections.nCopies(ocount, b));
+                ocount = 1;
             } else {
-                n = -b + 2;
+                ocount = MAX_NON_ENCODED_RUN - b;
             }
         }
-        return output;
+        return Collections.unmodifiableList(output);
     }
 
     /**
@@ -103,7 +112,7 @@ public final class RunLengthEncoder {
      * The returned list consists of maximum two bytes, the exacted technique
      * used is described at {@link #encode(List)} the method.
      * 
-     * Careful: the count argument is not allowed to succeed LONGEST_RUN!   FIXME throw exception?
+     * Careful: the count argument is not allowed to succeed LONGEST_RUN!
      * 
      * @param count
      *            number of consecutive occurrences of following byte
@@ -115,12 +124,12 @@ public final class RunLengthEncoder {
     private static List<Byte> encodedBytes(int count, byte b) {
         List<Byte> encoded = new ArrayList<>();
 
-        if (count <= 2)
+        if (count <= MAX_NON_ENCODED_RUN)
             encoded.addAll(Collections.nCopies(count, b));
         else {
-            encoded.add((byte) -(count - 2));
+            encoded.add((byte) (MAX_NON_ENCODED_RUN - count));
             encoded.add(b);
         }
-        return encoded;
+        return Collections.unmodifiableList(encoded);
     }
 }
