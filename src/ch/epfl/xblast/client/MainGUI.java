@@ -1,8 +1,10 @@
 package ch.epfl.xblast.client;
 
 import java.awt.BorderLayout;
+import java.awt.Choice;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Label;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -78,6 +80,8 @@ public class MainGUI {
             Thread.sleep(50);
         }
     }
+
+
     
     public static void createMenu(){
         
@@ -120,6 +124,14 @@ public class MainGUI {
 //        textboxIP.setValue(DEFAULT_HOST);
 //        textboxIP.setColumns(10);
 //        p.add(textboxServer, BorderLayout.CENTER);
+        /*
+         * add list for players
+         */
+        Label nombreText = new Label("number of player", Label.RIGHT);
+        Choice nbPlayers = new Choice();
+        for(int n=1; n<=4;n++)
+            nbPlayers.add(new Integer(n).toString());
+        nbPlayers.select(0);
         
         /*
          * Buttons
@@ -155,7 +167,7 @@ public class MainGUI {
         
         JButton b3 = new JButton("Start Server");
         b3.addActionListener(e -> {
-            String[] argsMain = { "1" }; //TODO
+            String[] argsMain = { nbPlayers.getSelectedItem() }; //TODO
             String[] argsClient = { DEFAULT_HOST };
             Runnable serverMain = new Runnable() {
                 public void run() {
@@ -182,10 +194,14 @@ public class MainGUI {
             
         });
 
+        
+        
         JPanel buttons = new JPanel(new FlowLayout());
         buttons.add(b1);
         buttons.add(b2);
         buttons.add(b3);
+        buttons.add(nombreText);
+        buttons.add(nbPlayers);
 
         
         p.add(buttons, BorderLayout.PAGE_END);
