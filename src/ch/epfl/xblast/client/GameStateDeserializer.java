@@ -178,19 +178,19 @@ public final class GameStateDeserializer {
                             + " bytes were used instead of "
                             + BYTES_PER_PLAYER * NUMBER_OF_PLAYERS);
 
-        List<Player> players = new ArrayList<>();
-        Iterator<Byte> encoded = encodedPlayers.iterator();
-        
         /*
          * For every player retrieve the unsigned bytes and create instance of player
          */
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
+        List<Player> players = new ArrayList<>();
+        Iterator<Byte> encoded = encodedPlayers.iterator();
+        
+        for (PlayerID id : PlayerID.values()) {
             int lives = Byte.toUnsignedInt(encoded.next());
             SubCell position = new SubCell(Byte.toUnsignedInt(encoded.next()),
                     Byte.toUnsignedInt(encoded.next()));
             Image image = PLAYER_COLLECTION.imageOrNull(Byte.toUnsignedInt(encoded.next()));
             
-            players.add(new Player(PlayerID.values()[i], lives, position, image));
+            players.add(new Player(id, lives, position, image));
         }
         return Collections.unmodifiableList(players);
     }

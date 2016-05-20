@@ -32,10 +32,12 @@ public final class KeyboardEventHandler extends KeyAdapter
     private final Consumer<PlayerAction> consumer;
 
     /**
-     * Additional method that construct a map to associate key to a classic player action
-     * @return a map of default keyboardEvents
+     * ADDITIONAL method that constructs a map associating a key to a player
+     * action in a default way.
+     * 
+     * @return a map associating keys to actions
      */
-    private static Map<Integer, PlayerAction> defaultControls(){
+    private static Map<Integer, PlayerAction> defaultControls() {
         Map<Integer, PlayerAction> keyboardEvents = new HashMap<>();
         keyboardEvents.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
         keyboardEvents.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
@@ -45,7 +47,7 @@ public final class KeyboardEventHandler extends KeyAdapter
         keyboardEvents.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
         return Collections.unmodifiableMap(keyboardEvents);
     }
-    
+
     /**
      * Sole constructor taking the mapping between a key pressed and the action
      * to take, and a consumer as parameter.

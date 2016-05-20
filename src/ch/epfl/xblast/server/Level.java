@@ -17,7 +17,7 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public final class Level {
-    
+
     /*
      * DEFAULT LEVEL
      */
@@ -25,27 +25,27 @@ public final class Level {
             defaultGameState());
 
     /**
-     * ADDITIONAL Static method that constructs a classic BoardPainter that uses
+     * ADDITIONAL static method that constructs a classic BoardPainter that uses
      * the standard images.
      * 
      * @return a default BoardPainter
      */
-    private static BoardPainter defaultBoardPainter(){
-        
-        Map<Block,BlockImage> palette = new HashMap<>();
-        
-        palette.put(Block.INDESTRUCTIBLE_WALL,BlockImage.DARK_BLOCK);
-        palette.put(Block.FREE,BlockImage.IRON_FLOOR);
-        palette.put(Block.DESTRUCTIBLE_WALL,BlockImage.EXTRA);
-        palette.put(Block.CRUMBLING_WALL,BlockImage.EXTRA_O);
-        palette.put(Block.BONUS_RANGE,BlockImage.BONUS_RANGE);
-        palette.put(Block.BONUS_BOMB,BlockImage.BONUS_BOMB);
-        
+    private static BoardPainter defaultBoardPainter() {
+
+        Map<Block, BlockImage> palette = new HashMap<>();
+
+        palette.put(Block.INDESTRUCTIBLE_WALL, BlockImage.DARK_BLOCK);
+        palette.put(Block.FREE, BlockImage.IRON_FLOOR);
+        palette.put(Block.DESTRUCTIBLE_WALL, BlockImage.EXTRA);
+        palette.put(Block.CRUMBLING_WALL, BlockImage.EXTRA_O);
+        palette.put(Block.BONUS_RANGE, BlockImage.BONUS_RANGE);
+        palette.put(Block.BONUS_BOMB, BlockImage.BONUS_BOMB);
+
         return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
     }
-    
+
     /**
-     * ADDITIONAL Static method that constructs the default initial GameState,
+     * ADDITIONAL static method that constructs the default initial GameState,
      * consisting of the default Board and the default player configuration.
      * 
      * The default player configuration places all players in the corner and the
@@ -53,25 +53,26 @@ public final class Level {
      * 
      * @return a default initial GameState
      */
-    private static  GameState defaultGameState(){
+    private static GameState defaultGameState() {
         Block __ = Block.FREE;
         Block XX = Block.INDESTRUCTIBLE_WALL;
         Block xx = Block.DESTRUCTIBLE_WALL;
-        
-        Board board = Board.ofQuadrantNWBlocksWalled(Arrays.asList(
-                Arrays.asList(__, __, __, __, __, xx, __),
-                Arrays.asList(__, XX, xx, XX, xx, XX, xx), 
-                Arrays.asList(__, xx, __, __, __, xx, __),
-                Arrays.asList(xx, XX, __, XX, XX, XX, XX), 
-                Arrays.asList(__, xx, __, xx, __, __, __),
-                Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
-        
-        List<Player> players = Arrays.asList(
-                new Player(PlayerID.PLAYER_1, 3, new Cell( 1, 1), 2, 3),
-                new Player(PlayerID.PLAYER_2, 3, new Cell(13, 1), 2, 3),
-                new Player(PlayerID.PLAYER_3, 3, new Cell(13,11), 2, 3),
-                new Player(PlayerID.PLAYER_4, 3, new Cell( 1,11), 2, 3));
-        
+
+        Board board = Board.ofQuadrantNWBlocksWalled(
+                Arrays.asList(
+                        Arrays.asList(__, __, __, __, __, xx, __),
+                        Arrays.asList(__, XX, xx, XX, xx, XX, xx),
+                        Arrays.asList(__, xx, __, __, __, xx, __),
+                        Arrays.asList(xx, XX, __, XX, XX, XX, XX),
+                        Arrays.asList(__, xx, __, xx, __, __, __),
+                        Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
+
+        List<Player> players = Arrays
+                .asList(new Player(PlayerID.PLAYER_1, 3, new Cell(1, 1), 2, 3),
+                        new Player(PlayerID.PLAYER_2, 3, new Cell(13, 1), 2, 3),
+                        new Player(PlayerID.PLAYER_3, 3, new Cell(13, 11), 2, 3),
+                new Player(PlayerID.PLAYER_4, 3, new Cell(1, 11), 2, 3));
+
         return new GameState(board, players);
     }
 
