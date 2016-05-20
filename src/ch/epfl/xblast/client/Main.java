@@ -40,7 +40,6 @@ public class Main {
      * Attributes
      */
     private static XBlastComponent xbc;
-    private static DatagramChannel channel;
     private static SocketAddress serverAddress;
 
     /**
@@ -51,7 +50,7 @@ public class Main {
      *            address.
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception{    //FIXME error handling!!
+    public static void main(String[] args) throws Exception {
         
         /*
          * PHASE 1
@@ -59,54 +58,55 @@ public class Main {
          */
         String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
         serverAddress = new InetSocketAddress(hostName, PORT);
-        
+
         //FIXME try with resources. HOW?
-        channel = DatagramChannel.open(StandardProtocolFamily.INET);
-        
-        //TODO comments
-        channel.configureBlocking(false);
+        try( DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET)){
 
-        /*
-         * 1.2) Send request to join game to Server as long as the server
-         * doesn't send the initial GameState.
-         */
-        ByteBuffer sendByteBuffer = ByteBuffer.allocate(1);
-        ByteBuffer receiveByteBuffer = ByteBuffer.allocate(MAX_RECEIVING_BYTES);
-        sendByteBuffer.put((byte) PlayerAction.JOIN_GAME.ordinal());
-        sendByteBuffer.flip();
-        do{
-            channel.send(sendByteBuffer, serverAddress);
-            sendByteBuffer.rewind();
-            Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
-        }while((channel.receive(receiveByteBuffer)) == null);
-        
-        /*
-         * PHASE 2
-         * 2.1) Start by invoking the parallel EDT Swing thread.
-         */
-        SwingUtilities.invokeAndWait(() -> createUI());
-        
-        
-        // From now one the client will wait to get the next GameState from the server.
-        channel.configureBlocking(true);
+            //TODO comments
+            channel.configureBlocking(false);
 
-        /*
-         * 2.2) As long as the program runs the client waits for a new GameState
-         * and shares it with the parallel Swing thread.
-         */
-        do{
-            receiveByteBuffer.flip();
-            PlayerID id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
-            List<Byte> serialized = new ArrayList<>();
-            while(receiveByteBuffer.hasRemaining()){
-                serialized.add(receiveByteBuffer.get());
-            }
-            GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
-            xbc.setGameState(gameState, id);
-            receiveByteBuffer.clear();
-            channel.receive(receiveByteBuffer);
-        } while (true);
-        //FIXME close channel?
+            /*
+             * 1.2) Send request to join game to Server as long as the server
+             * doesn't send the initial GameState.
+             */
+            ByteBuffer sendByteBuffer = ByteBuffer.allocate(1);
+            ByteBuffer receiveByteBuffer = ByteBuffer.allocate(MAX_RECEIVING_BYTES);
+            sendByteBuffer.put((byte) PlayerAction.JOIN_GAME.ordinal());
+            sendByteBuffer.flip();
+            do{
+                channel.send(sendByteBuffer, serverAddress);
+                sendByteBuffer.rewind();
+                Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
+            }while((channel.receive(receiveByteBuffer)) == null);
+
+            /*
+             * PHASE 2
+             * 2.1) Start by invoking the parallel EDT Swing thread.
+             */
+            SwingUtilities.invokeAndWait(() -> createUI(channel));
+
+
+            // From now one the client will wait to get the next GameState from the server.
+            channel.configureBlocking(true);
+
+            /*
+             * 2.2) As long as the program runs the client waits for a new GameState
+             * and shares it with the parallel Swing thread.
+             */
+            do{
+                receiveByteBuffer.flip();
+                PlayerID id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
+                List<Byte> serialized = new ArrayList<>();
+                while(receiveByteBuffer.hasRemaining()){
+                    serialized.add(receiveByteBuffer.get());
+                }
+                GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
+                xbc.setGameState(gameState, id);
+                receiveByteBuffer.clear();
+                channel.receive(receiveByteBuffer);
+            } while (true);
+        }
+        
     }
 
     /**
@@ -114,7 +114,7 @@ public class Main {
      * the game
      * 
      */
-    public static void createUI(){
+    public static void createUI(DatagramChannel channel){
         
         /*
          * Open new Window.
@@ -141,7 +141,7 @@ public class Main {
             try {
                 channel.send(oneByteBuffer, serverAddress);
             } catch (Exception e) {
-                //Do nothing.
+                e.printStackTrace();
             }
         };
         xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));

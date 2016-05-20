@@ -1,6 +1,7 @@
 package ch.epfl.xblast.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +30,7 @@ public final class GameStateSerializer {
      *            that has to be serialized
      * @return a list of bytes representing the serialized GameState
      */
-    public static List<Byte> serialize(BoardPainter boardPainter,GameState gameState){  //FIXME use private methods?
+    public static List<Byte> serialize(BoardPainter boardPainter,GameState gameState){ 
 
         /*
          * SERIALIZING BOARD
@@ -95,6 +96,6 @@ public final class GameStateSerializer {
         output.addAll(serialisedExplosions);
         output.addAll(serialisedPlayers);
         output.add(serialisedTime);
-        return output;
+        return Collections.unmodifiableList(output);
     }
 }

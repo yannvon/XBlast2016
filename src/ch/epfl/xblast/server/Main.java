@@ -38,7 +38,7 @@ public class Main {
     private static final int MAX_SENDING_BYTES = 2 * (Cell.COUNT + 1)
             + 4 * NUMBER_OF_PLAYERS + 1 + 1;
     private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(2016);
-    private static final UnaryOperator<Integer> ACTION_TO_DIR_ORDINAL = x -> x - 1;
+    private static final UnaryOperator<Integer> MOUVEMENT_TO_DIR_ORDINAL = x -> x - 1;
 
     /**
      * Main method of the XBlast 2016 Server.
@@ -49,7 +49,7 @@ public class Main {
      *            default amount of players.
      * @throws Exception 
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         /*
          * PHASE 1
@@ -165,7 +165,7 @@ public class Main {
                         case MOVE_N:
                         case MOVE_W:
                         case MOVE_E:
-                            int dirOrdinal = ACTION_TO_DIR_ORDINAL
+                            int dirOrdinal = MOUVEMENT_TO_DIR_ORDINAL
                                     .apply(action.ordinal());
                             speedChangeEvents.put(id, Optional
                                     .of(Direction.values()[dirOrdinal]));
@@ -187,10 +187,10 @@ public class Main {
 
             Optional<PlayerID> winner = gameState.winner();
             System.out.println(winner.isPresent() ? winner.get() : "There was no winner.");
-            channel.close(); // FIXME correct?
             
         }catch(Exception e){
-            throw e;
+            System.err.println();
+            e.printStackTrace();
         }
     }
 }
