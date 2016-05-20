@@ -74,10 +74,13 @@ public final class GameState {
     public GameState(int ticks, Board board, List<Player> players,
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
             List<Sq<Cell>> blasts) {
+        
+        // 0) verify that the players are ordered correctly (natural order) ADDITIONAL
+        List<Player> sortedPlayers = new ArrayList<>(Objects.requireNonNull(players));
+        sortedPlayers.sort((p1, p2) -> Integer.compare(p1.id().ordinal(), p2.id().ordinal()));
 
         // 1) copy lists and save an unmodifiable view of them
-        this.players = Collections.unmodifiableList(
-                new ArrayList<>(Objects.requireNonNull(players)));
+        this.players = Collections.unmodifiableList(sortedPlayers);
         this.explosions = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(explosion)));
         this.bombs = Collections.unmodifiableList(
@@ -92,6 +95,7 @@ public final class GameState {
                     "The Game requires " + PlayerID.values().length
                             + " players instead of " + players.size());
         }
+        
         this.board = Objects.requireNonNull(board);
     }
 
