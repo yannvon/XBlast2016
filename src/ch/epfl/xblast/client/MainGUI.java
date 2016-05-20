@@ -43,22 +43,7 @@ public class MainGUI {
     private static final ImageCollection GUI_COLLECTION = new ImageCollection(
             "gui");
     
-    private static final int PORT = 2016;
-    private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
-            + 4 * PlayerID.values().length + 1 + 1; // FIXME
-    private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
-    // FIXME KeyBoard Control map here?
-
-    /*
-     * Attributes
-     */
-    private static XBlastComponent xbc;
-    private static DatagramChannel channel;
-    private static SocketAddress serverAddress;
-    
-    private static String hostName = DEFAULT_HOST;
-    private static boolean input = false;
 
     /**
      * Main method of the XBlast 2016 Client.
@@ -75,10 +60,6 @@ public class MainGUI {
          * IP Address input
          */
         SwingUtilities.invokeAndWait(() -> createMenu());
-
-        while(!input){
-            Thread.sleep(50);
-        }
     }
 
 
@@ -124,6 +105,7 @@ public class MainGUI {
 //        textboxIP.setValue(DEFAULT_HOST);
 //        textboxIP.setColumns(10);
 //        p.add(textboxServer, BorderLayout.CENTER);
+        
         /*
          * add list for players
          */
