@@ -131,7 +131,7 @@ public class MainGUI {
         textboxIP.setColumns(10);
 
         //2)button
-        JButton clientButton = new JButton("Enter IP-address");
+        JButton clientButton = new JButton("Join Game");
         clientButton.addActionListener(e -> {
             String[] address = { (String) textboxIP.getValue()};
             Runnable clientMain = new Runnable() {
