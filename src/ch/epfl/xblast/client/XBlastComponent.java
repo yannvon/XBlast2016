@@ -111,7 +111,7 @@ public final class XBlastComponent extends JComponent {
         Graphics2D g = (Graphics2D) g0;
         
         /*
-         * Draw Board
+         * Draw Board and explosions
          */
         Iterator<Image> bloc = gameState.board().iterator();
         Iterator<Image> explosion = gameState.explosions().iterator();
@@ -155,16 +155,18 @@ public final class XBlastComponent extends JComponent {
         /*
          * Draw Players
          */
-        Comparator<Player> firstC = (p1, p2) -> Integer.compare(p1.position().y(),
+        
+        //FIXME constant?
+        Comparator<Player> comparatorOfPosition = (p1, p2) -> Integer.compare(p1.position().y(),
                 p2.position().y());
                 
-        Comparator<Player> secondC = (p1, p2) -> Integer.compare(
+        Comparator<Player> comparatorOfIdentity = (p1, p2) -> Integer.compare(
                 Math.floorMod(p1.id().ordinal() + (NUMBER_OF_PLAYERS - 1 - playerId.ordinal()),
                         NUMBER_OF_PLAYERS),
                 Math.floorMod(p2.id().ordinal() + (NUMBER_OF_PLAYERS - 1 - playerId.ordinal()),
                         NUMBER_OF_PLAYERS));
 
-        Comparator<Player> finalC = firstC.thenComparing(secondC);
+        Comparator<Player> finalC = comparatorOfPosition.thenComparing(comparatorOfIdentity);
         List<Player> orderedPlayers = new ArrayList<>(gameState.players());
         Collections.sort(orderedPlayers, finalC);
 
