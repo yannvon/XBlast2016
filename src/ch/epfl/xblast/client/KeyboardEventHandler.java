@@ -23,7 +23,7 @@ public final class KeyboardEventHandler extends KeyAdapter
     /*
      * Constants
      */
-    public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls(); //FIXME correct?
+    public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls();
     
     /*
      * Attributes

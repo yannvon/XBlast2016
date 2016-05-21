@@ -27,7 +27,7 @@ import ch.epfl.xblast.client.GameState.Player;
  * @author Yann Vonlanthen (258857)
  *
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("serial") //FIXME
 public final class XBlastComponent extends JComponent {
 
     /*
@@ -41,32 +41,33 @@ public final class XBlastComponent extends JComponent {
     private static final int BLOCK_WIDTH = 64;
     private static final int BOARD_HEIGHT = Cell.ROWS * BLOCK_HEIGHT;
     private static final int BOARD_WIDTH = Cell.COLUMNS * BLOCK_WIDTH;
-    
+
     // --- players
     private final static int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final UnaryOperator<Integer> X_FUNCTION = (x) -> 4 * x - 24;
     private static final UnaryOperator<Integer> Y_FUNCTION = (y) -> 3 * y - 52;
-    
+
     // --- scorLine
     private static final int SCORELINE_HEIGHT = 48;
-    private static final int SCORELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.SCORELINE_LENGTH;
+    private static final int SCORELINE_IMAGE_WIDTH = BOARD_WIDTH
+            / GameStateDeserializer.SCORELINE_LENGTH;
     private static final Font SCORE_FONT = new Font("Arial", Font.BOLD, 25);
+    private static final Color SCORE_FONT_COLOR = Color.WHITE;
     private static final int SCORELINE_Y = 659;
-    private static final int[] SCORELINE_X = {96, 240, 768, 912};
-    
+    private static final int[] SCORELINE_X = { 96, 240, 768, 912 };
+
     // --- timeLine
-    private static final int TIMELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.TIMELINE_LENGTH;
-    
+    private static final int TIMELINE_IMAGE_WIDTH = BOARD_WIDTH
+            / GameStateDeserializer.TIMELINE_LENGTH;
     
     /*
      * Attributes
      */
-
     private GameState gameState;
     private PlayerID playerId;
 
     /**
-     * Constructor initialising all attributes to null.
+     * Constructor of an XBlastComponent. Initialises all attributes to null.
      */
     public XBlastComponent() {
         gameState = null;
@@ -143,7 +144,7 @@ public final class XBlastComponent extends JComponent {
         /*
          * Draw Score
          */
-        g.setColor(Color.WHITE);
+        g.setColor(SCORE_FONT_COLOR);
         g.setFont(SCORE_FONT);
 
         for(int i = 0; i < NUMBER_OF_PLAYERS; i++) {
@@ -154,18 +155,18 @@ public final class XBlastComponent extends JComponent {
         /*
          * Draw Players
          */
-        Comparator<Player> c1 = (p1, p2) -> Integer.compare(p1.position().y(),
+        Comparator<Player> firstC = (p1, p2) -> Integer.compare(p1.position().y(),
                 p2.position().y());
                 
-        Comparator<Player> c2 = (p1, p2) -> Integer.compare(
+        Comparator<Player> secondC = (p1, p2) -> Integer.compare(
                 Math.floorMod(p1.id().ordinal() + (NUMBER_OF_PLAYERS - 1 - playerId.ordinal()),
                         NUMBER_OF_PLAYERS),
                 Math.floorMod(p2.id().ordinal() + (NUMBER_OF_PLAYERS - 1 - playerId.ordinal()),
                         NUMBER_OF_PLAYERS));
 
-        Comparator<Player> comparator = c1.thenComparing(c2);
+        Comparator<Player> finalC = firstC.thenComparing(secondC);
         List<Player> orderedPlayers = new ArrayList<>(gameState.players());
-        Collections.sort(orderedPlayers, comparator);
+        Collections.sort(orderedPlayers, finalC);
 
         for (Player p : orderedPlayers) {
             g.drawImage(p.image(), X_FUNCTION.apply((p.position().x())),
