@@ -34,7 +34,6 @@ public class Main {
             + 4 * PlayerID.values().length + 1 + 1; // FIXME
     private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
-    // FIXME KeyBoard Control map here?
 
     /*
      * Attributes
@@ -58,8 +57,7 @@ public class Main {
          */
         String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
         serverAddress = new InetSocketAddress(hostName, PORT);
-
-        //FIXME try with resources. HOW?
+        
         try( DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET)){
 
             //TODO comments
