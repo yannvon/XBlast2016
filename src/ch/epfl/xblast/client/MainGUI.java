@@ -208,7 +208,7 @@ public class MainGUI {
         serverPanel.add(checkLaunchClient,BorderLayout.CENTER);
         serverPanel.add(serverButtton,BorderLayout.EAST);
         
-        serverPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 125, 255)));
+        serverPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 0, 255)));
         
         
         /*
