@@ -1,7 +1,13 @@
 Bonus XBlasts:
 
-1)Local Main
-	...
+1)Main classes
+	1)LocalGame
+	Class that manage a game without server and client, we can control two player on the same compter
+		
+
+	2)MainGUI
+	TODO
+	
 	
 	
 	

@@ -4,21 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.StandardProtocolFamily;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -26,11 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
-import ch.epfl.xblast.Cell;
-import ch.epfl.xblast.PlayerAction;
-import ch.epfl.xblast.PlayerID;
-import javafx.scene.control.CheckBox;
 
 /**
  * Main class of the Client. In charge of communicating with the server and
@@ -171,14 +155,13 @@ public class MainGUI {
         //2)Button
         JButton serverButtton = new JButton("Start Server");
         serverButtton.addActionListener(e -> {
-            String[] argsMain = { nbPlayers.getSelectedItem() }; //TODO
+            String[] argsMain = { nbPlayers.getSelectedItem() };
             String[] argsClient = { DEFAULT_HOST };
             Runnable serverMain = new Runnable() {
                 public void run() {
                     try {
                         ch.epfl.xblast.server.Main.main(argsMain);
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }

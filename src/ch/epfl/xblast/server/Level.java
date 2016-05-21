@@ -1,10 +1,15 @@
 package ch.epfl.xblast.server;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
+
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
@@ -107,6 +112,122 @@ public final class Level {
                 new Player(PlayerID.PLAYER_4, 0, new Cell( 1,11), 2, 3));
         
         return new GameState(board, players);
+    }
+    
+    
+    /**
+     * Bonus method that import a gameState from a file
+     * TODO method to export gameState
+     * @param name
+     *          is the name of the file to import
+     * @return
+     *      the imported GameState
+     */
+    private static GameState chargeGameState(String name){
+       GameState gameState=null; 
+       File gameStateFile=null;
+       /*
+        * Charge the corresponding file
+        */
+        try{
+            File file =  new File(Level.class
+                    .getClassLoader()
+                    .getResource("gameStates")
+                    .toURI());
+
+            gameStateFile =file.listFiles((f,n)->name.equals(n))[0];
+            System.out.println(gameStateFile.toString());
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            throw new Error("the file " + name +" does not exist");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        /*
+         *construct GameState 
+         */
+        try (Scanner scanner = new Scanner(gameStateFile)){
+            int lives = scanner.nextInt();
+            int maxBombs = scanner.nextInt();
+            int range = scanner.nextInt();
+            int alivesPlayers = scanner.nextInt();
+            scanner.nextLine();
+            
+            List<List<Block>> boardList = new ArrayList<>();
+            List<Player> players = new ArrayList<>();
+            int startingX=1,startingY=1;
+            for(int y=0; y<(Cell.ROWS-1)/2;y++){
+                String line = scanner.nextLine();
+                List<Block> row = new ArrayList<>();
+                for(int x=0; x<(Cell.COLUMNS-1)/2;x++){
+                    char c = line.charAt(x);
+                    switch(c){
+                    case 'X':
+                        row.add(Block.INDESTRUCTIBLE_WALL);
+                        break;
+                    case 'x':
+                        row.add(Block.DESTRUCTIBLE_WALL);
+                        break;
+                    case 'p':
+                        startingX=x+1;
+                        startingY= y+1;
+                    case '_':
+                        row.add(Block.FREE);
+                        break;
+                    //TODO bonuses
+                    }   
+                }
+                boardList.add(row);
+                
+                
+            }
+            /*
+             * add alives players
+             */
+            Cell[] startingPos={
+                    new Cell(startingX,startingY),
+                    new Cell(-startingX-1,-startingY-1),
+                    new Cell(-startingX-1,startingY),
+                    new Cell(startingX,-startingY-1)
+            };
+            for(int i=0; i<alivesPlayers;i++){
+                players.add(new Player(
+                            PlayerID.values()[players.size()], 
+                            lives, 
+                            startingPos[i], 
+                            maxBombs, 
+                            range));
+            }
+            /*
+             * add dead players
+             */
+            for(int i = players.size(); i<PlayerID.values().length ;i++  ){
+                players.add(new Player(
+                                PlayerID.values()[i], 
+                                0, 
+                                new Cell(0,0), 
+                                maxBombs, 
+                                range));
+            }
+            
+            Board board = Board.ofQuadrantNWBlocksWalled(boardList);
+            gameState = new GameState(board, players);
+            
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        return gameState;
+        
     }
 
     /*

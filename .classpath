@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="images"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="personal"/>
+	<classpathentry kind="src" path="levels"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/sq.jar"/>
