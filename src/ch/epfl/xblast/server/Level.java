@@ -22,13 +22,6 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public final class Level {
-
-    /*
-     * CONSTANT
-     */
-    private static final Block __ = Block.FREE;
-    private static final Block XX = Block.INDESTRUCTIBLE_WALL;
-    private static final Block xx = Block.DESTRUCTIBLE_WALL;
     
     /*
      * DEFAULT LEVEL
@@ -80,7 +73,6 @@ public final class Level {
                     .toURI());
 
             gameStateFile =file.listFiles((f,n)->name.equals(n))[0];
-            System.out.println(gameStateFile.toString());
         }
         catch(ArrayIndexOutOfBoundsException e){
             throw new Error("the file " + name +" does not exist");
