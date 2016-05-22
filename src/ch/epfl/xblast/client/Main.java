@@ -103,6 +103,7 @@ public class Main {
                 receiveByteBuffer.clear();
                 channel.receive(receiveByteBuffer);
             } while (true);
+            //FIXME print last gameState?!
         }
         
     }
