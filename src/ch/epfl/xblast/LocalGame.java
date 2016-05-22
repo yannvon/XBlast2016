@@ -148,9 +148,11 @@ public class LocalGame {
             xbc = new XBlastComponent();
             
             f.getContentPane().add(xbc);
+            
             f.setResizable(false);
-            f.pack();
+            
             f.setVisible(true);
+            f.pack();
             xbc.requestFocusInWindow();
     
             /*
