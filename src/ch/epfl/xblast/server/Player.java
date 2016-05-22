@@ -155,8 +155,8 @@ public final class Player {
         public static Sq<DirectedPosition> movingFast(DirectedPosition p) {
             return Sq.iterate(p,
                     pos -> new DirectedPosition(
-                            pos.position.neighbor(pos.direction).neighbor(pos.direction),
-                            pos.direction));
+                            pos.position.neighbor(p.direction).neighbor(p.direction),
+                            p.direction));
         }
         
         /**
@@ -500,7 +500,7 @@ public final class Player {
     public Player withRoller() {
         Player p =withPowerUp(State.WITH_ROLLER) ;
         return new Player(id(),p.lifeStates(),
-                DirectedPosition.movingFast(p.directedPositions().head()), 
+                DirectedPosition.movingFast(directedPositions().head()), 
                 maxBombs(),
                 bombRange());
     }
