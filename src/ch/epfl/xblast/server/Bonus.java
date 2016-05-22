@@ -29,13 +29,13 @@ public enum Bonus {
     ROLLER {
         @Override
         public Player applyTo(Player player) {
-            return player.withPowerUp(State.WITH_ROLLER);
+            return player.withRoller();
         }
     },
     SNAIL {
         @Override
         public Player applyTo(Player player) {
-            return player.withPowerUp(State.SNAILED);
+            return player.withSnail();
         }
     };
     

@@ -46,6 +46,9 @@ public final class Level {
         palette.put(Block.CRUMBLING_WALL,BlockImage.EXTRA_O);
         palette.put(Block.BONUS_RANGE,BlockImage.BONUS_RANGE);
         palette.put(Block.BONUS_BOMB,BlockImage.BONUS_BOMB);
+        palette.put(Block.BONUS_ROLLER,BlockImage.BONUS_ROLLER);
+
+        palette.put(Block.BONUS_SNAIL,BlockImage.BONUS_SNAIL);
         
         return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
     }

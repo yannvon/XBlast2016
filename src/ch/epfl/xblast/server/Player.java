@@ -492,7 +492,37 @@ public final class Player {
     
     /**
      * BONUS METHOD : Returns a new player that is completely identical except
-     * that he's powered with a bonus for a whil
+     * that he's faster for a while
+     *
+     *
+     * @return almost identical player but faster
+     */
+    public Player withRoller() {
+        Player p =withPowerUp(State.WITH_ROLLER) ;
+        return new Player(id(),p.lifeStates(),
+                DirectedPosition.movingFast(p.directedPositions().head()), 
+                maxBombs(),
+                bombRange());
+    }
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he's slower for a while
+     *
+     *
+     * @return almost identical player but faster
+     */
+    public Player withSnail() {
+        Player p =withPowerUp(State.SNAILED) ;
+        return new Player(id(),p.lifeStates(),
+                DirectedPosition.movingSlow(p.directedPositions().head()), 
+                maxBombs(),
+                bombRange());
+    }
+    
+    
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he's powered with a bonus for a while
      *
      *@param powerUp
      *          The new State of the player for a while
@@ -500,23 +530,15 @@ public final class Player {
      * @return almost identical player but with the new State
      */
     public Player withPowerUp(State powerUp) {
-        
-        return new Player(id(), powerUpLifeStateCreation(powerUp), directedPositions(), maxBombs(),
+        Sq<LifeState> newLifeStates= Sq.repeat(Ticks.BONUS_DURATION_TICKS,
+                new LifeState(lives(), powerUp))
+                .concat(Sq.constant(
+                        new LifeState(lives(), LifeState.State.VULNERABLE)));
+        return new Player(id(), newLifeStates, directedPositions(), maxBombs(),
                 bombRange());
     }
     
     
 
-    /**
-     * BONUS METHOD : construct a new sequence of LifeState with the power up
-     * @param powerUp
-     *      
-     * @return sequence of lifeState according to the new State
-     */
-    private  Sq<LifeState> powerUpLifeStateCreation(State powerUp) {
-        return Sq.repeat(Ticks.BONUS_DURATION_TICKS,
-                new LifeState(lives(), powerUp))
-                .concat(Sq.constant(
-                        new LifeState(lives(), LifeState.State.VULNERABLE)));
-    }
+
 }

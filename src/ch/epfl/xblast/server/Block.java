@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 public enum Block {
     
     FREE, INDESTRUCTIBLE_WALL, DESTRUCTIBLE_WALL, CRUMBLING_WALL, 
-    BONUS_BOMB(Bonus.INC_BOMB), BONUS_RANGE(Bonus.INC_RANGE);
+    BONUS_BOMB(Bonus.INC_BOMB), BONUS_RANGE(Bonus.INC_RANGE),BONUS_ROLLER(Bonus.ROLLER),BONUS_SNAIL(Bonus.SNAIL);
 
     // Attributes
     private Bonus maybeAssociatedBonus; // corresponding bonus or null
@@ -78,6 +78,8 @@ public enum Block {
         switch (this) {
         case BONUS_BOMB:
         case BONUS_RANGE:
+        case BONUS_SNAIL:
+        case BONUS_ROLLER:
             return true;
         default:
             return false;

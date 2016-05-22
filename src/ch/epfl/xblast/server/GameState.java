@@ -39,7 +39,7 @@ public final class GameState {
             .unmodifiableList(Lists.permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
     private static final Block[] BONUS_GENERATOR = 
-            { Block.BONUS_BOMB, Block.BONUS_RANGE, Block.FREE };
+            { Block.BONUS_BOMB, Block.BONUS_RANGE,Block.BONUS_ROLLER,Block.BONUS_SNAIL, Block.FREE };
 
     // Instance attributes
     private final int ticks;
@@ -553,7 +553,7 @@ public final class GameState {
             // defining some useful variables
             SubCell currentSubCell = p.position();
             SubCell nextSubCell = directedPositions1.tail().head().position();
-            Block nextBlock = board1.blockAt(directedPositions1.tail()
+            Block nextBlock = board1.blockAt(directedPositions1.tail().tail()
                     .findFirst(d -> d.position().isCentral()).position()
                     .containingCell());
             
@@ -610,7 +610,15 @@ public final class GameState {
          * 2) a player can immediately go back or continue in same direction
          */
         if (speedChange.isPresent() && d.isParallelTo(p.direction())) {
+            //BONUS
+            switch(p.lifeState().state()){
+            case SNAILED:
+                return DirectedPosition.movingSlow(new DirectedPosition(p.position(),d));
+            case WITH_ROLLER:
+                return DirectedPosition.movingFast(new DirectedPosition(p.position(),d));
+            default:
             return DirectedPosition.moving(new DirectedPosition(p.position(),d));
+            }
         }
 
         /*
@@ -621,15 +629,28 @@ public final class GameState {
             /*
              * 3.1) compute first part of the sequence
              */
-            Sq<DirectedPosition> dp1 = sq
-                    .takeWhile(t -> !t.position().isCentral());
+            Sq<DirectedPosition> dp1= sq.takeWhile(t -> !t.position().isCentral());
+            
             /*
-             * 3.2) compute second part: the player either stays at the central
+             * Bonus choose the speed of the player
+             */
+            Sq<DirectedPosition> moving;
+            switch(p.lifeState().state()){
+            case SNAILED:
+                moving= DirectedPosition.movingSlow(new DirectedPosition(nextCentral.position(),d));
+                break;
+            case WITH_ROLLER:
+                moving= DirectedPosition.movingFast(new DirectedPosition(nextCentral.position(),d));
+                break;
+            default:
+                moving=DirectedPosition.moving(new DirectedPosition(nextCentral.position(), d)); 
+            }
+            /*
+             * 3.3) compute second part: the player either stays at the central
              * SubCell or takes a turn.
              */
             Sq<DirectedPosition> dp2 = speedChange.isPresent()
-                    ? DirectedPosition.moving(
-                            new DirectedPosition(nextCentral.position(), d))
+                    ? moving
                     : DirectedPosition.stopped(nextCentral);
             return dp1.concat(dp2);
         }
@@ -656,7 +677,7 @@ public final class GameState {
 
             boolean blasted = blastedCells1
                     .contains(p.position().containingCell());
-            boolean vulnerable = p.lifeState().state() == State.VULNERABLE;
+            boolean vulnerable = p.lifeState().isVulnerable();
 
             Sq<LifeState> lifeStates1 = (blasted && vulnerable)
                     ? p.statesForNextLife() : p.lifeStates().tail();
