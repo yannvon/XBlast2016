@@ -36,9 +36,11 @@ public class Main {
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final int DEFAULT_NUMBER_OF_CLIENTS = NUMBER_OF_PLAYERS;
     private static final int MAX_SENDING_BYTES = 2 * (Cell.COUNT + 1)
-            + 4 * NUMBER_OF_PLAYERS + 1 + 1;
-    private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(2016);
-    private static final UnaryOperator<Integer> MOUVEMENT_TO_DIR_ORDINAL = x -> x - 1;
+            + 4 * NUMBER_OF_PLAYERS + 2; //FIXME (see client)
+    private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(
+            2016);
+    private static final UnaryOperator<Integer> MOUVEMENT_TO_DIR_ORDINAL = x -> x
+            - 1;
 
     /**
      * Main method of the XBlast 2016 Server.
@@ -47,12 +49,12 @@ public class Main {
      *            Amount of clients that should connect before the game
      *            launches. If this argument is omitted the server waits for the
      *            default amount of players.
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) {
 
         /*
-         * PHASE 1
+         * PHASE 1 
          * 1.1) Determine how many player will be playing.
          */
         int numberOfClients = (args.length != 0) ? Integer.parseInt(args[0])
@@ -66,16 +68,16 @@ public class Main {
          */
         try (DatagramChannel channel = DatagramChannel
                 .open(StandardProtocolFamily.INET)) {
-            
-            //Bind the port to the used channel
+
+            // Bind the port to the used channel
             channel.bind(PORT_ADDRESS);
-            
-            //Enable blocking mode, since the server waits for the clients.
+
+            // Enable blocking mode, since the server waits for the clients.
             channel.configureBlocking(true);
 
             /*
              * 1.3) Look for clients that want to join the game and save them in
-             *      an "address book".
+             * an "address book".
              */
             Map<SocketAddress, PlayerID> clientAdresses = new HashMap<>();
             ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);
@@ -88,12 +90,15 @@ public class Main {
                     clientAdresses.put(senderAddress,
                             PlayerID.values()[clientAdresses.size()]);
                 }
+                // Clear oneByteBuffer for next client and for later use in
+                // Phase 2
                 oneByteBuffer.clear();
             }
 
             /*
-             * Phase 2:
-             * 2.1) Start the game and save the starting time for later time management.
+             * Phase 2: 
+             * 2.1) Start the game and save the starting time for later
+             * time management.
              */
             GameState gameState = LEVEL.initialGameState();
             long startingTime = System.nanoTime();
@@ -103,24 +108,24 @@ public class Main {
             channel.configureBlocking(false);
 
             // Prepare Buffer in order to send the GameState. The maximal
-            // transmission size equals the max GameState size + 1 byte for the playerID.
-            ByteBuffer gameStateBuffer = ByteBuffer
-                    .allocate(MAX_SENDING_BYTES);
+            // transmission size equals the max GameState size + 1 byte for the
+            // playerID.
+            ByteBuffer gameStateBuffer = ByteBuffer.allocate(MAX_SENDING_BYTES);
 
             while (!gameState.isGameOver()) {
-                
+
                 /*
-                 *  2.2) Serialize the current GameState and prepare buffer.
+                 * 2.2) Serialize the current GameState and prepare buffer.
                  */
                 List<Byte> serialized = GameStateSerializer
                         .serialize(LEVEL.boardPainter(), gameState);
-                gameStateBuffer.put((byte) 0);    // Placeholder where PlayerID belongs
+                gameStateBuffer.put((byte) 0); // Placeholder where PlayerID belongs
                 serialized.forEach(gameStateBuffer::put);
                 gameStateBuffer.flip();
 
                 /*
                  * 2.2) Send the GameState to each client, the first byte
-                 *      represents the playerID, for which the GameState is meant.
+                 * represents the playerID, for which the GameState is meant.
                  */
                 for (Entry<SocketAddress, PlayerID> e : clientAdresses
                         .entrySet()) {
@@ -131,8 +136,10 @@ public class Main {
                 gameStateBuffer.clear();
 
                 /*
-                 * 2.3) Wait the correct amount of time, so that the tick duration is
-                 *      correct.
+                 * 2.3) Wait the correct amount of time, so that the tick
+                 * duration is correct. We add one to the amount of ticks
+                 * already played, in order to have a break between the first
+                 * and second GameState. FIXME correct?
                  */
                 long timeForNextTick = startingTime
                         + ((long) gameState.ticks() + 1)
@@ -143,8 +150,8 @@ public class Main {
 
                 /*
                  * 2.4) Check if the clients sent an action they want to
-                 *      execute. This is done by receiving the messages until
-                 *      there are none left.
+                 * execute. This is done by receiving the messages until there
+                 * are none left.
                  */
                 Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
                 Set<PlayerID> bombDrpEvent = new HashSet<>();
@@ -154,9 +161,11 @@ public class Main {
                         .receive(oneByteBuffer)) != null) {
                     oneByteBuffer.flip();
                     PlayerID id = clientAdresses.get(senderAddress);
-                    PlayerAction action = PlayerAction.values()[oneByteBuffer
-                            .get()];
+
+                    // If the id was valid, check what the player wants to do.
                     if (id != null) {
+                        PlayerAction action = PlayerAction
+                                .values()[oneByteBuffer.get()];
                         switch (action) {
                         case DROP_BOMB:
                             bombDrpEvent.add(id);
@@ -185,11 +194,14 @@ public class Main {
                 gameState = gameState.next(speedChangeEvents, bombDrpEvent);
             }
 
+            /*
+             * 3) Print winner in console if there was one.
+             */
             Optional<PlayerID> winner = gameState.winner();
-            System.out.println(winner.isPresent() ? winner.get() : "There was no winner.");
-            
-        }catch(Exception e){
-            System.err.println();
+            System.out.println(
+                    winner.isPresent() ? winner.get() : "There was no winner.");
+
+        } catch (Exception e) { //FIXME why not like in client main?
             e.printStackTrace();
         }
     }

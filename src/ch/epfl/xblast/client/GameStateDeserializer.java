@@ -31,7 +31,7 @@ public final class GameStateDeserializer {
     public static final int TIMELINE_LENGTH = 60;   
     public static final int SCORELINE_LENGTH = 20;
     
-    public static final int BYTES_PER_PLAYER = 4;   //FIXME is it ok to have some public some private?
+    private static final int BYTES_PER_PLAYER = 4;
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
     
     private static final int MIDDLE_GAP_LENGTH = 8;

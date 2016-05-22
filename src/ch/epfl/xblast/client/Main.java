@@ -21,7 +21,7 @@ import ch.epfl.xblast.PlayerID;
  * displaying the current GameState.
  * 
  * @author Loïc Vandenberghe (257742)
- * @author Yann Vonlanthen(258857)
+ * @author Yann Vonlanthen (258857)
  *
  */
 public class Main {
@@ -34,13 +34,12 @@ public class Main {
      */
     private static final int PORT = 2016;
     private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
-            + GameStateDeserializer.BYTES_PER_PLAYER * PlayerID.values().length
-            + 2; // FIXME declare this in Deserializer?
+            + 4 * PlayerID.values().length + 2; // FIXME declare this in Deserializer? /Same on server side
     private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
 
     /*
-     * Attributes
+     * Static attributes
      */
     private static XBlastComponent xbc;
     private static SocketAddress serverAddress;
