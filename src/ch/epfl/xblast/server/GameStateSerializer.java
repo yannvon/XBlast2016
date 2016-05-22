@@ -18,6 +18,11 @@ import ch.epfl.xblast.RunLengthEncoder;
  * @author Yann Vonlanthen (258857)
  */
 public final class GameStateSerializer {
+    
+    /*
+     * Constants
+     */
+    private static final double REMAINING_TIME_COMPRESSION = 2;
 
     /**
      * Private Constructor: non instantiable class.
@@ -90,7 +95,7 @@ public final class GameStateSerializer {
         /*
          * SERIALIZING REMAINING TIME
          */
-        byte serialisedTime = (byte) Math.ceil(gameState.remainingTime() / 2);
+        byte serialisedTime = (byte) Math.ceil(gameState.remainingTime() / REMAINING_TIME_COMPRESSION);
 
         /*
          * CONSTRUCT OUTPUT

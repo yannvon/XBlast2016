@@ -222,7 +222,7 @@ public final class GameStateDeserializer {
                         SCORE_COLLECTION.image(TILE_VOID)));
             }
             int imageNumber = p.id().ordinal() * SCORE_IMAGES_PER_PLAYER
-                    + ((p.lives() > 0) ? 0 : 1);
+                    + ((p.lives() > 0) ? 0 : 1);            //FIXME constant?
             // for every player add the 3 corresponding images
             scoreLine.add(SCORE_COLLECTION.image(imageNumber));
             scoreLine.add(SCORE_COLLECTION.image(TEXT_MIDDLE));
