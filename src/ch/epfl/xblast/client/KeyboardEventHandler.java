@@ -33,10 +33,7 @@ public final class KeyboardEventHandler extends KeyAdapter
     private final Map<Integer, PlayerAction> controls;
     private final Consumer<PlayerAction> consumer;
 
-    /**
-     * TODO
-     * @return
-     */
+
     private static Map<Integer, PlayerAction> defaultControls(){
         Map<Integer, PlayerAction> keyboardEvents = new HashMap<>();
         keyboardEvents.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
@@ -53,24 +50,24 @@ public final class KeyboardEventHandler extends KeyAdapter
        
         //P1
         Map<Integer, PlayerAction> controlsP1 = new HashMap<>();
-        controlsP1.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
-        controlsP1.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
-        controlsP1.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
-        controlsP1.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
-        controlsP1.put(KeyEvent.VK_ENTER, PlayerAction.DROP_BOMB);
+        controlsP1.put(KeyEvent.VK_W, PlayerAction.MOVE_N);
+        controlsP1.put(KeyEvent.VK_S, PlayerAction.MOVE_S);
+        controlsP1.put(KeyEvent.VK_A, PlayerAction.MOVE_W);
+        controlsP1.put(KeyEvent.VK_D, PlayerAction.MOVE_E);
+        controlsP1.put(KeyEvent.VK_CAPS_LOCK, PlayerAction.DROP_BOMB);
         controlsP1.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
         controls.add(controlsP1);
-        
-      //P2
-        Map<Integer, PlayerAction> controlsP2 = new HashMap<>();
-        controlsP2.put(KeyEvent.VK_W, PlayerAction.MOVE_N);
-        controlsP2.put(KeyEvent.VK_S, PlayerAction.MOVE_S);
-        controlsP2.put(KeyEvent.VK_A, PlayerAction.MOVE_W);
-        controlsP2.put(KeyEvent.VK_D, PlayerAction.MOVE_E);
-        controlsP2.put(KeyEvent.VK_E, PlayerAction.DROP_BOMB);
-        controlsP2.put(KeyEvent.VK_Q, PlayerAction.STOP);
-        controls.add(controlsP2);
        
+        //P2
+        Map<Integer, PlayerAction> controlsP2 = new HashMap<>();
+        controlsP2.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
+        controlsP2.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
+        controlsP2.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
+        controlsP2.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
+        controlsP2.put(KeyEvent.VK_MINUS, PlayerAction.DROP_BOMB);
+        controlsP2.put(KeyEvent.VK_CONTROL, PlayerAction.STOP);
+        controls.add(controlsP2);
+        
         /*TODO
         //P3
         Map<Integer, PlayerAction> controlsP3 = new HashMap<>();
