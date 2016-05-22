@@ -27,11 +27,15 @@ import ch.epfl.xblast.PlayerID;
 public class Main {
 
     /*
-     * Constants
+     * Constants.
+     * 
+     * The max amount of receiving bytes consists of the worst case encoding +
+     * one first byte that represents the playerID of the recipient.
      */
     private static final int PORT = 2016;
     private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
-            + 4 * PlayerID.values().length + 1 + 1; // FIXME
+            + GameStateDeserializer.BYTES_PER_PLAYER * PlayerID.values().length
+            + 2; // FIXME declare this in Deserializer?
     private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
 
@@ -50,76 +54,77 @@ public class Main {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        
+
         /*
-         * PHASE 1
+         * PHASE 1 
          * 1.1) retrieve IP-address and open channel
          */
-        String hostName = (args.length == 0)? DEFAULT_HOST : args[0];   //FIXME throw error?
+        String hostName = (args.length == 0) ? DEFAULT_HOST : args[0]; // FIXME throw error?
         serverAddress = new InetSocketAddress(hostName, PORT);
-        
-        try( DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET)){
 
-            //TODO comments
-            channel.configureBlocking(false);
+        try (DatagramChannel channel = DatagramChannel
+                .open(StandardProtocolFamily.INET)) {
 
             /*
              * 1.2) Send request to join game to Server as long as the server
              * doesn't send the initial GameState.
              */
+            channel.configureBlocking(false);
+
             ByteBuffer sendByteBuffer = ByteBuffer.allocate(1);
-            ByteBuffer receiveByteBuffer = ByteBuffer.allocate(MAX_RECEIVING_BYTES);
+            ByteBuffer receiveByteBuffer = ByteBuffer
+                    .allocate(MAX_RECEIVING_BYTES);
             sendByteBuffer.put((byte) PlayerAction.JOIN_GAME.ordinal());
             sendByteBuffer.flip();
-            do{
+            do {
                 channel.send(sendByteBuffer, serverAddress);
                 sendByteBuffer.rewind();
                 Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
-            }while((channel.receive(receiveByteBuffer)) == null);
+            } while ((channel.receive(receiveByteBuffer)) == null);
 
             /*
-             * PHASE 2
+             * PHASE 2 
              * 2.1) Start by invoking the parallel EDT Swing thread.
              */
             SwingUtilities.invokeAndWait(() -> createUI(channel));
 
-
-            // From now one the client will wait to get the next GameState from the server.
+            // From now one the client will wait to get the next GameState from
+            // the server.
             channel.configureBlocking(true);
 
             /*
-             * 2.2) As long as the program runs the client waits for a new GameState
-             * and shares it with the parallel Swing thread.
+             * 2.2) As long as the program runs the client waits for a new
+             * GameState and shares it with the parallel Swing thread.
              */
-            do{
+            do {
                 receiveByteBuffer.flip();
-                PlayerID id = PlayerID.values()[receiveByteBuffer.get()];  //FIXME do this everytime? /check/throw exception?
+                PlayerID id = PlayerID.values()[receiveByteBuffer.get()]; // FIXME do this every time? attribute/throw exception?
                 List<Byte> serialized = new ArrayList<>();
-                while(receiveByteBuffer.hasRemaining()){
+                while (receiveByteBuffer.hasRemaining()) {
                     serialized.add(receiveByteBuffer.get());
                 }
-                GameState gameState = GameStateDeserializer.deserializeGameState(serialized);
+                GameState gameState = GameStateDeserializer
+                        .deserializeGameState(serialized);
                 xbc.setGameState(gameState, id);
                 receiveByteBuffer.clear();
                 channel.receive(receiveByteBuffer);
-            } while (true);
+            } while (true); //FIXME correct?
         }
-        
     }
 
     /**
      * Method invoked by the main in a other thread in charge of managing the
      * Swing graphical interface.
      */
-    public static void createUI(DatagramChannel channel){
-        
+    public static void createUI(DatagramChannel channel) {
+
         /*
          * Open new Window.
          */
         JFrame f = new JFrame("XBlast 2016");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         xbc = new XBlastComponent();
-        
+
         f.getContentPane().add(xbc);
         f.setResizable(false);
         f.pack();
@@ -141,6 +146,7 @@ public class Main {
                 e.printStackTrace();
             }
         };
-        xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));
+        xbc.addKeyListener(new KeyboardEventHandler(
+                KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));
     }
 }
