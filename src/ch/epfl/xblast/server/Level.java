@@ -53,6 +53,29 @@ public final class Level {
         return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
     }
     
+    /**
+     * BONUS Static method that constructs a classic BoardPainter that uses
+     * the standard images.
+     * 
+     * @return a default BoardPainter
+     */
+    private static BoardPainter randomBoardPainter(){
+        
+        Map<Block,BlockImage> palette = new HashMap<>();
+        
+        palette.put(Block.INDESTRUCTIBLE_WALL,BlockImage.DARK_BLOCK);
+        palette.put(Block.FREE,BlockImage.IRON_FLOOR);
+        palette.put(Block.DESTRUCTIBLE_WALL,BlockImage.EXTRA);
+        palette.put(Block.CRUMBLING_WALL,BlockImage.EXTRA_O);
+        palette.put(Block.BONUS_RANGE,BlockImage.RANDOM_BONUS);
+        palette.put(Block.BONUS_BOMB,BlockImage.RANDOM_BONUS);
+        palette.put(Block.BONUS_ROLLER,BlockImage.RANDOM_BONUS);
+
+        palette.put(Block.BONUS_SNAIL,BlockImage.RANDOM_BONUS);
+        
+        return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
+    }
+    
     
     /**
      * Bonus method that import a gameState from a file
