@@ -103,15 +103,13 @@ public class Main {
                 receiveByteBuffer.clear();
                 channel.receive(receiveByteBuffer);
             } while (true);
-            //FIXME print last gameState?!
         }
         
     }
 
     /**
-     * Method invoked by main in a other thread that create an Windows to print
-     * the game
-     * 
+     * Method invoked by the main in a other thread in charge of managing the
+     * Swing graphical interface.
      */
     public static void createUI(DatagramChannel channel){
         
