@@ -1,10 +1,8 @@
 package ch.epfl.xblast.client;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Label;
 import java.io.File;
@@ -12,6 +10,7 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -173,7 +172,7 @@ public class MainGUI {
             nbPlayers.add(new Integer(n).toString());
         nbPlayers.select(0);
 
-        Checkbox checkLaunchClient = new Checkbox("Launch Server Only", false);
+        JCheckBox checkLaunchClient = new JCheckBox("Launch Server Only", false);
         
         //2)Button
         JButton serverButtton = new JButton("Host Game");
@@ -189,7 +188,7 @@ public class MainGUI {
                     }
                 }
             };
-            if(!checkLaunchClient.getState()){
+            if(!checkLaunchClient.isSelected()){
                 Runnable clientMain = new Runnable() {
                     public void run() {
                         try {
