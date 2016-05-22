@@ -8,6 +8,7 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.server.Player.LifeState.State;
 
 /**
  * A player being characterized by a multitude of attributes. This is an
@@ -29,7 +30,7 @@ public final class Player {
          * An enumeration of all possible states that the player can be in.
          */
         public enum State {
-            INVULNERABLE, VULNERABLE, DYING, DEAD;
+            INVULNERABLE, VULNERABLE, DYING, DEAD, WITH_ROLLER, SNAILED;
         }
 
         // Attributes
@@ -77,7 +78,34 @@ public final class Player {
          * @return true if the player is allowed to move, false otherwise
          */
         public boolean canMove() {
-            return state() == State.VULNERABLE || state() == State.INVULNERABLE;
+            return state() != State.DYING && state() != State.DEAD;
+        }
+        
+        /**
+         * BONUS METHOD: Determines if the player have a power up or not.
+         * 
+         * @return true if the player have a power up
+         */
+        public boolean isPowerUp() {
+            return this.state() == State.SNAILED || this.state() == State.WITH_ROLLER;
+        }
+        
+        
+        
+        /**
+         * BONUS METHOD: Determines if the player is vulnerable or not.
+         * 
+         * @return true if the player is allowed to move, false otherwise
+         */
+        public boolean isVulnerable() {
+            switch(this.state()){
+            case INVULNERABLE:
+            case DYING:
+            case DEAD:
+                return false;
+            default:
+                return true;
+            }
         }
     }
 
@@ -113,6 +141,42 @@ public final class Player {
                     pos -> new DirectedPosition(
                             pos.position.neighbor(pos.direction),
                             pos.direction));
+        }
+        
+        /**
+         * BONUS: static method that returns an infinite sequence representing the
+         * Player moving twice faster than usually
+         * 
+         * @param p
+         *            directed Position
+         * @return Sequence of directed position representing the player moving
+         *         fast
+         */
+        public static Sq<DirectedPosition> movingFast(DirectedPosition p) {
+            return Sq.iterate(p,
+                    pos -> new DirectedPosition(
+                            pos.position.neighbor(pos.direction).neighbor(pos.direction),
+                            pos.direction));
+        }
+        
+        /**
+         * BONUS: static method that returns an infinite sequence representing the
+         * Player moving twice slower than usually
+         * 
+         * @param p
+         *            directed Position
+         * @return Sequence of directed position representing the player moving
+         *         slow
+         */
+        public static Sq<DirectedPosition> movingSlow(DirectedPosition p) {
+            Sq<DirectedPosition> directedPositions = Sq.empty();
+            SubCell pos = p.position();
+            Direction dir = p.direction();
+            for(int i=0; i<Ticks.TOTAL_TICKS/2;i++){
+                directedPositions = directedPositions.concat(Sq.repeat(2,new DirectedPosition(pos, dir))); 
+                pos=pos.neighbor(dir);
+            }
+            return directedPositions;
         }
 
         // Attributes
@@ -383,6 +447,8 @@ public final class Player {
         return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
                 newBombRange);
     }
+    
+    
 
     /**
      * Returns a bomb, placed on the players current location. The fuseLength of
@@ -418,5 +484,39 @@ public final class Player {
                     .concat(Sq.constant(
                             new LifeState(lives, LifeState.State.VULNERABLE)));
         }
+    }
+    
+    /*
+     * BONUS
+     */
+    
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he's powered with a bonus for a whil
+     *
+     *@param powerUp
+     *          The new State of the player for a while
+     *
+     * @return almost identical player but with the new State
+     */
+    public Player withPowerUp(State powerUp) {
+        
+        return new Player(id(), powerUpLifeStateCreation(powerUp), directedPositions(), maxBombs(),
+                bombRange());
+    }
+    
+    
+
+    /**
+     * BONUS METHOD : construct a new sequence of LifeState with the power up
+     * @param powerUp
+     *      
+     * @return sequence of lifeState according to the new State
+     */
+    private  Sq<LifeState> powerUpLifeStateCreation(State powerUp) {
+        return Sq.repeat(Ticks.BONUS_DURATION_TICKS,
+                new LifeState(lives(), powerUp))
+                .concat(Sq.constant(
+                        new LifeState(lives(), LifeState.State.VULNERABLE)));
     }
 }

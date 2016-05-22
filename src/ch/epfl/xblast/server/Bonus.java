@@ -1,5 +1,7 @@
 package ch.epfl.xblast.server;
 
+import ch.epfl.xblast.server.Player.LifeState.State;
+
 /**
  * Enumeration that defines every bonus and gives the possibility to apply the
  * bonus to a player.
@@ -22,6 +24,18 @@ public enum Bonus {
         public Player applyTo(Player player) {
             return (player.bombRange() < MAX_RANGE)
                     ? player.withBombRange(player.bombRange() + 1) : player;
+        }
+    },
+    ROLLER {
+        @Override
+        public Player applyTo(Player player) {
+            return player.withPowerUp(State.WITH_ROLLER);
+        }
+    },
+    SNAIL {
+        @Override
+        public Player applyTo(Player player) {
+            return player.withPowerUp(State.SNAILED);
         }
     };
     
