@@ -6,6 +6,7 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Label;
+import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -14,14 +15,15 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.TabbedPaneUI;
 
 /**
- * Main class of the Client. In charge of communicating with the server and
- * displaying the current GameState.
+ * Bonus: Main class of the XBlast 2016 Game.
  * 
  * @author Loïc Vandenberghe (257742)
- * @author Yann Vonlanthen(258857)
+ * @author Yann Vonlanthen (258857)
  *
  */
 public class MainGUI {
@@ -35,18 +37,18 @@ public class MainGUI {
     private static final String DEFAULT_HOST = "localhost";
 
     /**
-     * Main method of the XBlast 2016 Client.
+     * Main method of the XBlast 2016.
      * 
      * @param args
      *            IP-address of the Server. If none localhost is used as default
      *            address.
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception{    //FIXME error handling!!
+    public static void main(String[] args) throws Exception{
         
         /*
          * PHASE 0
-         * IP Address input
+         * Open Menu
          */
         SwingUtilities.invokeAndWait(() -> createMenu());
     }
@@ -80,7 +82,7 @@ public class MainGUI {
         title.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, new Color(0, 200, 255)));
 
         /*
-         * Local Game
+         * LOCAL GAME
          */
         //1)Input TODO different Levels or options
         
@@ -105,7 +107,7 @@ public class MainGUI {
         localPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 0, 255)));
         
         /*
-         * Client
+         * JOIN GAME
          */
         //1)Input
         JLabel instruction1 = new JLabel(" Enter server ip address  :  ",Label.LEFT);//FIXME What the fuck????
@@ -139,21 +141,21 @@ public class MainGUI {
         
         
         /*
-         * Client
+         * HOST GAME
          */
         
         //1)Input        
-        JLabel numberText = new JLabel("Number of player");
+        JLabel numberText = new JLabel("Number of players");
         
         Choice nbPlayers = new Choice();
-        for(int n=1; n<=4;n++)
+        for (int n = 1; n <= 4; n++)
             nbPlayers.add(new Integer(n).toString());
         nbPlayers.select(0);
-        
-        Checkbox checkLaunchClient = new Checkbox("Launch Client",true);
+
+        Checkbox checkLaunchClient = new Checkbox("Launch Server Only", false);
         
         //2)Button
-        JButton serverButtton = new JButton("Start Server");
+        JButton serverButtton = new JButton("Host Game");
         serverButtton.addActionListener(e -> {
             String[] argsMain = { nbPlayers.getSelectedItem() };
             String[] argsClient = { DEFAULT_HOST };
@@ -166,7 +168,7 @@ public class MainGUI {
                     }
                 }
             };
-            if(checkLaunchClient.getState()){
+            if(!checkLaunchClient.getState()){
                 Runnable clientMain = new Runnable() {
                     public void run() {
                         try {
@@ -197,18 +199,19 @@ public class MainGUI {
         /*
          * General Panel
          */
-        JPanel buttons = new JPanel();
-        buttons.setLayout(new GridLayout(3, 1));
-
-        buttons.add(localPanel);
-        buttons.add(clientPanel);
-        buttons.add(serverPanel);
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setForeground(Color.darkGray);
+//        tabbedPane.setUI(new TabbedPaneUI);
+        
+        tabbedPane.addTab("JOIN GAME", clientPanel);
+        tabbedPane.addTab("HOST GAME", serverPanel);
+        tabbedPane.addTab("LOCAL GAME", localPanel);
         
 
         JPanel panel = new JPanel(new BorderLayout());
         
         panel.add(title,BorderLayout.NORTH);
-        panel.add(buttons,BorderLayout.SOUTH);
+        panel.add(tabbedPane,BorderLayout.CENTER);
         panel.setBorder(BorderFactory.createMatteBorder(40, 40, 40, 40, new Color(0, 255, 255)));
         f.getContentPane().add(panel);
 
