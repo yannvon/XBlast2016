@@ -30,7 +30,7 @@ public class LocalGame {
      */
 
     private static final UnaryOperator<Integer> ACTION_TO_DIR_ORDINAL = x -> x - 1;
-    
+    private static final Level DEFAULT_LEVEL = Level.TWO_PLAYER_LEVEL;
     /*
      * Controls 
      */
@@ -51,7 +51,7 @@ public class LocalGame {
          *      Select the Level TODO
          */
 
-        Level lvl = Level.TWO_PLAYER_LEVEL;
+        Level lvl = (args.length == 0)?DEFAULT_LEVEL:new Level(DEFAULT_LEVEL.boardPainter(), Level.chargeGameState(args[0]));
         //TODO
         
         GameState gameState =  lvl.initialGameState();
@@ -67,7 +67,7 @@ public class LocalGame {
              *  2.2) Serialize the current GameState and prepare buffer.
              */
             List<Byte> serialized = GameStateSerializer
-                    .serialize(Level.DEFAULT_LEVEL.boardPainter(), gameState);
+                    .serialize(lvl.boardPainter(), gameState);
 
             /*
              * 2.2) Set the GameState

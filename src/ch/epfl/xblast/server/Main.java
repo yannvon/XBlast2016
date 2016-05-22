@@ -32,7 +32,7 @@ public class Main {
     /*
      * Constants
      */
-    private static final Level LEVEL = Level.DEFAULT_LEVEL;
+    private static final Level DEFAULT_LEVEL = Level.DEFAULT_LEVEL;
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final int DEFAULT_NUMBER_OF_CLIENTS = NUMBER_OF_PLAYERS;
     private static final int MAX_SENDING_BYTES = 2 * (Cell.COUNT + 1)
@@ -95,7 +95,7 @@ public class Main {
              * Phase 2:
              * 2.1) Start the game and save the starting time for later time management.
              */
-            GameState gameState = LEVEL.initialGameState();
+            GameState gameState =(args.length < 2)?DEFAULT_LEVEL.initialGameState():Level.chargeGameState(args[1]);
             long startingTime = System.nanoTime();
 
             // Disable blocking mode since in Phase 2 the clients are not
@@ -113,7 +113,7 @@ public class Main {
                  *  2.2) Serialize the current GameState and prepare buffer.
                  */
                 List<Byte> serialized = GameStateSerializer
-                        .serialize(LEVEL.boardPainter(), gameState);
+                        .serialize(DEFAULT_LEVEL.boardPainter(), gameState);
                 gameStateBuffer.put((byte) 0);    // Placeholder where PlayerID belongs
                 serialized.forEach(gameStateBuffer::put);
                 gameStateBuffer.flip();
