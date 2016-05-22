@@ -1,0 +1,12 @@
+Model for a gameState file:
+
+<lives>
+<initial maxbombs>
+<inital range>
+<number of players alives>
+<board with:
+X=indestructible
+x=destuctible
+_=free
+p=starting position and free cell
+>
