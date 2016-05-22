@@ -35,8 +35,6 @@ public class LocalGame {
      * Controls 
      */
     
-    
-    
     /**
      * Attributes
      */
@@ -158,11 +156,15 @@ public class LocalGame {
             /*
              * Consumers
              */
-            Consumer<PlayerAction> CONSP1 = (playerAction) ->  actions.put(PlayerID.PLAYER_1,playerAction);
-            Consumer<PlayerAction> CONSP2 = (playerAction) ->actions.put(PlayerID.PLAYER_2,playerAction); 
-            Consumer<PlayerAction> CONSP3 = (playerAction) ->actions.put(PlayerID.PLAYER_3,playerAction); 
-            Consumer<PlayerAction> CONSP4 = (playerAction) ->actions.put(PlayerID.PLAYER_4,playerAction); 
-            
+        Consumer<PlayerAction> CONSP1 = (playerAction) -> actions
+                .put(PlayerID.PLAYER_1, playerAction);
+        Consumer<PlayerAction> CONSP2 = (playerAction) -> actions
+                .put(PlayerID.PLAYER_2, playerAction);
+        Consumer<PlayerAction> CONSP3 = (playerAction) -> actions
+                .put(PlayerID.PLAYER_3, playerAction);
+        Consumer<PlayerAction> CONSP4 = (playerAction) -> actions
+                .put(PlayerID.PLAYER_4, playerAction);
+
             /*
              * keyListener
              */

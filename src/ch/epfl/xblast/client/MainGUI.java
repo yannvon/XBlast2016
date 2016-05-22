@@ -4,9 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Label;
-import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.TabbedPaneUI;
 
 /**
  * Bonus: Main class of the XBlast 2016 Game.
@@ -33,6 +32,8 @@ public class MainGUI {
      */
     private static final ImageCollection GUI_COLLECTION = new ImageCollection(
             "gui");
+    private static final int TABBED_ICON_WIDTH = 50;
+    private static final int TABBED_ICON_HEIGHT = 40;
     
     private static final String DEFAULT_HOST = "localhost";
 
@@ -56,17 +57,6 @@ public class MainGUI {
 
     
     public static void createMenu(){
-        
-//      //SECOND
-//      JLabel instruction2 = new JLabel("Enter server ip address");
-//      p.add(instruction2, BorderLayout.LINE_START);
-//      
-//      JFormattedTextField textboxServer = new JFormattedTextField();
-//      //add text field
-//      textboxIP.setValue(DEFAULT_HOST);
-//      textboxIP.setColumns(10);
-//      p.add(textboxServer, BorderLayout.CENTER);
-        
         
         /*
          * Open new Window.
@@ -201,14 +191,27 @@ public class MainGUI {
          */
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setForeground(Color.darkGray);
-//        tabbedPane.setUI(new TabbedPaneUI);
+//        tabbedPane.setUI(new Pl);
         
-        tabbedPane.addTab("JOIN GAME", clientPanel);
-        tabbedPane.addTab("HOST GAME", serverPanel);
-        tabbedPane.addTab("LOCAL GAME", localPanel);
-        
-
+//        JLabel lab = new JLabel();
+//        lab.setPreferredSize(new Dimension(200, 50));
+//        tabbedPane.setTabComponentAt(0, lab);
+//        
         JPanel panel = new JPanel(new BorderLayout());
+        ImageIcon join = new ImageIcon(GUI_COLLECTION.image((byte) 001)
+                .getScaledInstance(TABBED_ICON_HEIGHT, TABBED_ICON_WIDTH,
+                        Image.SCALE_SMOOTH));
+        ImageIcon host = new ImageIcon(GUI_COLLECTION.image((byte) 002)
+                .getScaledInstance(TABBED_ICON_HEIGHT, TABBED_ICON_WIDTH,
+                        Image.SCALE_SMOOTH));
+        ImageIcon local = new ImageIcon(GUI_COLLECTION.image((byte) 003)
+                .getScaledInstance(TABBED_ICON_HEIGHT, TABBED_ICON_WIDTH,
+                        Image.SCALE_SMOOTH));
+
+        tabbedPane.addTab("JOIN GAME", join, clientPanel);
+        tabbedPane.addTab("HOST GAME", host, serverPanel);
+        tabbedPane.addTab("LOCAL GAME", local, localPanel);
+//        tabbedPane.addta
         
         panel.add(title,BorderLayout.NORTH);
         panel.add(tabbedPane,BorderLayout.CENTER);
