@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Label;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -17,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+
+import ch.epfl.xblast.server.Level;
 
 /**
  * Bonus: Main class of the XBlast 2016 Game.
@@ -72,6 +75,33 @@ public class MainGUI {
         title.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, new Color(0, 200, 255)));
 
         /*
+         * Input Level
+         */
+        //1) add choice for level
+        Label chooseLevel = new Label("Choose Level : ",Label.RIGHT);
+        Choice levelChoice = new Choice();
+        try{
+            File file =  new File(Level.class
+                    .getClassLoader()
+                    .getResource("gameStates")
+                    .toURI());
+            for(String fileName: file.list())
+                levelChoice.add(fileName);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        levelChoice.select("DEFAULT");
+        
+        JPanel levelPanel = new JPanel(new BorderLayout());
+        
+        levelPanel.add(chooseLevel,BorderLayout.WEST);
+        levelPanel.add(levelChoice, BorderLayout.CENTER);
+        levelPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 125, 255)));
+        
+        
+        
+        /*
          * LOCAL GAME
          */
         //1)Input TODO different Levels or options
@@ -79,10 +109,11 @@ public class MainGUI {
         //2)button
         JButton localButton = new JButton("Local Game");
         localButton.addActionListener(e -> {
+            String[] arg= {levelChoice.getSelectedItem()};
             Runnable localMain = new Runnable() {
                 public void run() {
                     try {
-                        ch.epfl.xblast.LocalGame.main(new String[0]);
+                        ch.epfl.xblast.LocalGame.main(arg);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -127,7 +158,7 @@ public class MainGUI {
         clientPanel.add(instruction1,BorderLayout.NORTH);
         clientPanel.add(textboxIP,BorderLayout.CENTER);
         clientPanel.add(clientButton,BorderLayout.EAST);
-        clientPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 125, 255)));
+        clientPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 0, 255)));
         
         
         /*
@@ -147,7 +178,7 @@ public class MainGUI {
         //2)Button
         JButton serverButtton = new JButton("Host Game");
         serverButtton.addActionListener(e -> {
-            String[] argsMain = { nbPlayers.getSelectedItem() };
+            String[] argsMain = { nbPlayers.getSelectedItem(),levelChoice.getSelectedItem() };
             String[] argsClient = { DEFAULT_HOST };
             Runnable serverMain = new Runnable() {
                 public void run() {
@@ -214,7 +245,8 @@ public class MainGUI {
 //        tabbedPane.addta
         
         panel.add(title,BorderLayout.NORTH);
-        panel.add(tabbedPane,BorderLayout.CENTER);
+        panel.add(levelPanel,BorderLayout.CENTER);
+        panel.add(tabbedPane,BorderLayout.SOUTH);
         panel.setBorder(BorderFactory.createMatteBorder(40, 40, 40, 40, new Color(0, 255, 255)));
         f.getContentPane().add(panel);
 

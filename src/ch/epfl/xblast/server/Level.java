@@ -60,7 +60,7 @@ public final class Level {
      * @return
      *      the imported GameState
      */
-    private static GameState chargeGameState(String name){
+    public static GameState chargeGameState(String name){
        GameState gameState=null; 
        File gameStateFile=null;
        /*
