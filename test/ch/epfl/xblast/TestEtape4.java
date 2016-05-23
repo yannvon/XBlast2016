@@ -103,7 +103,7 @@ public class TestEtape4 {
         for(Block block : Block.values()) {
             switch(block) {
                 case BONUS_BOMB:
-                case BONUS_RANGE:
+                case BONUS_RANGE: //TODO after adding BONUS! Yann 23.05.16
                     assertTrue("isBonus on bonus should be true", block.isBonus());
                     break;
                 default:

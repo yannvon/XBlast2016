@@ -337,6 +337,14 @@ public final class Player {
     }
 
     /**
+     * Bonus: Getter for the canKickBmb attribute.
+     * @return
+     */
+    public boolean canKickBomb(){
+        return canKickBomb;
+    }
+    
+    /**
      * Returns the id of the player.
      * 
      * @return id of the player
@@ -452,7 +460,7 @@ public final class Player {
      */
     public Player withMaxBombs(int newMaxBombs) {
         return new Player(id(), lifeStates(), directedPositions(), newMaxBombs,
-                bombRange());
+                bombRange(), canKickBomb());
     }
 
     /**
@@ -475,7 +483,7 @@ public final class Player {
      */
     public Player withBombRange(int newBombRange) {
         return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
-                newBombRange);
+                newBombRange, canKickBomb());
     }
     
     
@@ -531,7 +539,7 @@ public final class Player {
         Player p = withPowerUp(State.WITH_ROLLER);
         return new Player(id(),p.lifeStates(),
                 DirectedPosition.movingFast(directedPositions().tail().head()), //tail is a necessity since the player must be on a pair subcell
-                maxBombs(), bombRange());
+                maxBombs(), bombRange(), canKickBomb());
     }
 
     /**
@@ -545,7 +553,7 @@ public final class Player {
         Player p = withPowerUp(State.SLOWED);
         return new Player(id(), p.lifeStates(),
                 DirectedPosition.movingSlow(p.directedPositions().head()),
-                maxBombs(), bombRange());
+                maxBombs(), bombRange(), canKickBomb());
     }
 
     /**
@@ -575,9 +583,6 @@ public final class Player {
                 .concat(Sq.constant(
                         new LifeState(lives(), LifeState.State.VULNERABLE)));
         return new Player(id(), newLifeStates, directedPositions(), maxBombs(),
-                bombRange());
+                bombRange(), canKickBomb());
     }
-    
-
-
 }

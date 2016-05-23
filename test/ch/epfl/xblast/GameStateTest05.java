@@ -370,7 +370,7 @@ public class GameStateTest05 {
 
         gameState = gameState.next(emptyMap(), emptySet());
 
-        Set<Block> possibleBlocks = asSet(Block.BONUS_BOMB, Block.BONUS_RANGE, Block.FREE);
+        Set<Block> possibleBlocks = asSet(Block.BONUS_BOMB, Block.BONUS_RANGE, Block.FREE); //TODO
         assertTrue(possibleBlocks.contains(gameState.board().blockAt(POS_CENTER)));
     }
 

@@ -260,18 +260,70 @@ public final class GameState {
         // resolve conflicts)
         bombs0.addAll(newlyDroppedBombs(sortedPlayers, bombDrpEvents, bombs));
 
-        // 4.2) every bomb either explodes (and disappears) or evolves (fuse-1).
+        // 4.2) every bomb either explodes (and disappears) or evolves (fuse-1, positions-1).
         for (Bomb b : bombs0) {
 
             Sq<Integer> newFuse = b.fuseLengths().tail();
+            Sq<SubCell> newPosition = b.positions().tail();
+            
             // if the fuse has burned out or the bomb was hit by a blast it
             // explodes and disappears (not added to bombs1)
-            if (newFuse.isEmpty() || blastedCells1.contains(b.position())) {
+            
+            //BONUS: also explodes when hitting wall, stops when hitting player.
+            SubCell currentSubCell = b.positionExact();
+            SubCell nextSubCell = b.positions().tail().head();
+            
+            Cell nextCell = b.positions().tail().tail()     //FIXME why two tail?   //FIXME adapt to speed
+                    .findFirst(d -> d.isCentral())
+                    .containingCell();
+            Block nextBlock = board1.blockAt(nextCell);
+            
+            boolean blockedByWall = currentSubCell.isCentral()
+                    && !nextBlock.canHostPlayer();
+            boolean blockedByBomb = bombs0
+                    .contains(currentSubCell.containingCell())
+                    && currentSubCell
+                            .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB;
+            boolean blockedByPlayer = false;    //FIXME TODO
+            
+            boolean kickAttempt = false;
+            
+            Player kicker = null;
+            for (Player p : players()) {
+                SubCell playerCurrentSubCell = p.position();
+                SubCell playerNextSubCell = p.directedPositions().tail().head().position();
+
+                boolean playerMovingTowardsBomb = playerCurrentSubCell
+                        .distanceToCentral() > playerNextSubCell.distanceToCentral();
+                if (currentSubCell.containingCell()
+                        .equals(p.position().containingCell())
+                        && playerMovingTowardsBomb && playerCurrentSubCell
+                                .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB) {                    
+                    
+                    kickAttempt = true;
+                    kicker = p;
+                    System.out.println("kick attempt");
+                }
+            }
+            
+            if (newFuse.isEmpty() || blastedCells1.contains(b.position())
+                    || (b.isMoving() && (blockedByWall || blockedByBomb || blockedByPlayer ))) {
                 explosions1.addAll(b.explosion());
             }
-            // otherwise only the fuse gets shorter
+
+            // TODO explain
             else {
-                bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
+                if(!b.isMoving() && kickAttempt && kicker.canKickBomb() ){
+                    final Player kickerF = kicker;  //FIXME
+                    Sq<SubCell> movingPositions = Sq.iterate(newPosition.head(), p -> p.neighbor(kickerF.direction()));
+                    
+                    bombs1.add(
+                            new Bomb(b.ownerId(), movingPositions, newFuse, b.range()));
+                }
+                else{
+                    bombs1.add(
+                            new Bomb(b.ownerId(), newPosition, newFuse, b.range()));                    
+                }
             }
         }
 
@@ -577,7 +629,10 @@ public final class GameState {
 
             // Finally add the new moved player to the list
             players1.add(new Player(p.id(), p.lifeStates(), directedPositions1,
-                    p.maxBombs(), p.bombRange()));
+                    p.maxBombs(), p.bombRange(), p.canKickBomb()));
+            if(p.canKickBomb()){
+                System.out.println("can kick bomb!");
+            }
         }
         return Collections.unmodifiableList(players1);
     }
@@ -684,7 +739,7 @@ public final class GameState {
                     ? p.statesForNextLife() : p.lifeStates().tail();
 
             newStatePlayer.add(new Player(p.id(), lifeStates1,
-                    p.directedPositions(), p.maxBombs(), p.bombRange()));
+                    p.directedPositions(), p.maxBombs(), p.bombRange(), p.canKickBomb()));
         }
         return Collections.unmodifiableList(newStatePlayer);
     }
@@ -725,7 +780,7 @@ public final class GameState {
 
         Map<Cell, Bomb> bombedCells = new HashMap<>();
         for (Bomb bomb : bombs) {
-            bombedCells.put(bomb.position(), bomb);
+            bombedCells.put(bomb.position(), bomb);    //FIXME maybe wrong! KICK_BOMB BONUS
         }
         return Collections.unmodifiableMap(bombedCells);
     }

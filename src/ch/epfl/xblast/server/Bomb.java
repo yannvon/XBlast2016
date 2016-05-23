@@ -10,6 +10,7 @@ import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.SubCell;
 
 /**
  * A bomb that explodes after given amount of Ticks.
@@ -22,12 +23,40 @@ public final class Bomb {
     
     // Attributes
     private final PlayerID ownerId;
-    private final Cell position;
+    private final Sq<SubCell> positions;
     private final Sq<Integer> fuseLengths;
     private final int range;
 
     /**
-     * First Constructor, taking a sequence of Integers as fuse length.
+     * First Constructor USED FOR MOVING BOMB. BONUS TODO
+     * 
+     * @param ownerId
+     *            PayerID of the bomb owner
+     * @param position
+     *            Cell in which the bomb will be located
+     * @param fuseLengths
+     *            Sequence of Integers to represent the fuse length
+     * @param range
+     *            Integer to represent bomb detonation range
+     * @throws NullPointerException
+     *             if one of the first three parameters is null
+     * @throws IllegalArgumentException
+     *             if range is negative or fuseLength sequence empty
+     */
+    public Bomb(PlayerID ownerId, Sq<SubCell> positions, Sq<Integer> fuseLengths, int range) {
+        this.ownerId = Objects.requireNonNull(ownerId);
+        this.positions = Objects.requireNonNull(positions);
+        this.range = ArgumentChecker.requireNonNegative(range);
+        this.fuseLengths = Objects.requireNonNull(fuseLengths);
+        if (fuseLengths.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "fuseLentghs sequence cannot be empty.");
+        }
+    }
+    
+    /**
+     * OLD
+     * SECOND Constructor BONUS TODO
      * 
      * @param ownerId
      *            PayerID of the bomb owner
@@ -43,18 +72,15 @@ public final class Bomb {
      *             if range is negative or fuseLength sequence empty
      */
     public Bomb(PlayerID ownerId, Cell position, Sq<Integer> fuseLengths, int range) {
-        this.ownerId = Objects.requireNonNull(ownerId);
-        this.position = Objects.requireNonNull(position);
-        this.range = ArgumentChecker.requireNonNegative(range);
-        this.fuseLengths = Objects.requireNonNull(fuseLengths);
-        if (fuseLengths.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "fuseLentghs sequence cannot be empty.");
-        }
+        this(ownerId, 
+                Sq.iterate(Objects.requireNonNull(SubCell.centralSubCellOf(position)), p -> p),
+                fuseLengths,
+                range);
     }
 
     /**
-     * Second Constructor, taking an integer to represent initial fuseLength.
+     * OLD
+     * Third Constructor BONUS TODO
      * 
      * @param ownerId
      *            PayerID of the bomb owner
@@ -71,10 +97,12 @@ public final class Bomb {
      */
     public Bomb(PlayerID ownerId, Cell position, int fuseLength, int range) {
         this(ownerId, 
-             position,
+             Sq.iterate(Objects.requireNonNull(SubCell.centralSubCellOf(position)), p -> p),
              Sq.iterate(ArgumentChecker.requireNonNegative(fuseLength),i -> i - 1).limit(fuseLength),
              range);
     }
+    
+    
 
     /**
      * Getter of the ownerID.
@@ -86,14 +114,34 @@ public final class Bomb {
     }
 
     /**
+     * Getter of the exact bomb position.
+     * 
+     * ATTENTION: this was done like this in order to assure backwards compatibility!
+     * 
+     * @return position of the bomb
+     */
+    public SubCell positionExact() {
+        return positions().head();
+    }
+
+    /**
      * Getter of the bomb position.
      * 
      * @return position of the bomb
      */
     public Cell position() {
-        return position;
+        return positions().head().containingCell();
     }
 
+    /**
+     * Getter of position sequence. (present and future positions)
+     * 
+     * @return a sequence representing the positions
+     */
+    public Sq<SubCell> positions() {
+        return positions;
+    }
+    
     /**
      * Getter of fuseLength sequence. (present and future fuseLengths)
      * 
@@ -119,6 +167,17 @@ public final class Bomb {
      */
     public int range() {
         return range;
+    }
+
+    /**
+     * BONUS Determines if the bomb is moving or not.
+     * 
+     * @return true if bomb is moving, false otherwise.
+     */
+    public boolean isMoving(){
+        Bomb nextBomb = new Bomb(ownerId(), positions.tail() ,fuseLengths(), range());
+        return positionExact().x() != nextBomb.positionExact().x() || 
+                positionExact().y() != nextBomb.positionExact().y();
     }
 
     /**
