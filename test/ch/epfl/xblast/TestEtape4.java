@@ -48,7 +48,7 @@ public class TestEtape4 {
                 players,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class TestEtape4 {
                 createPlayers(3, 2, 3, POS_NW, POS_NE, POS_SE, POS_SW),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
     }
 
     private void constructGameState(List<Player> players) {
@@ -154,7 +154,7 @@ public class TestEtape4 {
                 players,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -179,7 +179,7 @@ public class TestEtape4 {
                 p,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
     }
 
     @Test(expected = NullPointerException.class)
@@ -189,7 +189,7 @@ public class TestEtape4 {
                 null,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
     }
 
     @Test(expected = NullPointerException.class)
@@ -200,7 +200,7 @@ public class TestEtape4 {
                 p,
                 null,
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
     }
 
     @Test(expected = NullPointerException.class)
@@ -211,7 +211,7 @@ public class TestEtape4 {
                 p,
                 new ArrayList<>(),
                 null,
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
     }
 
     @Test(expected = NullPointerException.class)
@@ -222,7 +222,7 @@ public class TestEtape4 {
                 p,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                null);
+                null, Collections.emptyList());
     }
 
     // GameState methods
@@ -236,7 +236,7 @@ public class TestEtape4 {
                 players,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
         assertTrue("Game is over, as three players are dead", game.isGameOver());
     }
 
@@ -273,7 +273,7 @@ public class TestEtape4 {
                 players,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
         assertTrue("Option should not be empty", game.winner().isPresent());
         assertEquals("Winner should be alive", winner.id(), game.winner().get());
     }
@@ -299,7 +299,7 @@ public class TestEtape4 {
                 players,
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(), Collections.emptyList());
         assertEquals("Only one remaining", 1, game.alivePlayers().size());
         assertEquals("ID of the remaining is correct", PlayerID.PLAYER_1,game.alivePlayers().get(0).id());
     }

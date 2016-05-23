@@ -22,7 +22,6 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.Player.LifeState;
-import ch.epfl.xblast.server.Player.LifeState.State;
 
 /**
  * This class represents the current state of a game.
@@ -49,6 +48,7 @@ public final class GameState {
     private final List<Bomb> bombs;
     private final List<Sq<Sq<Cell>>> explosions;
     private final List<Sq<Cell>> blasts;
+    private final List<MovingBomb> movingBombs;
 
     /**
      * Principal constructor of a GameState.
@@ -65,6 +65,7 @@ public final class GameState {
      *            current explosions
      * @param blasts
      *            current blasts
+     * @param movingBombs TODO
      * @throws IllegalArgumentException
      *             if the number of players is not 4 or if the ticks value is
      *             negative.
@@ -73,7 +74,7 @@ public final class GameState {
      */
     public GameState(int ticks, Board board, List<Player> players,
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
-            List<Sq<Cell>> blasts) {
+            List<Sq<Cell>> blasts, List<MovingBomb> movingBombs) {
 
         // 1) copy lists and save an unmodifiable view of them
         this.players = Collections.unmodifiableList(
@@ -84,6 +85,8 @@ public final class GameState {
                 new ArrayList<>(Objects.requireNonNull(bombs)));
         this.blasts = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(blasts)));
+        this.movingBombs= Collections.unmodifiableList(
+                new ArrayList<>(Objects.requireNonNull(movingBombs)));
 
         // 2) check ticks, players and board requirements
         this.ticks = ArgumentChecker.requireNonNegative(ticks);
@@ -115,7 +118,7 @@ public final class GameState {
              players,
              Collections.emptyList(),
              Collections.emptyList(),
-             Collections.emptyList());
+             Collections.emptyList(), Collections.emptyList());
     }
 
     /**
@@ -281,7 +284,7 @@ public final class GameState {
                 speedChangeEvents);
 
         // 6) construct and return the new GameStates
-        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1);
+        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1, Collections.emptyList());
     }
 
     /*

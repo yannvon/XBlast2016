@@ -98,7 +98,7 @@ public class GameStateTest05 {
                 new Player(PlayerID.PLAYER_4, 1, POS_SW, 0, 3));
 
         GameState gameState = new GameState(0, board, players, emptyList(), emptyList(),
-                emptyList());
+                emptyList(), Collections.emptyList());
         assertEquals(block, gameState.board().blockAt(POS_CENTER));
 
         gameState = gameState.next(emptyMap(), emptySet());
@@ -115,7 +115,7 @@ public class GameStateTest05 {
                 singletonList(Sq.iterate(POS_CENTER.neighbor(Direction.N), c -> c.neighbor(Direction.S)));
 
         GameState gameState = new GameState(0, board, players, emptyList(), emptyList(),
-                blasts);
+                blasts, Collections.emptyList());
 
         assertEquals(block, gameState.board().blockAt(POS_CENTER));
 
@@ -138,7 +138,7 @@ public class GameStateTest05 {
                 singletonList(Sq.iterate(POS_CENTER.neighbor(Direction.N), c -> c.neighbor(Direction.S)));
 
         GameState gameState = new GameState(0, board, players, emptyList(), emptyList(),
-                blasts);
+                blasts, Collections.emptyList());
 
         assertEquals(block, gameState.board().blockAt(POS_CENTER));
 
@@ -163,7 +163,7 @@ public class GameStateTest05 {
                 singletonList(Sq.iterate(POS_CENTER.neighbor(Direction.W), q -> q.neighbor(Direction.E)));
 
         GameState gameState = new GameState(0, board, players, emptyList(), emptyList(),
-                singleBlast);
+                singleBlast, Collections.emptyList());
 
         gameState = gameState.next(emptyMap(), emptySet());
         assertEquals(1, gameState.blastedCells().size());
@@ -196,7 +196,7 @@ public class GameStateTest05 {
         assertTrue(ig1.bombedCells().isEmpty());
 
         GameState ig2 = new GameState(0, createBoard(), createPlayers(3, 2, 3, POS_NW, POS_NE, POS_SE, POS_SW),
-                createBombs(), emptyList(), emptyList());
+                createBombs(), emptyList(), emptyList(), Collections.emptyList());
         assertEquals(new HashSet<>(CELLS), ig2.bombedCells().keySet());
     }
 
@@ -204,7 +204,7 @@ public class GameStateTest05 {
     public void bombedCellsImmutable() {
         List<Bomb> bombs = createBombs();
         GameState ig = new GameState(0, createBoard(), createPlayers(3, 2, 3, POS_NW, POS_NE, POS_SE, POS_SW), bombs,
-                emptyList(), emptyList());
+                emptyList(), emptyList(), Collections.emptyList());
         Map<Cell, Bomb> bombedCells1 = ig.bombedCells();
         bombs.remove(0);
         Map<Cell, Bomb> bombedCells2 = ig.bombedCells();
@@ -217,7 +217,7 @@ public class GameStateTest05 {
         assertTrue(ig1.blastedCells().isEmpty());
 
         GameState ig2 = new GameState(0, createBoard(), createPlayers(3, 2, 3, POS_NW, POS_NE, POS_SE, POS_SW),
-                emptyList(), emptyList(), createBlasts());
+                emptyList(), emptyList(), createBlasts(), Collections.emptyList());
         assertEquals(new HashSet<>(CELLS), ig2.blastedCells());
     }
 
@@ -225,7 +225,7 @@ public class GameStateTest05 {
     public void blastedCellsImmutable() {
         List<Sq<Cell>> blasts = createBlasts();
         GameState ig = new GameState(0, createBoard(), createPlayers(3, 2, 3, POS_NW, POS_NE, POS_SE, POS_SW),
-                emptyList(), emptyList(), blasts);
+                emptyList(), emptyList(), blasts, Collections.emptyList());
         Set<Cell> blastedCells1 = ig.blastedCells();
         blasts.remove(0);
         Set<Cell> blastedCells2 = ig.blastedCells();
@@ -275,7 +275,7 @@ public class GameStateTest05 {
         }
 
         GameState gameState = new GameState(0, board, players, existingBombs, emptyList(),
-                emptyList());
+                emptyList(), Collections.emptyList());
         gameState = gameState.next(emptyMap(), singleton(droppingPlayer.id()));
 
         assertEquals(2, gameState.bombedCells().size());
@@ -289,7 +289,7 @@ public class GameStateTest05 {
         Bomb bomb = new Bomb(PlayerID.PLAYER_1, POS_CENTER, 2, 2);
 
         GameState gameState = new GameState(0, board, createPlayers(), singletonList(bomb),
-                emptyList(), emptyList());
+                emptyList(), emptyList(), Collections.emptyList());
 
         Collection<Bomb> result = gameState.bombedCells().values();
         assertEquals(1, result.size());
@@ -340,7 +340,7 @@ public class GameStateTest05 {
                 singletonList(new Bomb(otherPlayer.id(), droppingPlayer.position().containingCell(), 3, 3));
 
         GameState gameState = new GameState(0, board, players, existingBombs, emptyList(),
-                emptyList());
+                emptyList(), Collections.emptyList());
         gameState = gameState.next(emptyMap(), singleton(droppingPlayer.id()));
 
         assertEquals(1, gameState.bombedCells().size());
@@ -360,7 +360,7 @@ public class GameStateTest05 {
                 singletonList(Sq.iterate(centerNeighbor, q -> q.neighbor(Direction.E)));
 
         GameState gameState = new GameState(0, board, players, emptyList(), emptyList(),
-                singleBlast);
+                singleBlast, Collections.emptyList());
 
         assertEquals(Block.DESTRUCTIBLE_WALL, gameState.board().blockAt(POS_CENTER));
         for (int i = 0; i < Ticks.WALL_CRUMBLING_TICKS; i++) {
@@ -425,7 +425,7 @@ public class GameStateTest05 {
 
         for (int i = 1; i <= fact * 100; ++i) {
             gameState = new GameState(i - 1, board, players, emptyList(), emptyList(),
-                    emptyList());
+                    emptyList(), Collections.emptyList());
             assertEquals(0, gameState.bombedCells().size());
             gameState = gameState.next(emptyMap(), bombEvents);
             assertEquals(1, gameState.bombedCells().size());
@@ -454,7 +454,7 @@ public class GameStateTest05 {
 
         // Create a game state with a single blast
         GameState gameState = new GameState(0, board, players, emptyList(), emptyList(),
-                singleBlast);
+                singleBlast, Collections.emptyList());
 
         // The blast should move at each tick
         Cell nextExpectedPos = blastStartPosition;
@@ -487,7 +487,7 @@ public class GameStateTest05 {
                 new Player(PlayerID.PLAYER_4, 3, POS_SW, 0, 3));
 
         GameState gameState = new GameState(0, board, players, emptyList(), emptyList(),
-                emptyList());
+                emptyList(), Collections.emptyList());
 
         // First step : the bomb consumes its fuse length
         for (int i = 1; i < Ticks.BOMB_FUSE_TICKS; ++i) {

@@ -61,7 +61,7 @@ public class GameStateTest {
     @Test
     public void initialGameTest() {
         
-        GameState a = new GameState(0,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState a = new GameState(0,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
         GameState b = new GameState(board,players);
         
         
@@ -79,14 +79,14 @@ public class GameStateTest {
     
     @Test
     public void timeOutTest(){
-        GameState game = new GameState(Ticks.TOTAL_TICKS+1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(Ticks.TOTAL_TICKS+1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
         assertTrue(game.isGameOver());
         assertEquals(-Ticks.TICK_NANOSECOND_DURATION*1e-9,game.remainingTime(),1e-11);
         assertEquals(Optional.empty(),game.winner());
     }
     @Test
     public void OneTickToEndTest(){
-        GameState game = new GameState(Ticks.TOTAL_TICKS,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(Ticks.TOTAL_TICKS,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
         assertFalse(game.isGameOver());
         assertEquals(0,game.remainingTime(),1e-11);
         assertEquals(Optional.empty(),game.winner());
@@ -101,7 +101,7 @@ public class GameStateTest {
                 new Player(PlayerID.PLAYER_4,0,new Cell(1,1),3,3)
                 );
         
-        GameState game = new GameState(60,board,pl,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(60,board,pl,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
         assertTrue(game.isGameOver());
         assertEquals(120-3,game.remainingTime(),1e-11);
         assertEquals(PlayerID.PLAYER_1,game.winner().get());
@@ -110,39 +110,39 @@ public class GameStateTest {
 
     @Test(expected= java.lang.IllegalArgumentException.class)
     public void ticksException(){
-        GameState game = new GameState(-1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(-1,board,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
 
     }
     
     @Test(expected= java.lang.NullPointerException.class)
     public void BoardException(){
-        GameState game = new GameState(0,null,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(0,null,players,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
 
     }
     @Test(expected= java.lang.NullPointerException.class)
     public void playerException(){
-        GameState game = new GameState(1,board,null,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(1,board,null,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
 
     }
     @Test(expected= java.lang.IllegalArgumentException.class)
     public void nbPlayerException(){
         List<Player> pl= Arrays.asList();
-        GameState game = new GameState(0,board,pl,new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(0,board,pl,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
 
     }
     @Test(expected= java.lang.NullPointerException.class)
     public void bombException(){
-        GameState game = new GameState(1,board,players,null,new ArrayList<>(),new ArrayList<>());
+        GameState game = new GameState(1,board,players,null,new ArrayList<>(),new ArrayList<>(), Collections.emptyList());
 
     }
     @Test(expected= java.lang.NullPointerException.class)
     public void explosionException(){
-        GameState game = new GameState(1,board,players,new ArrayList<>(),null,new ArrayList<>());
+        GameState game = new GameState(1,board,players,new ArrayList<>(),null,new ArrayList<>(), Collections.emptyList());
 
     }
     @Test(expected= java.lang.NullPointerException.class)
     public void blastException(){
-        GameState game = new GameState(1,board,players,new ArrayList<>(),new ArrayList<>(),null);
+        GameState game = new GameState(1,board,players,new ArrayList<>(),new ArrayList<>(),null, Collections.emptyList());
 
     }
     @Test
@@ -248,7 +248,7 @@ public class GameStateTest {
                         Arrays.asList(__, xx, __, xx, __, __, __),
                         Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
         //Tick 0
-        GameState a = new GameState(0,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        GameState a = new GameState(0,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), new HashSet<>());
         List<Player> pl =a.alivePlayers();
@@ -258,7 +258,7 @@ public class GameStateTest {
         assertEquals(3,pl.get(3).maxBombs());
         
         //Tick 1
-        a = new GameState(1,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(1,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), new HashSet<>());
         pl =a.alivePlayers();
@@ -268,7 +268,7 @@ public class GameStateTest {
         assertEquals(3,pl.get(3).maxBombs());
         
         //Tick 6
-        a = new GameState(6,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(6,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), new HashSet<>());
         pl =a.alivePlayers();
@@ -278,7 +278,7 @@ public class GameStateTest {
         assertEquals(3,pl.get(3).maxBombs());
         
       //Tick 23
-        a = new GameState(23,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(23,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), new HashSet<>());
         pl =a.alivePlayers();
@@ -288,7 +288,7 @@ public class GameStateTest {
         assertEquals(4,pl.get(3).maxBombs());
         
         //Tick 24
-        a = new GameState(24,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(24,oneBonus,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), new HashSet<>());
         pl =a.alivePlayers();
@@ -307,7 +307,7 @@ public class GameStateTest {
         p.set(3,new Player(PlayerID.PLAYER_4,3,initialPos,3,3));
         
         //Tick 0
-        GameState a = new GameState(0,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        GameState a = new GameState(0,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
         Set<PlayerID> drp= new HashSet<>();
         drp.add(PlayerID.PLAYER_1);
         drp.add(PlayerID.PLAYER_2);
@@ -319,28 +319,28 @@ public class GameStateTest {
         assertEquals(PlayerID.PLAYER_1,bb.get(initialPos).ownerId());
         
         //Tick 1
-        a = new GameState(1,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(1,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), drp);
         bb =a.bombedCells();
         assertEquals(PlayerID.PLAYER_2,bb.get(initialPos).ownerId());
         
       //Tick 21
-        a = new GameState(21,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(21,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), drp);
         bb =a.bombedCells();
         assertEquals(PlayerID.PLAYER_4,bb.get(initialPos).ownerId());
         
       //Tick 20
-        a = new GameState(20,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(20,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), drp);
         bb =a.bombedCells();
         assertEquals(PlayerID.PLAYER_1,bb.get(initialPos).ownerId());
         
       //Tick 11
-        a = new GameState(11,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>());
+        a = new GameState(11,board,p, new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), Collections.emptyList());
 
         a= a.next(new HashMap<>(), drp);
         bb =a.bombedCells();
