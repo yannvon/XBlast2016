@@ -34,7 +34,7 @@ public class Main {
      */
     private static final int PORT = 2016;
     private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
-            + 4 * PlayerID.values().length + 2; // FIXME declare this in Deserializer? /Same on server side
+            + 4 * PlayerID.values().length + 2;
     private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
 
@@ -58,7 +58,7 @@ public class Main {
          * PHASE 1 
          * 1.1) retrieve IP-address and open channel
          */
-        String hostName = (args.length == 0) ? DEFAULT_HOST : args[0]; // FIXME throw error?
+        String hostName = (args.length == 0) ? DEFAULT_HOST : args[0];
         serverAddress = new InetSocketAddress(hostName, PORT);
 
         try (DatagramChannel channel = DatagramChannel
@@ -97,7 +97,7 @@ public class Main {
              */
             do {
                 receiveByteBuffer.flip();
-                PlayerID id = PlayerID.values()[receiveByteBuffer.get()]; // FIXME do this every time? attribute/throw exception?
+                PlayerID id = PlayerID.values()[receiveByteBuffer.get()];
                 List<Byte> serialized = new ArrayList<>();
                 while (receiveByteBuffer.hasRemaining()) {
                     serialized.add(receiveByteBuffer.get());
@@ -107,7 +107,7 @@ public class Main {
                 xbc.setGameState(gameState, id);
                 receiveByteBuffer.clear();
                 channel.receive(receiveByteBuffer);
-            } while (true); //FIXME correct?
+            } while (true);
         }
     }
 
