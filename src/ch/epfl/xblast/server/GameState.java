@@ -612,7 +612,7 @@ public final class GameState {
         if (speedChange.isPresent() && d.isParallelTo(p.direction())) {
             //BONUS
             switch(p.lifeState().state()){
-            case SNAILED:
+            case SLOWED:
                 return DirectedPosition.movingSlow(new DirectedPosition(p.position(),d));
             case WITH_ROLLER:
                 return DirectedPosition.movingFast(new DirectedPosition(p.position(),d));
@@ -636,7 +636,7 @@ public final class GameState {
              */
             Sq<DirectedPosition> moving;
             switch(p.lifeState().state()){
-            case SNAILED:
+            case SLOWED:
                 moving= DirectedPosition.movingSlow(new DirectedPosition(nextCentral.position(),d));
                 break;
             case WITH_ROLLER:

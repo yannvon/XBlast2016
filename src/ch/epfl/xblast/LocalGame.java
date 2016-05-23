@@ -23,6 +23,13 @@ import ch.epfl.xblast.server.GameStateSerializer;
 import ch.epfl.xblast.server.Level;
 import ch.epfl.xblast.server.Ticks;
 
+/**
+ * Main Program that manage a game on the same computer
+ * 
+ * @author Loïc Vandenberghe (257742)
+ * @author Yann Vonlanthen (258857)
+ *
+ */
 public class LocalGame {
     
     /**

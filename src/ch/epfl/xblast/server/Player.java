@@ -30,7 +30,7 @@ public final class Player {
          * An enumeration of all possible states that the player can be in.
          */
         public enum State {
-            INVULNERABLE, VULNERABLE, DYING, DEAD, WITH_ROLLER, SNAILED;
+            INVULNERABLE, VULNERABLE, DYING, DEAD, WITH_ROLLER, SLOWED;
         }
 
         // Attributes
@@ -87,7 +87,7 @@ public final class Player {
          * @return true if the player have a power up
          */
         public boolean isPowerUp() {
-            return this.state() == State.SNAILED || this.state() == State.WITH_ROLLER;
+            return this.state() == State.SLOWED || this.state() == State.WITH_ROLLER;
         }
         
         
@@ -512,7 +512,7 @@ public final class Player {
      * @return almost identical player but slower
      */
     public Player withSnail() {
-        Player p =withPowerUp(State.SNAILED) ;
+        Player p =withPowerUp(State.SLOWED) ;
         return new Player(id(),p.lifeStates(),
                 DirectedPosition.movingSlow(p.directedPositions().head()), 
                 maxBombs(),
