@@ -27,7 +27,7 @@ import ch.epfl.xblast.client.GameState.Player;
  * @author Yann Vonlanthen (258857)
  *
  */
-@SuppressWarnings("serial") //FIXME
+@SuppressWarnings("serial")
 public final class XBlastComponent extends JComponent {
 
     /*
@@ -155,8 +155,6 @@ public final class XBlastComponent extends JComponent {
         /*
          * Draw Players
          */
-        
-        //FIXME constant?
         Comparator<Player> comparatorOfPosition = (p1, p2) -> Integer.compare(p1.position().y(),
                 p2.position().y());
                 

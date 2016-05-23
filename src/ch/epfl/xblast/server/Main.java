@@ -31,12 +31,15 @@ public class Main {
 
     /*
      * Constants
+     *  
+     * The max amount of sending bytes consists of the worst case encoding +
+     * one first byte that represents the playerID of the recipient.
      */
     private static final Level LEVEL = Level.DEFAULT_LEVEL;
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final int DEFAULT_NUMBER_OF_CLIENTS = NUMBER_OF_PLAYERS;
     private static final int MAX_SENDING_BYTES = 2 * (Cell.COUNT + 1)
-            + 4 * NUMBER_OF_PLAYERS + 2; //FIXME (see client)
+            + 4 * NUMBER_OF_PLAYERS + 2;
     private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(
             2016);
     private static final UnaryOperator<Integer> MOUVEMENT_TO_DIR_ORDINAL = x -> x
@@ -51,7 +54,7 @@ public class Main {
      *            default amount of players.
      * @throws Exception
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         /*
          * PHASE 1 
@@ -139,7 +142,7 @@ public class Main {
                  * 2.3) Wait the correct amount of time, so that the tick
                  * duration is correct. We add one to the amount of ticks
                  * already played, in order to have a break between the first
-                 * and second GameState. FIXME correct?
+                 * and second GameState.
                  */
                 long timeForNextTick = startingTime
                         + ((long) gameState.ticks() + 1)
@@ -200,9 +203,6 @@ public class Main {
             Optional<PlayerID> winner = gameState.winner();
             System.out.println(
                     winner.isPresent() ? winner.get() : "There was no winner.");
-
-        } catch (Exception e) { //FIXME why not like in client main?
-            e.printStackTrace();
-        }
+        } 
     }
 }
