@@ -10,6 +10,8 @@ import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.server.Player.DirectedPosition;
 
 /**
  * A bomb that explodes after given amount of Ticks.
@@ -152,5 +154,15 @@ public final class Bomb {
         Sq<Cell> arm = Sq.iterate(position(), c -> c.neighbor(dir)).limit(range());
 
         return Sq.repeat(Ticks.EXPLOSION_TICKS, arm);
+    }
+    
+    
+    /**
+     * BONUS METHOD: return a moving version of the bomb
+     * @param dir
+     * @return
+     */
+    public MovingBomb kickedBomb(Direction dir){
+        return new MovingBomb(this,DirectedPosition.movingFast(new DirectedPosition(SubCell.centralSubCellOf(position()),dir)));
     }
 }

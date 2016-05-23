@@ -552,6 +552,10 @@ public final class Player {
         return new Player(id(), newLifeStates, directedPositions(), maxBombs(),
                 bombRange(), false);
     }
+
+    public boolean canKickBomb() {
+        return canKickBomb;
+    }
     
 
 

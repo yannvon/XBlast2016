@@ -178,6 +178,7 @@ public final class GameState {
     public List<Player> players() {
         return players;
     }
+    
 
     /**
      * Returns a List containing all currently alive players only.
@@ -193,7 +194,11 @@ public final class GameState {
         }
         return alivePlayers;
     }
-
+    
+    public Map<Cell,MovingBomb> movingBombsCells(){
+        return movingBombsCells(movingBombs);
+    }
+    
     /**
      * Returns a map that associates the bombs to the Cells they occupy.
      * 
@@ -277,14 +282,46 @@ public final class GameState {
                 bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
             }
         }
-
+        Map<Cell,Bomb> bombedCells1 = bombedCells(bombs1);
         // 5) evolve players
         List<Player> players1 = nextPlayers(players(), playerBonuses,
-                bombedCells(bombs1).keySet(), board1, blastedCells1,
+                bombedCells1.keySet(), board1, blastedCells1,
                 speedChangeEvents);
 
+        //7)evolve moving bombs
+        List<MovingBomb> movingBombs1= new ArrayList<>();
+        for(Map.Entry<Cell,MovingBomb> cb: movingBombsCells().entrySet()){
+            MovingBomb mBomb = cb.getValue();
+            Cell cell = cb.getKey();
+            boolean explose= false;
+            for(Player p : players1){
+                explose |= p.position().containingCell().equals(cell);//FIXME change to better way
+            }
+            SubCell nextCentral = mBomb.getDirectedPosition().findFirst(d->d.position().isCentral()).position();
+            explose|= bombedCells1.containsKey(nextCentral.containingCell());
+            explose|= !board1.blockAt(nextCentral.containingCell()).canHostPlayer();
+            if(explose)
+                explosions1.addAll(mBomb.explosion());
+            else
+                movingBombs1.add(new MovingBomb(mBomb.bomb(), mBomb.getDirectedPosition().tail()));
+        }
+        for(Player p:sortedPlayers){
+            SubCell nextSubCell = p.directedPositions().tail().head().position();
+            SubCell currentSubCell = p.position();
+            boolean movingTowardsCentral = currentSubCell
+                    .distanceToCentral() > nextSubCell.distanceToCentral();
+            boolean blockedByBomb = bombedCells1
+                    .containsKey(currentSubCell.containingCell())
+                    && currentSubCell
+                            .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB
+                    && movingTowardsCentral;
+            if(blockedByBomb && p.canKickBomb())
+                movingBombs1.add(bombedCells1.get(currentSubCell.containingCell()).kickedBomb(p.direction()));
+                
+        }
+        
         // 6) construct and return the new GameStates
-        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1, Collections.emptyList());
+        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1, movingBombs1);
     }
 
     /*
@@ -731,6 +768,15 @@ public final class GameState {
             bombedCells.put(bomb.position(), bomb);
         }
         return Collections.unmodifiableMap(bombedCells);
+    }
+    
+    private static Map<Cell, MovingBomb> movingBombsCells(List<MovingBomb> movingBombs) {
+
+        Map<Cell, MovingBomb> bombedcells = new HashMap<>();
+        for (MovingBomb bomb : movingBombs) {
+            bombedcells.put(bomb.cell(), bomb);
+        }
+        return Collections.unmodifiableMap(bombedcells);
     }
 
     /**

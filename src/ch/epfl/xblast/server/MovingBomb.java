@@ -37,6 +37,12 @@ public final class MovingBomb {
         return bomb.ownerId();
     }
 
+    public Bomb bomb() {
+        return bomb;
+    }
+    public Sq<DirectedPosition> getDirectedPosition() {
+        return directedPosition;
+    }
     /**
      * Getter of the bomb position.
      * 
@@ -81,12 +87,6 @@ public final class MovingBomb {
     public int range() {
         return bomb.range();
         }
-
-    
-    
-    public Bomb toStoppedBomb(){
-        return new Bomb(ownerId(), cell(), fuseLengths(), range());
-    }
     
     
     /**
