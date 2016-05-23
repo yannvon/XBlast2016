@@ -246,6 +246,7 @@ public final class Player {
     private final Sq<DirectedPosition> directedPos;
     private final int maxBombs;
     private final int bombRange;
+    private final boolean canKickBomb;
 
     /**
      * Constructs a player from given arguments.
@@ -273,6 +274,7 @@ public final class Player {
         this.directedPos = Objects.requireNonNull(directedPos);
         this.maxBombs = ArgumentChecker.requireNonNegative(maxBombs);
         this.bombRange = ArgumentChecker.requireNonNegative(bombRange);
+        this.canKickBomb = false;
     }
 
     /**
@@ -304,6 +306,34 @@ public final class Player {
                      SubCell.centralSubCellOf(position), Direction.S)),
              maxBombs, 
              bombRange);
+    }
+    
+    /**
+     * BONUS : Constructs a player from given arguments.
+     * 
+     * @param id
+     *            id of the player
+     * @param lifeStates
+     *            life state of the new player
+     * @param directedPos
+     *            directedPosition of the player
+     * @param maxBombs
+     *            maximal number of bombs the player can drop
+     * @param bombRange
+     *            range of the players bombs
+     * @throws NullPointerException
+     *             if one of the first three arguments is null.
+     * @throws IllegalArgumentException
+     *             if one of the last two arguments is negative.
+     */
+    public Player(PlayerID id, Sq<LifeState> lifeStates, Sq<DirectedPosition> directedPos, int maxBombs,
+            int bombRange, boolean canKickBomb) {
+        this.id = Objects.requireNonNull(id);
+        this.lifeStates = Objects.requireNonNull(lifeStates);
+        this.directedPos = Objects.requireNonNull(directedPos);
+        this.maxBombs = ArgumentChecker.requireNonNegative(maxBombs);
+        this.bombRange = ArgumentChecker.requireNonNegative(bombRange);
+        this.canKickBomb = canKickBomb;
     }
 
     /**
@@ -485,11 +515,11 @@ public final class Player {
                             new LifeState(lives, LifeState.State.VULNERABLE)));
         }
     }
-    
+
     /*
      * BONUS
      */
-    
+
     /**
      * BONUS METHOD : Returns a new player that is completely identical except
      * that he's faster for a while
@@ -498,12 +528,12 @@ public final class Player {
      * @return almost identical player but faster
      */
     public Player withRoller() {
-        Player p =withPowerUp(State.WITH_ROLLER) ;
+        Player p = withPowerUp(State.WITH_ROLLER);
         return new Player(id(),p.lifeStates(),
                 DirectedPosition.movingFast(directedPositions().tail().head()), //tail is a necessity since the player must be on a pair subcell
-                maxBombs(),
-                bombRange());
+                maxBombs(), bombRange());
     }
+
     /**
      * BONUS METHOD : Returns a new player that is completely identical except
      * that he's slower for a while
@@ -512,32 +542,41 @@ public final class Player {
      * @return almost identical player but slower
      */
     public Player withSnail() {
-        Player p =withPowerUp(State.SLOWED) ;
-        return new Player(id(),p.lifeStates(),
-                DirectedPosition.movingSlow(p.directedPositions().head()), 
-                maxBombs(),
-                bombRange());
+        Player p = withPowerUp(State.SLOWED);
+        return new Player(id(), p.lifeStates(),
+                DirectedPosition.movingSlow(p.directedPositions().head()),
+                maxBombs(), bombRange());
     }
-    
-    
+
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he can kick bombs
+     *
+     * @return almost identical player but with the ability to kick bombs
+     */
+    public Player kickingBomb() {
+        return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
+                bombRange(), true);
+    }
+
     /**
      * BONUS METHOD : Returns a new player that is completely identical except
      * that he's powered with a bonus for a while
      *
-     *@param powerUp
-     *          The new State of the player for a while
+     * @param powerUp
+     *            The new State of the player for a while
      *
      * @return almost identical player but with the new State
      */
     private Player withPowerUp(State powerUp) {
-        Sq<LifeState> newLifeStates= Sq.repeat(Ticks.BONUS_DURATION_TICKS,
-                new LifeState(lives(), powerUp))
+        Sq<LifeState> newLifeStates = Sq
+                .repeat(Ticks.BONUS_DURATION_TICKS,
+                        new LifeState(lives(), powerUp))
                 .concat(Sq.constant(
                         new LifeState(lives(), LifeState.State.VULNERABLE)));
         return new Player(id(), newLifeStates, directedPositions(), maxBombs(),
                 bombRange());
     }
-    
     
 
 

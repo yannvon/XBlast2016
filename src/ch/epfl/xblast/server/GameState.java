@@ -38,8 +38,9 @@ public final class GameState {
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
             .unmodifiableList(Lists.permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
-    private static final Block[] BONUS_GENERATOR = 
-            { Block.BONUS_BOMB, Block.BONUS_RANGE,Block.BONUS_ROLLER,Block.BONUS_SNAIL, Block.FREE };
+    private static final Block[] BONUS_GENERATOR = { Block.BONUS_BOMB,
+            Block.BONUS_RANGE, Block.BONUS_ROLLER, Block.BONUS_SNAIL,
+            Block.FREE, Block.BONUS_KICKBOMB };
 
     // Instance attributes
     private final int ticks;

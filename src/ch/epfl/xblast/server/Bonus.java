@@ -37,7 +37,13 @@ public enum Bonus {
         public Player applyTo(Player player) {
             return player.withSnail();
         }
-    };
+    },
+    KICK_BOMB {
+        @Override
+        public Player applyTo(Player player) {
+            return player.kickingBomb();
+        }
+    },;
     
     // Constants
     private static final int MAX_BOMBS = 9;
