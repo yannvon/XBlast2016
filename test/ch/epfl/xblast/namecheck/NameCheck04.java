@@ -1,5 +1,6 @@
 package ch.epfl.xblast.namecheck;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 

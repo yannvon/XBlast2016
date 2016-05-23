@@ -1,16 +1,25 @@
 package ch.epfl.xblast;
 
-import ch.epfl.cs108.Sq;
-import ch.epfl.xblast.server.*;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static org.junit.Assert.*;
+import org.junit.Assert;
+import org.junit.Test;
+
+import ch.epfl.cs108.Sq;
+import ch.epfl.xblast.server.Block;
+import ch.epfl.xblast.server.Board;
+import ch.epfl.xblast.server.Bonus;
+import ch.epfl.xblast.server.GameState;
+import ch.epfl.xblast.server.Player;
+import ch.epfl.xblast.server.Ticks;
 
 public class TestEtape4 {
 
