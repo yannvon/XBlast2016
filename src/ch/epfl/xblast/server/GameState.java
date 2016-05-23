@@ -577,7 +577,7 @@ public final class GameState {
 
             // Finally add the new moved player to the list
             players1.add(new Player(p.id(), p.lifeStates(), directedPositions1,
-                    p.maxBombs(), p.bombRange()));
+                    p.maxBombs(), p.bombRange(), false));
         }
         return Collections.unmodifiableList(players1);
     }
@@ -684,7 +684,7 @@ public final class GameState {
                     ? p.statesForNextLife() : p.lifeStates().tail();
 
             newStatePlayer.add(new Player(p.id(), lifeStates1,
-                    p.directedPositions(), p.maxBombs(), p.bombRange()));
+                    p.directedPositions(), p.maxBombs(), p.bombRange(), false));
         }
         return Collections.unmodifiableList(newStatePlayer);
     }

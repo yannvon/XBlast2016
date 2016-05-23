@@ -261,20 +261,22 @@ public final class Player {
      *            maximal number of bombs the player can drop
      * @param bombRange
      *            range of the players bombs
+     * @param canKickBomb 
+     *            if the player can kick bomb
      * @throws NullPointerException
      *             if one of the first three arguments is null.
      * @throws IllegalArgumentException
      *             if one of the last two arguments is negative.
      */
     public Player(PlayerID id, Sq<LifeState> lifeStates,
-            Sq<DirectedPosition> directedPos, int maxBombs, int bombRange) {
+            Sq<DirectedPosition> directedPos, int maxBombs, int bombRange, boolean canKickBomb) {
 
         this.id = Objects.requireNonNull(id);
         this.lifeStates = Objects.requireNonNull(lifeStates);
         this.directedPos = Objects.requireNonNull(directedPos);
         this.maxBombs = ArgumentChecker.requireNonNegative(maxBombs);
         this.bombRange = ArgumentChecker.requireNonNegative(bombRange);
-        this.canKickBomb = false;
+        this.canKickBomb = canKickBomb;
     }
 
     /**
@@ -305,36 +307,9 @@ public final class Player {
              DirectedPosition.stopped(new DirectedPosition(
                      SubCell.centralSubCellOf(position), Direction.S)),
              maxBombs, 
-             bombRange);
+             bombRange, false);
     }
     
-    /**
-     * BONUS : Constructs a player from given arguments.
-     * 
-     * @param id
-     *            id of the player
-     * @param lifeStates
-     *            life state of the new player
-     * @param directedPos
-     *            directedPosition of the player
-     * @param maxBombs
-     *            maximal number of bombs the player can drop
-     * @param bombRange
-     *            range of the players bombs
-     * @throws NullPointerException
-     *             if one of the first three arguments is null.
-     * @throws IllegalArgumentException
-     *             if one of the last two arguments is negative.
-     */
-    public Player(PlayerID id, Sq<LifeState> lifeStates, Sq<DirectedPosition> directedPos, int maxBombs,
-            int bombRange, boolean canKickBomb) {
-        this.id = Objects.requireNonNull(id);
-        this.lifeStates = Objects.requireNonNull(lifeStates);
-        this.directedPos = Objects.requireNonNull(directedPos);
-        this.maxBombs = ArgumentChecker.requireNonNegative(maxBombs);
-        this.bombRange = ArgumentChecker.requireNonNegative(bombRange);
-        this.canKickBomb = canKickBomb;
-    }
 
     /**
      * Returns the id of the player.
@@ -452,7 +427,7 @@ public final class Player {
      */
     public Player withMaxBombs(int newMaxBombs) {
         return new Player(id(), lifeStates(), directedPositions(), newMaxBombs,
-                bombRange());
+                bombRange(), false);
     }
 
     /**
@@ -475,7 +450,7 @@ public final class Player {
      */
     public Player withBombRange(int newBombRange) {
         return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
-                newBombRange);
+                newBombRange, false);
     }
     
     
@@ -531,7 +506,7 @@ public final class Player {
         Player p = withPowerUp(State.WITH_ROLLER);
         return new Player(id(),p.lifeStates(),
                 DirectedPosition.movingFast(directedPositions().tail().head()), //tail is a necessity since the player must be on a pair subcell
-                maxBombs(), bombRange());
+                maxBombs(), bombRange(), false);
     }
 
     /**
@@ -545,7 +520,7 @@ public final class Player {
         Player p = withPowerUp(State.SLOWED);
         return new Player(id(), p.lifeStates(),
                 DirectedPosition.movingSlow(p.directedPositions().head()),
-                maxBombs(), bombRange());
+                maxBombs(), bombRange(), false);
     }
 
     /**
@@ -575,7 +550,7 @@ public final class Player {
                 .concat(Sq.constant(
                         new LifeState(lives(), LifeState.State.VULNERABLE)));
         return new Player(id(), newLifeStates, directedPositions(), maxBombs(),
-                bombRange());
+                bombRange(), false);
     }
     
 
