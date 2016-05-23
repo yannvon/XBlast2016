@@ -152,11 +152,11 @@ public final class Player {
          * @return Sequence of directed position representing the player moving
          *         fast
          */
-        public static Sq<DirectedPosition> movingFast(DirectedPosition p) {//BUGFIX
+        public static Sq<DirectedPosition> movingFast(DirectedPosition p) {
             return Sq.iterate(p,
                     pos -> new DirectedPosition(
                             pos.position.neighbor(p.direction).neighbor(p.direction),
-                            p.direction)).limit(Ticks.TOTAL_TICKS);
+                            p.direction));
         }
         
         /**
