@@ -9,7 +9,7 @@ package ch.epfl.xblast;
  */
 public final class SubCell {
 
-    // Constants related to the devision of the Game Board into Sub Cells
+    // Constants related to the division of the GameBoard into SubCells
     private static final int SUBDIVISION = 16;
     private static final int CENTRAL = SUBDIVISION / 2;
     private static final int SUBCOLUMNS = Cell.COLUMNS * SUBDIVISION;

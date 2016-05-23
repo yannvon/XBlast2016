@@ -14,29 +14,29 @@ import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.client.GameState.Player;
 
 /**
- * Non-instantiable class offering one static method that allows the client to deserialize a GameSate.
- * This class in some way does the opposite class of GameStateSerializer.
+ * Non-instantiable class offering a static method that allows the client to
+ * deserialize a GameSate. This class is in some way the opposite class of
+ * GameStateSerializer.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */
 public final class GameStateDeserializer {
-    private GameStateDeserializer() {}
-    
+
     /*
      * General constants
      */
-    //public because used for argument testing in GameState
-    public static final int TIMELINE_LENGTH = 60;   
+    // public since used for argument testing in GameState
+    public static final int TIMELINE_LENGTH = 60;
     public static final int SCORELINE_LENGTH = 20;
-    
+
     private static final int BYTES_PER_PLAYER = 4;
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
-    
-    private static final int MIDDLE_GAP_LENGTH = 8;
-    private static final int SCORE_IMAGES_PER_PLAYER = 2;
 
+    private static final int MIDDLE_GAP_LENGTH = 8;
+    private static final PlayerID PLAYER_AFTER_MIDDLE_GAP = PlayerID.PLAYER_3;
+    private static final int SCORE_ICONS_PER_PLAYER = 2;
 
     /*
      * ImageCollections used to retrieve the images.
@@ -52,11 +52,17 @@ public final class GameStateDeserializer {
     /*
      * Constants for images
      */
-    private static final int TEXT_MIDDLE = 10; 
+    private static final int TEXT_MIDDLE = 10;
     private static final int TEXT_RIGHT = 11;
     private static final int TILE_VOID = 12;
     private static final int LED_ON = 21;
     private static final int LED_OFF = 20;
+
+    /**
+     * Private Constructor: non instantiable class.
+     */
+    private GameStateDeserializer() {
+    }
 
     /**
      * Static method that given a serialized GameState (list of bytes) can
@@ -69,8 +75,8 @@ public final class GameStateDeserializer {
     public static GameState deserializeGameState(List<Byte> serialized) {
 
         /*
-         * Get Sublists Indices (Note: it is important interpret the size of the
-         * sequence as unsigned byte!)
+         * Get Sublists Indices (Note: it is important to interpret the size of
+         * the sequence as unsigned byte!)
          */
         int lastIndex = serialized.size() - 1;
         int boardDelimiter = Byte.toUnsignedInt(serialized.get(0)) + 1;
@@ -79,29 +85,43 @@ public final class GameStateDeserializer {
 
         /*
          * Deserialize Board
+         * 
+         * The sublist containing the board lays between the
+         * second and boardDelimiter byte.
          */
         List<Image> deBoard = deserializeBoard(
                 serialized.subList(1, boardDelimiter));
 
         /*
          * Deserialize Explosions and Bombs
+         * 
+         * The sublist containing the blasts and bombs starts after 
+         * the board subList + 1 and ends at the previously computed 
+         * explosionDelimiter byte.
          */
         List<Image> deExplosions = deserializeExplosions(
                 serialized.subList(boardDelimiter + 1, explosionDelimiter));
 
         /*
          * Deserialize Players
+         * 
+         * The sublist starts directly after the
+         * explosion subList and goes to the lastIndex - 1.
          */
         List<Player> dePlayers = deserializePlayers(
                 serialized.subList(explosionDelimiter, lastIndex));
 
         /*
          * Construct Score line
+         * 
+         * Using the deserialized players.
          */
         List<Image> scoreLine = constructScoreLine(dePlayers);
 
         /*
          * Construct Time line
+         * 
+         * Using last byte of the serialized GameState.
          */
         List<Image> timeLine = constructTimeLine(serialized.get(lastIndex));
 
@@ -120,10 +140,15 @@ public final class GameStateDeserializer {
      * @return the list of images that represent the board in reading order
      */
     private static List<Image> deserializeBoard(List<Byte> encodedBoard) {
-        // decode the compressed List
+        
+        /*
+         *  1) Decode the compressed List.
+         */
         List<Byte> decodedBoard = RunLengthEncoder.decode(encodedBoard);
 
-        // deserialize bytes into images in the rowMajorOrder
+        /*
+         *  2) Deserialize bytes into images following the rowMajorOrder
+         */
         Iterator<Byte> boardIterator = decodedBoard.iterator();
         Image[] boardRepresentation = new Image[Cell.COUNT];
 
@@ -146,11 +171,16 @@ public final class GameStateDeserializer {
      */
     private static List<Image> deserializeExplosions(
             List<Byte> encodedExplosions) {
-        // decode the compressed List
+        
+        /*
+         * 1) Decode the compressed List
+         */
         List<Byte> decodedExplosions = RunLengthEncoder
                 .decode(encodedExplosions);
 
-        // deserialize bytes into images
+        /*
+         * 2) Deserialize bytes into images.
+         */
         List<Image> explosionsRepresentation = new ArrayList<>();
 
         for (Byte b : decodedExplosions)
@@ -174,7 +204,7 @@ public final class GameStateDeserializer {
     private static List<Player> deserializePlayers(List<Byte> encodedPlayers) {
 
         /*
-         * Test that size of encodedPlayers is correct (optional)
+         * Test that size of encodedPlayers is correct. (optional)
          */
         if (encodedPlayers.size() != BYTES_PER_PLAYER * NUMBER_OF_PLAYERS)
             throw new IllegalArgumentException(
@@ -184,8 +214,8 @@ public final class GameStateDeserializer {
                             + BYTES_PER_PLAYER * NUMBER_OF_PLAYERS);
 
         /*
-         * For every player retrieve the unsigned bytes and create instance of
-         * player
+         * For every player retrieve the unsigned bytes and create an instance
+         * of a player using an iterator.
          */
         List<Player> players = new ArrayList<>();
         Iterator<Byte> encoded = encodedPlayers.iterator();
@@ -206,24 +236,27 @@ public final class GameStateDeserializer {
      * Additional static method in charge of constructing the ScoreLine. It
      * takes the previously deserialized players as argument and is in charge of
      * correctly filling a list with the images displaying the correct images
-     * that represent the players on the Score line. The representation of the
+     * that represent the players on the ScoreLine. The representation of the
      * amount of lives left is not done here.
      * 
      * @param dePlayers
      *            list of the deserialized players for the current tick
-     * @return list of images corresponding that represent the ScoreLine from
-     *         left to right
+     * @return list of images that represent the ScoreLine from left to right
      */
     private static List<Image> constructScoreLine(List<Player> dePlayers) {
         List<Image> scoreLine = new ArrayList<>();
+        
         for (Player p : dePlayers) {
-            // add void tiles in the centre of the score line
-            if (p.id() == PlayerID.PLAYER_3) {
+            // add void tiles in the centre of the ScoreLine
+            if (p.id() == PLAYER_AFTER_MIDDLE_GAP) {
                 scoreLine.addAll(Collections.nCopies(MIDDLE_GAP_LENGTH,
                         SCORE_COLLECTION.image(TILE_VOID)));
             }
-            int imageNumber = p.id().ordinal() * SCORE_IMAGES_PER_PLAYER
+            
+            // find the correct score icon of a player
+            int imageNumber = p.id().ordinal() * SCORE_ICONS_PER_PLAYER
                     + ((p.lives() > 0) ? 0 : 1);
+            
             // for every player add the 3 corresponding images
             scoreLine.add(SCORE_COLLECTION.image(imageNumber));
             scoreLine.add(SCORE_COLLECTION.image(TEXT_MIDDLE));

@@ -29,8 +29,7 @@ public final class PlayerPainter {
     /**
      * Private Constructor: non instantiable class.
      */
-    private PlayerPainter() {
-    }
+    private PlayerPainter() {}
 
     /**
      * Returns the byte corresponding to the image representation of the player

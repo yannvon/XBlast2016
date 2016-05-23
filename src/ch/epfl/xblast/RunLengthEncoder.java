@@ -13,7 +13,6 @@ import java.util.List;
  *
  */
 public final class RunLengthEncoder {
-   
 
     /*
      * Constants
@@ -22,9 +21,10 @@ public final class RunLengthEncoder {
     private static final int MAX_NON_ENCODED_RUN = 2;
 
     /**
-     *  Private Constructor: non instantiable class.
+     * Private Constructor: non instantiable class.
      */
-    private RunLengthEncoder() {}
+    private RunLengthEncoder() {
+    }
 
     /**
      * Takes a list of Bytes as argument and returns an run length encoded list.
@@ -53,6 +53,7 @@ public final class RunLengthEncoder {
             if (b < 0)
                 throw new IllegalArgumentException(
                         "Cannot encode a negative byte!");
+
             // since we can only use negative byte values as indicator, we can
             // only encode 130 consecutive occurrences at once.
             if (b == lastByte && count < LONGEST_RUN)
@@ -79,7 +80,7 @@ public final class RunLengthEncoder {
      *             if the last element of given list is negative
      */
     public static List<Byte> decode(List<Byte> l) {
-        
+
         /*
          * Throw illegalArgumentException if last element is negative.
          */

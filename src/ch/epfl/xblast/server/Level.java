@@ -17,7 +17,14 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public final class Level {
-
+    
+    /*
+     * Constants
+     */
+    private static final Block __ = Block.FREE;
+    private static final Block XX = Block.INDESTRUCTIBLE_WALL;
+    private static final Block xx = Block.DESTRUCTIBLE_WALL;
+    
     /*
      * DEFAULT LEVEL
      */
@@ -54,10 +61,7 @@ public final class Level {
      * @return a default initial GameState
      */
     private static GameState defaultGameState() {
-        Block __ = Block.FREE;
-        Block XX = Block.INDESTRUCTIBLE_WALL;
-        Block xx = Block.DESTRUCTIBLE_WALL;
-
+        
         Board board = Board.ofQuadrantNWBlocksWalled(
                 Arrays.asList(
                         Arrays.asList(__, __, __, __, __, xx, __),
@@ -67,11 +71,12 @@ public final class Level {
                         Arrays.asList(__, xx, __, xx, __, __, __),
                         Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
 
+        //TODO constants
         List<Player> players = Arrays
                 .asList(new Player(PlayerID.PLAYER_1, 3, new Cell(1, 1), 2, 3),
                         new Player(PlayerID.PLAYER_2, 3, new Cell(13, 1), 2, 3),
                         new Player(PlayerID.PLAYER_3, 3, new Cell(13, 11), 2, 3),
-                new Player(PlayerID.PLAYER_4, 3, new Cell(1, 11), 2, 3));
+                        new Player(PlayerID.PLAYER_4, 3, new Cell(1, 11), 2, 3));
 
         return new GameState(board, players);
     }
