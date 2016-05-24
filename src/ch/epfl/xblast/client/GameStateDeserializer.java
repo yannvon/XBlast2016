@@ -11,6 +11,7 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.RunLengthEncoder;
 import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.client.GameState.MovingBomb;
 import ch.epfl.xblast.client.GameState.Player;
 
 /**
@@ -76,6 +77,7 @@ public final class GameStateDeserializer {
         int boardDelimiter = Byte.toUnsignedInt(serialized.get(0)) + 1;
         int explosionDelimiter = Byte.toUnsignedInt(serialized.get(boardDelimiter)) + boardDelimiter
                 + 1;
+        int movingBombsDelimiter = Byte.toUnsignedInt(serialized.get(explosionDelimiter)) + explosionDelimiter +1;
 
         /*
          * Deserialize Board
@@ -89,11 +91,17 @@ public final class GameStateDeserializer {
         List<Image> deExplosions = deserializeExplosions(
                 serialized.subList(boardDelimiter + 1, explosionDelimiter));
 
+        
+        /*
+         * Deserialize MovingBombs
+         */
+        List<MovingBomb> deMovingsBombs = deserializeMovingBombs(serialized
+                .subList(explosionDelimiter + 1, movingBombsDelimiter));
         /*
          * Deserialize Players
          */
         List<Player> dePlayers = deserializePlayers(
-                serialized.subList(explosionDelimiter, lastIndex));
+                serialized.subList(movingBombsDelimiter, lastIndex));
 
         /*
          * Construct Score line
@@ -106,8 +114,9 @@ public final class GameStateDeserializer {
         List<Image> timeLine = constructTimeLine(serialized.get(lastIndex));
 
         return new GameState(dePlayers, deBoard, deExplosions, scoreLine,
-                timeLine);
+                timeLine, deMovingsBombs);
     }
+
 
     /**
      * Additional static method that decodes the list of bytes corresponding to
@@ -244,5 +253,19 @@ public final class GameStateDeserializer {
         scoreLine.addAll(Collections.nCopies(TIMELINE_LENGTH - unsignedTime,
                 SCORE_COLLECTION.image(LED_OFF)));
         return Collections.unmodifiableList(scoreLine);
+    }
+
+    /**
+     * BONUS METHOD
+     * @param subList
+     * @return
+     */
+    private static List<MovingBomb> deserializeMovingBombs(List<Byte> deMovingBombs) {
+        List<MovingBomb> movingBombs= new ArrayList<>();
+        Iterator<Byte> it = deMovingBombs.iterator(); 
+        for(int i=0; i<deMovingBombs.size()/3; i++){
+            movingBombs.add(new MovingBomb(EXPLOSION_COLLECTION.image(it.next()), new SubCell(it.next(), it.next())));
+        }
+        return Collections.unmodifiableList(movingBombs);
     }
 }

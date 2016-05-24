@@ -27,14 +27,14 @@ public class DeserializerTest {
     @Test
     (expected = NullPointerException.class)
     public void gameStateNullPointer(){
-        GameState game = new GameState(null, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        GameState game = new GameState(null, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null);
         
     }
     
     @Test
     (expected = IllegalArgumentException.class)
     public void gameStateThrowsIllegal(){
-        GameState game = new GameState(Collections.EMPTY_LIST, null, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        GameState game = new GameState(Collections.EMPTY_LIST, null, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null);
     }
     
     

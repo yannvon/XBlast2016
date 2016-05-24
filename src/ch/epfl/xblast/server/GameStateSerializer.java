@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sun.media.jfxmedia.events.NewFrameEvent;
+
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.RunLengthEncoder;
+import ch.epfl.xblast.SubCell;
 
 /**
  * This public, final and non intantiable class offers a unique static method
@@ -69,6 +72,17 @@ public final class GameStateSerializer {
         serialisedExplosions = RunLengthEncoder.encode(serialisedExplosions);
 
         /*
+         * MOVING BOMBS
+         */
+        List<Byte> serialisedMovingBombs = new ArrayList<>();
+        Map<SubCell,MovingBomb> movingsBombs = gameState.movingBombsSubCells();
+        for(Map.Entry<SubCell, MovingBomb> e : movingsBombs.entrySet()){
+            serialisedMovingBombs.add(ExplosionPainter.byteForBomb(e.getValue()));
+            serialisedMovingBombs.add((byte)e.getKey().x());
+            serialisedMovingBombs.add((byte)e.getKey().y());
+        }
+        
+        /*
          * SERIALIZNG PLAYERS
          */
         List<Byte> serialisedPlayers = new ArrayList<>();
@@ -93,6 +107,8 @@ public final class GameStateSerializer {
         output.addAll(serialisedBoard);
         output.add((byte) serialisedExplosions.size());
         output.addAll(serialisedExplosions);
+        output.add((byte)serialisedMovingBombs.size());
+        output.addAll(serialisedMovingBombs);
         output.addAll(serialisedPlayers);
         output.add(serialisedTime);
         return output;

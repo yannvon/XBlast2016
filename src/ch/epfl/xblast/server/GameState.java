@@ -195,8 +195,18 @@ public final class GameState {
         return alivePlayers;
     }
     
+    /**TODO
+     * @return
+     */
     public Map<Cell,MovingBomb> movingBombsCells(){
         return movingBombsCells(movingBombs);
+    }
+    
+    /**TODO
+     * @return
+     */
+    public Map<SubCell,MovingBomb> movingBombsSubCells(){
+        return movingBombsSubCells(movingBombs);
     }
     
     /**
@@ -777,11 +787,29 @@ public final class GameState {
         return Collections.unmodifiableMap(bombedCells);
     }
     
+    /**
+     * BONUS METHOD
+     * @param movingBombs
+     * @return
+     */
     private static Map<Cell, MovingBomb> movingBombsCells(List<MovingBomb> movingBombs) {
 
         Map<Cell, MovingBomb> bombedcells = new HashMap<>();
         for (MovingBomb bomb : movingBombs) {
             bombedcells.put(bomb.cell(), bomb);
+        }
+        return Collections.unmodifiableMap(bombedcells);
+    }
+    /**
+     * BONUS METHOD
+     * @param movingBombs
+     * @return
+     */
+    private static Map<SubCell, MovingBomb> movingBombsSubCells(List<MovingBomb> movingBombs) {
+
+        Map<SubCell, MovingBomb> bombedcells = new HashMap<>();
+        for (MovingBomb bomb : movingBombs) {
+            bombedcells.put(bomb.subCell(), bomb);
         }
         return Collections.unmodifiableMap(bombedcells);
     }
