@@ -276,7 +276,7 @@ public final class GameState {
 
         // 4.1) add all newly dropped bombs (using sortedPlayers method to
         // resolve conflicts)
-        bombs0.addAll(newlyDroppedBombs(sortedPlayers, bombDrpEvents, bombs));
+        bombs0.addAll(newlyDroppedBombs(sortedPlayers, bombDrpEvents, bombs,movingBombs));
 
         // 4.2) every bomb either explodes (and disappears) or evolves (fuse-1).
         for (Bomb b : bombs0) {
@@ -299,28 +299,11 @@ public final class GameState {
                 speedChangeEvents);
 
         //7)evolve moving bombs
-        List<MovingBomb> movingBombs1= new ArrayList<>();
-        for(Map.Entry<SubCell,MovingBomb> cb: movingBombsSubCells().entrySet()){
-            MovingBomb newBomb = cb.getValue().next();
-            SubCell subCell = cb.getKey();
-            boolean explose= false;
-            for(Player p : players1){
-                explose |= p.position().distanceTo(newBomb.subCell())<6;
-            }
-            SubCell nextCentral = newBomb.getDirectedPosition().findFirst(d->d.position().isCentral()).position();
-            explose|= bombedCells1.containsKey(nextCentral.containingCell()) && newBomb.subCell().distanceToCentral()>=6; //FIXME ricochet?
-            explose|= !board1.blockAt(nextCentral.containingCell()).canHostPlayer() && newBomb.subCell().distanceToCentral()>=2;
-            explose |= blastedCells1.contains(subCell.containingCell());
-            explose |= newBomb.bomb().fuseLengths().tail().isEmpty();
-            for(MovingBomb mb : movingBombs1){
-                explose |= mb.subCell().distanceTo(newBomb.subCell())<=8;
-            }
-            
-            if(explose)
-                explosions1.addAll(newBomb.explosion());
-            else
-                movingBombs1.add(newBomb);
-        }
+
+        /*
+         * add new kickedBomb
+         */
+        List<MovingBomb> movingBombs0 = new ArrayList<>(movingBombs);
         for(Player p:sortedPlayers){
             SubCell nextSubCell = p.directedPositions().tail().head().position();
             SubCell currentSubCell = p.position();
@@ -332,13 +315,62 @@ public final class GameState {
                             .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB
                     && movingTowardsCentral;
             if(blockedByBomb && p.canKickBomb()){
-                movingBombs1.add(bombedCells1.get(currentSubCell.containingCell()).kickedBomb(p.direction()));
+                movingBombs0.add(bombedCells1.get(currentSubCell.containingCell()).kickedBomb(p.direction()));
                 bombs1.remove(bombedCells1.get(currentSubCell.containingCell())) ;//FIXME aie
             }
+        }
+        /*
+         * Evolve movingBombs
+         */
+        List<MovingBomb> movingBombs1= new ArrayList<>();
+        for(Map.Entry<SubCell,MovingBomb> cb: movingBombsSubCells(movingBombs0).entrySet()){
+            
+            MovingBomb newBomb = cb.getValue();
+            if (!newBomb.fuseLengths().tail().isEmpty()){
+                newBomb=newBomb.next();
+            }
+            SubCell subCell = cb.getKey();
+            /*
+             * determine if the moving bomb should explode
+             */
+            boolean explode= false;
+            //if touch a player
+            for(Player p : players1){
+                explode |= p.position().distanceTo(newBomb.subCell())<6;
+            }
+            //if touch another movingBomb
+            for(MovingBomb mb : movingBombs1){
+                explode |= mb.subCell().distanceTo(newBomb.subCell())<=8;
+            }
+            //if his fuselength is empty or the bomb is blasted
+            explode |= newBomb.bomb().fuseLengths().tail().isEmpty();
+            explode |= blastedCells1.contains(subCell.containingCell());
+            
+            /*
+             * determine if the bomb should stop (if blocked by a wall)
+             */
+            SubCell nextCentral = newBomb.getDirectedPosition().findFirst(d->d.position().isCentral()).position();
+            boolean stopped = !board1.blockAt(nextCentral.containingCell()).canHostPlayer() && newBomb.subCell().distanceToCentral()>=2;
+            
+            //Determine if the bomb is on contact with an fixed bomb
+            boolean ricochet= bombedCells1.containsKey(nextCentral.containingCell()) && newBomb.subCell().distanceToCentral()>=2; //FIXME ricochet?
+
+            
+            if(explode)
+                explosions1.addAll(newBomb.explosion());
+            else if(ricochet){
+                bombs1.add(newBomb.bomb());
+                bombs1.remove(bombedCells1.get(nextCentral.containingCell()));
+                movingBombs1.add(bombedCells1.get(nextCentral.containingCell()).kickedBomb(newBomb.getDirectedPosition().head().direction()));
+            }else if(stopped){
+                bombs1.add(newBomb.bomb());
+            }else
+                movingBombs1.add(newBomb);
+        }
             
                 
                 
-        }
+        
         
         // 6) construct and return the new GameStates
         return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1, movingBombs1);
@@ -492,10 +524,11 @@ public final class GameState {
      *            events of players wanting to drop bombs
      * @param bombs0
      *            bombs that are currently placed
+     * @param movingBombs0 
      * @return a list of all the newly dropped bombs
      */
     private static List<Bomb> newlyDroppedBombs(List<Player> players0,
-            Set<PlayerID> bombDropEvents, List<Bomb> bombs0) {
+            Set<PlayerID> bombDropEvents, List<Bomb> bombs0, List<MovingBomb> movingBombs0) {
 
         // Create a set containing all currently placed bombs
         Set<Cell> placedBombs = new HashSet<>(bombedCells(bombs0).keySet());
@@ -517,6 +550,11 @@ public final class GameState {
             int placedBombsNb = 0;
             for (Bomb b : bombs0) {
                 if (b.ownerId() == p.id()) {
+                    ++placedBombsNb;
+                }
+            }
+            for (MovingBomb mb : movingBombs0) {
+                if (mb.ownerId() == p.id()) {
                     ++placedBombsNb;
                 }
             }
