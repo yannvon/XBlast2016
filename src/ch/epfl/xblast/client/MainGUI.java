@@ -3,9 +3,15 @@ package ch.epfl.xblast.client;
 import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Label;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -36,8 +42,13 @@ public class MainGUI {
             "gui");
     private static final int TABBED_ICON_WIDTH = 50;
     private static final int TABBED_ICON_HEIGHT = 40;
+    private static final Color TITLE_COLOR = new Color(0, 200, 255);
+    private static final Color TAB_COLOR = new Color(0, 200, 255);
+    private static final Color LEVEL_COLOR = new Color(0, 200, 255);
+    private static final Color GENERAL_COLOR = new Color(0, 225, 255);
     
     private static final String DEFAULT_HOST = "localhost";
+    private static final String NO_IP_MESSAGE = "No IP address found.";
 
     /**
      * Main method of the XBlast 2016.
@@ -58,7 +69,7 @@ public class MainGUI {
 
 
     
-    public static void createMenu(){
+    public static void createMenu() {
         
         /*
          * Open new Window.
@@ -71,7 +82,7 @@ public class MainGUI {
          */
         ImageIcon i = new ImageIcon(GUI_COLLECTION.image((byte) 000));
         JLabel title = new JLabel(i);
-        title.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, new Color(0, 200, 255)));
+        title.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, TITLE_COLOR));
 
         /*
          * Input Level
@@ -96,7 +107,7 @@ public class MainGUI {
         
         levelPanel.add(chooseLevel,BorderLayout.WEST);
         levelPanel.add(levelChoice, BorderLayout.CENTER);
-        levelPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 125, 255)));
+        levelPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, LEVEL_COLOR));
         
         
         
@@ -124,7 +135,7 @@ public class MainGUI {
         //3)Panel
         JPanel localPanel = new JPanel(new BorderLayout());
         localPanel.add(localButton,BorderLayout.EAST);
-        localPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 0, 255)));
+        localPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, TAB_COLOR));
         
         /*
          * JOIN GAME
@@ -157,13 +168,12 @@ public class MainGUI {
         clientPanel.add(instruction1,BorderLayout.NORTH);
         clientPanel.add(textboxIP,BorderLayout.CENTER);
         clientPanel.add(clientButton,BorderLayout.EAST);
-        clientPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 0, 255)));
+        clientPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, TAB_COLOR));
         
         
         /*
          * HOST GAME
          */
-        
         //1)Input        
         JLabel numberText = new JLabel("Number of players");
         
@@ -206,14 +216,35 @@ public class MainGUI {
             
         });
 
-        //3)Panel
+        //3) Get own ip address
+        String myip = NO_IP_MESSAGE;
+        try {
+            myip = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e1) {
+            e1.printStackTrace();
+        }
+        
+        JFormattedTextField textIP = new JFormattedTextField();
+        textIP.setValue(myip);
+        ImageIcon ipIcon = new ImageIcon(GUI_COLLECTION.image((byte) 004)
+                .getScaledInstance(50, 50,
+                        Image.SCALE_SMOOTH));
+        JLabel ipLabel = new JLabel("Your IP-Address is: ", ipIcon, 0);
+        
+        //4) center panel
+        JPanel centerPanel = new JPanel(new FlowLayout());
+        centerPanel.add(checkLaunchClient);
+        centerPanel.add(ipLabel);
+        centerPanel.add(textIP);
+        
+        //5)final panel
         JPanel serverPanel = new JPanel(new BorderLayout());
         serverPanel.add(numberText,BorderLayout.NORTH);
         serverPanel.add(nbPlayers,BorderLayout.WEST);
-        serverPanel.add(checkLaunchClient,BorderLayout.CENTER);
+        serverPanel.add(centerPanel,BorderLayout.CENTER);
         serverPanel.add(serverButtton,BorderLayout.EAST);
         
-        serverPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, new Color(0, 0, 255)));
+        serverPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, TAB_COLOR));
         
         
         /*
@@ -221,12 +252,7 @@ public class MainGUI {
          */
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setForeground(Color.darkGray);
-//        tabbedPane.setUI(new Pl);
         
-//        JLabel lab = new JLabel();
-//        lab.setPreferredSize(new Dimension(200, 50));
-//        tabbedPane.setTabComponentAt(0, lab);
-//        
         JPanel panel = new JPanel(new BorderLayout());
         ImageIcon join = new ImageIcon(GUI_COLLECTION.image((byte) 001)
                 .getScaledInstance(TABBED_ICON_HEIGHT, TABBED_ICON_WIDTH,
@@ -241,15 +267,14 @@ public class MainGUI {
         tabbedPane.addTab("JOIN GAME", join, clientPanel);
         tabbedPane.addTab("HOST GAME", host, serverPanel);
         tabbedPane.addTab("LOCAL GAME", local, localPanel);
-//        tabbedPane.addta
         
         panel.add(title,BorderLayout.NORTH);
         panel.add(levelPanel,BorderLayout.CENTER);
         panel.add(tabbedPane,BorderLayout.SOUTH);
-        panel.setBorder(BorderFactory.createMatteBorder(40, 40, 40, 40, new Color(0, 255, 255)));
+        panel.setBorder(BorderFactory.createMatteBorder(40, 40, 40, 40, GENERAL_COLOR));
         f.getContentPane().add(panel);
 
-        //f.setResizable(false);
+        f.setResizable(false);
         f.pack();
         f.setVisible(true);
     }

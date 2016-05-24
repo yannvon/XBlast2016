@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.media.jfxmedia.events.NewFrameEvent;
-
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.RunLengthEncoder;
@@ -72,7 +70,7 @@ public final class GameStateSerializer {
         serialisedExplosions = RunLengthEncoder.encode(serialisedExplosions);
 
         /*
-         * MOVING BOMBS
+         * SERIALIZING MOVING BOMBS
          */
         List<Byte> serialisedMovingBombs = new ArrayList<>();
         Map<SubCell,MovingBomb> movingsBombs = gameState.movingBombsSubCells();
