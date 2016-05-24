@@ -121,4 +121,9 @@ public final class MovingBomb {
 
         return Sq.repeat(Ticks.EXPLOSION_TICKS, arm);
     }
+    
+    public MovingBomb next(){
+        Bomb newBomb = new Bomb(ownerId(), cell(), bomb.fuseLengths().tail(),range());
+        return new MovingBomb(newBomb, directedPosition.tail());
+    }
 }

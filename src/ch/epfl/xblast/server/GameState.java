@@ -291,19 +291,22 @@ public final class GameState {
         //7)evolve moving bombs
         List<MovingBomb> movingBombs1= new ArrayList<>();
         for(Map.Entry<Cell,MovingBomb> cb: movingBombsCells().entrySet()){
-            MovingBomb mBomb = cb.getValue();
+            MovingBomb newBomb = cb.getValue().next();
             Cell cell = cb.getKey();
             boolean explose= false;
             for(Player p : players1){
-                explose |= p.position().containingCell().equals(cell);//FIXME change to better way
+                explose |= p.position().distanceTo(newBomb.subCell())<6;
             }
-            SubCell nextCentral = mBomb.getDirectedPosition().findFirst(d->d.position().isCentral()).position();
-            explose|= bombedCells1.containsKey(nextCentral.containingCell());
-            explose|= !board1.blockAt(nextCentral.containingCell()).canHostPlayer();
+            SubCell nextCentral = newBomb.getDirectedPosition().findFirst(d->d.position().isCentral()).position();
+            explose|= bombedCells1.containsKey(nextCentral.containingCell()) && newBomb.subCell().distanceToCentral()>=4; //FIXME ricochet?
+            explose|= !board1.blockAt(nextCentral.containingCell()).canHostPlayer() && newBomb.subCell().distanceToCentral()>=2;
+            explose |= blastedCells1.contains(cell);
+            explose |= newBomb.bomb().fuseLengths().isEmpty();
+            
             if(explose)
-                explosions1.addAll(mBomb.explosion());
+                explosions1.addAll(newBomb.explosion());
             else
-                movingBombs1.add(new MovingBomb(mBomb.bomb(), mBomb.getDirectedPosition().tail()));
+                movingBombs1.add(newBomb);
         }
         for(Player p:sortedPlayers){
             SubCell nextSubCell = p.directedPositions().tail().head().position();
