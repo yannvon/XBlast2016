@@ -264,17 +264,17 @@ public final class GameState {
         for (Bomb b : bombs0) {
 
             Sq<Integer> newFuse = b.fuseLengths().tail();
-            Sq<SubCell> newPosition = b.positions().tail();
+            Sq<DirectedPosition> newPosition = b.positions().tail();
             
             // if the fuse has burned out or the bomb was hit by a blast it
             // explodes and disappears (not added to bombs1)
             
             //BONUS: also explodes when hitting wall, stops when hitting player.
             SubCell currentSubCell = b.positionExact();
-            SubCell nextSubCell = b.positions().tail().head();
+            SubCell nextSubCell = b.positions().tail().head().position();
             
             Cell nextCell = b.positions().tail().tail()     //FIXME why two tail?   //FIXME adapt to speed
-                    .findFirst(d -> d.isCentral())
+                    .findFirst(d -> d.position().isCentral()).position()
                     .containingCell();
             Block nextBlock = board1.blockAt(nextCell);
             
@@ -315,10 +315,8 @@ public final class GameState {
             else {
                 if(!b.isMoving() && kickAttempt && kicker.canKickBomb() ){
                     final Player kickerF = kicker;  //FIXME
-                    Sq<SubCell> movingPositions = Sq.iterate(newPosition.head(), p -> p.neighbor(kickerF.direction()));
                     
-                    bombs1.add(
-                            new Bomb(b.ownerId(), movingPositions, newFuse, b.range()));
+                    bombs1.add(b.kickedBomb(kickerF.direction()));
                 }
                 else{
                     bombs1.add(

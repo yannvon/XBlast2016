@@ -11,6 +11,7 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.server.Player.DirectedPosition;
 
 /**
  * A bomb that explodes after given amount of Ticks.
@@ -23,7 +24,7 @@ public final class Bomb {
     
     // Attributes
     private final PlayerID ownerId;
-    private final Sq<SubCell> positions;
+    private final Sq<DirectedPosition> positions;
     private final Sq<Integer> fuseLengths;
     private final int range;
 
@@ -43,7 +44,7 @@ public final class Bomb {
      * @throws IllegalArgumentException
      *             if range is negative or fuseLength sequence empty
      */
-    public Bomb(PlayerID ownerId, Sq<SubCell> positions, Sq<Integer> fuseLengths, int range) {
+    public Bomb(PlayerID ownerId, Sq<DirectedPosition> positions, Sq<Integer> fuseLengths, int range) {
         this.ownerId = Objects.requireNonNull(ownerId);
         this.positions = Objects.requireNonNull(positions);
         this.range = ArgumentChecker.requireNonNegative(range);
@@ -73,7 +74,7 @@ public final class Bomb {
      */
     public Bomb(PlayerID ownerId, Cell position, Sq<Integer> fuseLengths, int range) {
         this(ownerId, 
-                Sq.iterate(Objects.requireNonNull(SubCell.centralSubCellOf(position)), p -> p),
+                DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position),Direction.N)),
                 fuseLengths,
                 range);
     }
@@ -97,7 +98,7 @@ public final class Bomb {
      */
     public Bomb(PlayerID ownerId, Cell position, int fuseLength, int range) {
         this(ownerId, 
-             Sq.iterate(Objects.requireNonNull(SubCell.centralSubCellOf(position)), p -> p),
+             DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position),Direction.N)),
              Sq.iterate(ArgumentChecker.requireNonNegative(fuseLength),i -> i - 1).limit(fuseLength),
              range);
     }
@@ -121,7 +122,7 @@ public final class Bomb {
      * @return position of the bomb
      */
     public SubCell positionExact() {
-        return positions().head();
+        return positions().head().position();
     }
 
     /**
@@ -130,7 +131,7 @@ public final class Bomb {
      * @return position of the bomb
      */
     public Cell position() {
-        return positions().head().containingCell();
+        return positionExact().containingCell();
     }
 
     /**
@@ -138,7 +139,7 @@ public final class Bomb {
      * 
      * @return a sequence representing the positions
      */
-    public Sq<SubCell> positions() {
+    public Sq<DirectedPosition> positions() {
         return positions;
     }
     
@@ -211,5 +212,12 @@ public final class Bomb {
         Sq<Cell> arm = Sq.iterate(position(), c -> c.neighbor(dir)).limit(range());
 
         return Sq.repeat(Ticks.EXPLOSION_TICKS, arm);
+    }
+    
+    /**
+     * BONUS Method
+     */
+    public Bomb kickedBomb(Direction dir){
+        return new Bomb(ownerId,Player.DirectedPosition.movingFast(new DirectedPosition(positionExact(), dir)),fuseLengths() , range());
     }
 }
