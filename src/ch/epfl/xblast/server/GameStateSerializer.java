@@ -95,11 +95,12 @@ public final class GameStateSerializer {
         /*
          * SERIALIZING REMAINING TIME
          */
-        byte serialisedTime = (byte) Math.ceil(gameState.remainingTime() / REMAINING_TIME_COMPRESSION);
+        byte serialisedTime = (byte) 
+                Math.ceil(gameState.remainingTime() / REMAINING_TIME_COMPRESSION);
 
         /*
-         * CONSTRUCT OUTPUT
-         * Add the size of the variable length lists in front of them.
+         * CONSTRUCT OUTPUT Add the size of the variable length lists in front
+         * of them.
          */
         List<Byte> output = new ArrayList<>();
         output.add((byte) serializedBoard.size());

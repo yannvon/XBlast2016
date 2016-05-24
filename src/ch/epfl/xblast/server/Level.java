@@ -1,5 +1,6 @@
 package ch.epfl.xblast.server;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +62,12 @@ public final class Level {
      * @return a default initial GameState
      */
     private static GameState defaultGameState() {
-        
+        int defaultLives = 3;
+        int defaultBombs = 2;
+        int defaultRange = 3;
+        List<Cell> startingPos = Arrays.asList(new Cell(1, 1), new Cell(13, 1),
+                new Cell(13, 11), new Cell(1, 11));
+
         Board board = Board.ofQuadrantNWBlocksWalled(
                 Arrays.asList(
                         Arrays.asList(__, __, __, __, __, xx, __),
@@ -71,12 +77,11 @@ public final class Level {
                         Arrays.asList(__, xx, __, xx, __, __, __),
                         Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
 
-        //TODO constants
-        List<Player> players = Arrays
-                .asList(new Player(PlayerID.PLAYER_1, 3, new Cell(1, 1), 2, 3),
-                        new Player(PlayerID.PLAYER_2, 3, new Cell(13, 1), 2, 3),
-                        new Player(PlayerID.PLAYER_3, 3, new Cell(13, 11), 2, 3),
-                        new Player(PlayerID.PLAYER_4, 3, new Cell(1, 11), 2, 3));
+        List<Player> players = new ArrayList<>();
+        for (PlayerID id : PlayerID.values()) {
+            players.add(new Player(id, defaultLives,
+                    startingPos.get(id.ordinal()), defaultBombs, defaultRange));
+        }
 
         return new GameState(board, players);
     }
