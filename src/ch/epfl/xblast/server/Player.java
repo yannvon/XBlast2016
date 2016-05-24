@@ -506,7 +506,7 @@ public final class Player {
         Player p = withPowerUp(State.WITH_ROLLER);
         return new Player(id(),p.lifeStates(),
                 DirectedPosition.movingFast(directedPositions().tail().head()), //tail is a necessity since the player must be on a pair subcell
-                maxBombs(), bombRange(), false);
+                maxBombs(), bombRange(), canKickBomb());
     }
 
     /**
@@ -520,7 +520,7 @@ public final class Player {
         Player p = withPowerUp(State.SLOWED);
         return new Player(id(), p.lifeStates(),
                 DirectedPosition.movingSlow(p.directedPositions().head()),
-                maxBombs(), bombRange(), false);
+                maxBombs(), bombRange(), canKickBomb());
     }
 
     /**

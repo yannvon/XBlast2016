@@ -318,8 +318,12 @@ public final class GameState {
                     && currentSubCell
                             .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB
                     && movingTowardsCentral;
-            if(blockedByBomb && p.canKickBomb())
+            if(blockedByBomb && p.canKickBomb()){
                 movingBombs1.add(bombedCells1.get(currentSubCell.containingCell()).kickedBomb(p.direction()));
+                bombs1.remove(bombedCells1.get(currentSubCell.containingCell())) ;//FIXME aie
+            }
+            
+                
                 
         }
         
@@ -620,7 +624,7 @@ public final class GameState {
 
             // Finally add the new moved player to the list
             players1.add(new Player(p.id(), p.lifeStates(), directedPositions1,
-                    p.maxBombs(), p.bombRange(), false));
+                    p.maxBombs(), p.bombRange(), p.canKickBomb()));
         }
         return Collections.unmodifiableList(players1);
     }
@@ -727,7 +731,7 @@ public final class GameState {
                     ? p.statesForNextLife() : p.lifeStates().tail();
 
             newStatePlayer.add(new Player(p.id(), lifeStates1,
-                    p.directedPositions(), p.maxBombs(), p.bombRange(), false));
+                    p.directedPositions(), p.maxBombs(), p.bombRange(), p.canKickBomb()));
         }
         return Collections.unmodifiableList(newStatePlayer);
     }
