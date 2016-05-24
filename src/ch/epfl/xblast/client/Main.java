@@ -1,5 +1,6 @@
 package ch.epfl.xblast.client;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -50,15 +51,15 @@ public class Main {
      * @param args
      *            IP-address of the Server. If none localhost is used as default
      *            address.
-     * @throws Exception
+     * @throws Exception    //TODO
      */
     public static void main(String[] args) throws Exception {
 
         /*
          * PHASE 1 
-         * 1.1) retrieve IP-address and open channel
+         * 1.1) retrieve IP-address and open channel    FIXME inside try catch?
          */
-        String hostName = (args.length == 0) ? DEFAULT_HOST : args[0];
+        String hostName = (args.length == 1) ? args[0] : DEFAULT_HOST;
         serverAddress = new InetSocketAddress(hostName, PORT);
 
         try (DatagramChannel channel = DatagramChannel
@@ -97,14 +98,14 @@ public class Main {
              */
             do {
                 receiveByteBuffer.flip();
-                PlayerID id = PlayerID.values()[receiveByteBuffer.get()];
+                PlayerID id = PlayerID.values()[receiveByteBuffer.get()]; // FIXME
                 List<Byte> serialized = new ArrayList<>();
                 while (receiveByteBuffer.hasRemaining()) {
                     serialized.add(receiveByteBuffer.get());
                 }
                 GameState gameState = GameStateDeserializer
                         .deserializeGameState(serialized);
-                xbc.setGameState(gameState, id);
+                xbc.setGameState(gameState, id); // FIXME
                 receiveByteBuffer.clear();
                 channel.receive(receiveByteBuffer);
             } while (true);
@@ -122,9 +123,10 @@ public class Main {
          */
         JFrame f = new JFrame("XBlast 2016");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         xbc = new XBlastComponent();
-
         f.getContentPane().add(xbc);
+        
         f.setResizable(false);
         f.pack();
         f.setVisible(true);
@@ -141,7 +143,7 @@ public class Main {
             oneByteBuffer.flip();
             try {
                 channel.send(oneByteBuffer, serverAddress);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         };

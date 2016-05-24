@@ -164,9 +164,9 @@ public final class XBlastComponent extends JComponent {
                 Math.floorMod(p2.id().ordinal() + (NUMBER_OF_PLAYERS - 1 - playerId.ordinal()),
                         NUMBER_OF_PLAYERS));
 
-        Comparator<Player> finalC = comparatorOfPosition.thenComparing(comparatorOfIdentity);
+        Comparator<Player> finalComparator = comparatorOfPosition.thenComparing(comparatorOfIdentity);
         List<Player> orderedPlayers = new ArrayList<>(gameState.players());
-        Collections.sort(orderedPlayers, finalC);
+        Collections.sort(orderedPlayers, finalComparator);
 
         for (Player p : orderedPlayers) {
             g.drawImage(p.image(), X_FUNCTION.apply((p.position().x())),

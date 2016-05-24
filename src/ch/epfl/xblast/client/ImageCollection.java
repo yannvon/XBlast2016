@@ -2,6 +2,7 @@ package ch.epfl.xblast.client;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,42 +20,44 @@ import javax.imageio.ImageIO;
  *
  */
 public final class ImageCollection {
-   
+
     /*
-    * Attributes 
-    */
-    private final Map<Integer,Image> images;
+     * Attributes
+     */
+    private final Map<Integer, Image> images;
 
     /**
      * Only Constructor, taking the name of the repository that contains the
      * images as argument.
      * 
-     * @param repository
+     * @param dirName
      *            name of the repository where the images are saved
      */
-    public ImageCollection(String repository) {
-
+    public ImageCollection(String dirName) {
         Map<Integer, Image> images = new HashMap<>();
+        
         try {
             // don't modify the following line!
             File directory = new File(ImageCollection.class
-                                        .getClassLoader()
-                                        .getResource(repository)
-                                        .toURI());
+                                      .getClassLoader()
+                                      .getResource(dirName)
+                                      .toURI());
 
             for (File f : directory.listFiles()) {
                 try {
-                    Integer i = Integer.parseInt(f.getName().substring(0, 3));
+                    int i = Integer.parseInt(f.getName().substring(0, 3));
                     images.put(i, ImageIO.read(f));
-                } catch (Exception e) {
-                    // do nothing, we don't want to abort the operation if one image fails to load.
+                } catch (NumberFormatException | IOException e) {
+                    // do nothing, we don't want to abort the operation if one
+                    // image fails to load.
                 }
             }
         } catch (URISyntaxException e) {
             throw new Error(
-                    "The directory named " + repository + " doesn't exist!");
+                    "The directory named " + dirName + " doesn't exist!");
         }
-        // we treat the images like they were immutable (even if they are not really)
+        // we treat the images like they were immutable (even if they are not
+        // really)
         this.images = Collections.unmodifiableMap(images);
     }
 
@@ -80,8 +83,8 @@ public final class ImageCollection {
      * 
      * @param imageNumber
      *            integer value characterizing an image
-     * @return the image that corresponds to the integer value or null if no image
-     *         corresponds to given index.
+     * @return the image that corresponds to the integer value or null if no
+     *         image corresponds to given index.
      */
     public Image imageOrNull(int imageNumber) {
         return images.get(imageNumber);

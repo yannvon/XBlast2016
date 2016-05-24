@@ -31,6 +31,8 @@ public final class GameState {
         
         /*
          * Attributes
+         * 
+         * Note: We assume that an Image is immutable, even if it is not really.
          */
         private final PlayerID id;
         private final int lives;
@@ -38,7 +40,7 @@ public final class GameState {
         private final Image image;
 
         /**
-         * Constructs a player.
+         * Constructs a player with the values passed as arguments.
          * 
          * @param playerId
          *            id of the player
@@ -126,7 +128,7 @@ public final class GameState {
      *            order, contains null if a cell does not host a bomb or an
      *            explosion.
      * @param scoreLine
-     *            list of the images representing the score line.
+     *            list of the images representing the ScoreLine.
      * @param timeLine
      *            list of the images representing the time line (60 LED's).
      * @throws NullPointerException
@@ -136,8 +138,9 @@ public final class GameState {
      */
     public GameState(List<Player> players, List<Image> board,
             List<Image> explosions, List<Image> scoreLine, List<Image> timeLine) {
-    
-        //1) verify that all the lists have the correct size
+
+        // 1) verify that all the lists have the correct size and that they are
+        //    not null
         if (players.size() != NUMBER_OF_PLAYERS
                 || board.size() != Cell.COUNT 
                 || explosions.size() != Cell.COUNT
@@ -145,7 +148,7 @@ public final class GameState {
                 || scoreLine.size() != GameStateDeserializer.SCORELINE_LENGTH)
             throw new IllegalArgumentException("Incorrect list size.");
     
-        //2) verify that the players are ordered correctly (natural order)
+        //2) verify that the players are ordered correctly (natural order) FIXME
         for(int i = 0; i < NUMBER_OF_PLAYERS; i++){
             if(players.get(i).id().ordinal() != i)
                 throw new IllegalArgumentException("The players are not correctly sorted.");
@@ -182,7 +185,7 @@ public final class GameState {
     }
 
     /**
-     * Returns the list of images used to represent the explosions.
+     * Returns the list of images used to represent the bombs and blasts.
      * 
      * @return the explosions images
      */

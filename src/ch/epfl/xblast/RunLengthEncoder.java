@@ -47,24 +47,22 @@ public final class RunLengthEncoder {
     public static List<Byte> encode(List<Byte> l) {
         List<Byte> output = new ArrayList<>();
         byte lastByte = 0;
-        int count = 0;
+        int ocount = 0;
 
         for (Byte b : l) {
-            if (b < 0)
-                throw new IllegalArgumentException(
-                        "Cannot encode a negative byte!");
-
+            ArgumentChecker.requireNonNegative(b);
+            
             // since we can only use negative byte values as indicator, we can
             // only encode 130 consecutive occurrences at once.
-            if (b == lastByte && count < LONGEST_RUN)
-                count++;
+            if (b == lastByte && ocount < LONGEST_RUN)
+                ocount++;
             else {
-                output.addAll(encodedBytes(count, lastByte));
+                output.addAll(encodedBytes(ocount, lastByte));
                 lastByte = b;
-                count = 1;
+                ocount = 1;
             }
         }
-        output.addAll(encodedBytes(count, lastByte));
+        output.addAll(encodedBytes(ocount, lastByte));
 
         return Collections.unmodifiableList(output);
     }
@@ -130,6 +128,6 @@ public final class RunLengthEncoder {
             encoded.add((byte) (MAX_NON_ENCODED_RUN - count));
             encoded.add(b);
         }
-        return Collections.unmodifiableList(encoded);
+        return encoded;
     }
 }

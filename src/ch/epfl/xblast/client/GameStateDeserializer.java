@@ -75,8 +75,10 @@ public final class GameStateDeserializer {
     public static GameState deserializeGameState(List<Byte> serialized) {
 
         /*
-         * Get Sublists Indices (Note: it is important to interpret the size of
-         * the sequence as unsigned byte!)
+         * Retrieve SubList indices that delimit the different informations.
+         * 
+         * (Note: it is important to interpret the size of the sequence as
+         * unsigned byte!)
          */
         int lastIndex = serialized.size() - 1;
         int boardDelimiter = Byte.toUnsignedInt(serialized.get(0)) + 1;
@@ -277,12 +279,12 @@ public final class GameStateDeserializer {
      * @return list of 60 images of on/off Led's representing the TimeLine
      */
     private static List<Image> constructTimeLine(Byte time) {
-        List<Image> scoreLine = new ArrayList<>();
         int unsignedTime = Byte.toUnsignedInt(time);
-        scoreLine.addAll(Collections.nCopies(unsignedTime,
+        List<Image> timeLine = new ArrayList<>();
+        timeLine.addAll(Collections.nCopies(unsignedTime,
                 SCORE_COLLECTION.image(LED_ON)));
-        scoreLine.addAll(Collections.nCopies(TIMELINE_LENGTH - unsignedTime,
+        timeLine.addAll(Collections.nCopies(TIMELINE_LENGTH - unsignedTime,
                 SCORE_COLLECTION.image(LED_OFF)));
-        return Collections.unmodifiableList(scoreLine);
+        return Collections.unmodifiableList(timeLine);
     }
 }
