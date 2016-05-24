@@ -427,7 +427,7 @@ public final class Player {
      */
     public Player withMaxBombs(int newMaxBombs) {
         return new Player(id(), lifeStates(), directedPositions(), newMaxBombs,
-                bombRange(), false);
+                bombRange(), canKickBomb());
     }
 
     /**
@@ -450,7 +450,7 @@ public final class Player {
      */
     public Player withBombRange(int newBombRange) {
         return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
-                newBombRange, false);
+                newBombRange, canKickBomb());
     }
     
     
