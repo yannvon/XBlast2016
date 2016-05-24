@@ -42,7 +42,7 @@ public class MainGUI {
             "gui");
     private static final int TABBED_ICON_WIDTH = 50;
     private static final int TABBED_ICON_HEIGHT = 40;
-    private static final Color TITLE_COLOR = new Color(0, 200, 255);
+    private static final Color TITLE_COLOR = new Color(0, 225, 255);
     private static final Color TAB_COLOR = new Color(0, 200, 255);
     private static final Color LEVEL_COLOR = new Color(0, 200, 255);
     private static final Color GENERAL_COLOR = new Color(0, 225, 255);
@@ -271,7 +271,7 @@ public class MainGUI {
         panel.add(title,BorderLayout.NORTH);
         panel.add(levelPanel,BorderLayout.CENTER);
         panel.add(tabbedPane,BorderLayout.SOUTH);
-        panel.setBorder(BorderFactory.createMatteBorder(40, 40, 40, 40, GENERAL_COLOR));
+        panel.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GENERAL_COLOR));
         f.getContentPane().add(panel);
 
         f.setResizable(false);
