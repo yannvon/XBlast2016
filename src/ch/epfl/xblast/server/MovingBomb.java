@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
@@ -15,19 +14,29 @@ import ch.epfl.xblast.server.Player.DirectedPosition;
 
 /**
  * Immutable class that represent a moving bomb (kicked by a player)
+ * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */
 public final class MovingBomb {
-
+    /*
+     * Attributes
+     */
     private final Bomb bomb;
     private final Sq<DirectedPosition> directedPosition;
-    
-    public MovingBomb(Bomb bomb, Sq<DirectedPosition> directedPosition){
-        this.bomb=Objects.requireNonNull(bomb);
-        this.directedPosition= Objects.requireNonNull(directedPosition);
+
+    /**
+     * Constructor of a moving bomb.
+     * 
+     * @param bomb
+     * @param directedPosition
+     */
+    public MovingBomb(Bomb bomb, Sq<DirectedPosition> directedPosition) {
+        this.bomb = Objects.requireNonNull(bomb);
+        this.directedPosition = Objects.requireNonNull(directedPosition);
     }
+
     /**
      * Getter of the ownerID.
      * 
@@ -37,12 +46,24 @@ public final class MovingBomb {
         return bomb.ownerId();
     }
 
+    /**
+     * Getter for the bomb inside the moving bomb.
+     * 
+     * @return the bomb
+     */
     public Bomb bomb() {
         return bomb;
     }
+
+    /**
+     * Getter for directed positions of a moving bomb.
+     * 
+     * @return the moving bomb directed positions
+     */
     public Sq<DirectedPosition> getDirectedPosition() {
         return directedPosition;
     }
+
     /**
      * Getter of the bomb position.
      * 
@@ -51,7 +72,7 @@ public final class MovingBomb {
     public SubCell subCell() {
         return directedPosition.head().position();
     }
-    
+
     /**
      * Getter of the bomb position.
      * 
@@ -86,9 +107,8 @@ public final class MovingBomb {
      */
     public int range() {
         return bomb.range();
-        }
-    
-    
+    }
+
     /**
      * Returns the explosion corresponding to the bomb. The duration of the
      * explosion is given through Ticks.EXPLOSION_TICKS.
@@ -107,6 +127,17 @@ public final class MovingBomb {
     }
 
     /**
+     * Public method that evolves a moving bomb.
+     * 
+     * @return evolved instance of moving bomb
+     */
+    public MovingBomb next() {
+        Bomb newBomb = new Bomb(ownerId(), cell(), bomb.fuseLengths().tail(),
+                range());
+        return new MovingBomb(newBomb, directedPosition.tail());
+    }
+
+    /**
      * Helper Method: creates a single arm of the explosion towards given
      * direction.
      * 
@@ -120,10 +151,5 @@ public final class MovingBomb {
         Sq<Cell> arm = Sq.iterate(cell(), c -> c.neighbor(dir)).limit(range());
 
         return Sq.repeat(Ticks.EXPLOSION_TICKS, arm);
-    }
-    
-    public MovingBomb next(){
-        Bomb newBomb = new Bomb(ownerId(), cell(), bomb.fuseLengths().tail(),range());
-        return new MovingBomb(newBomb, directedPosition.tail());
     }
 }
