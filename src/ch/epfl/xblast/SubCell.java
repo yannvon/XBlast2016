@@ -63,8 +63,8 @@ public final class SubCell {
      * @return length of shortest Manhattan path to a central SubCell
      */
     public int distanceTo(SubCell subCell) {
-        return Math.abs(x() % SUBDIVISION - subCell.x())
-                + Math.abs(y() % SUBDIVISION - subCell.y());
+        return Math.abs(x() - subCell.x())
+                + Math.abs(y()- subCell.y());
     }
 
     /**

@@ -128,10 +128,9 @@ public final class XBlastComponent extends JComponent {
         /*
          * Draw MovingBombs
          */
-        for(MovingBomb b: gameState.movingBombs()){
+        for(MovingBomb b: gameState.movingBombs())
             g.drawImage(b.image(),X_FUNCTION_BOMB.apply(b.position().x()),Y_FUNCTION_BOMB.apply(b.position().y()),null);
-            System.out.println(b.position());
-        }
+       
         
         /*
          * Draw ScoreLine
