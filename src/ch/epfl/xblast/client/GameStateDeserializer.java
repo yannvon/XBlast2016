@@ -264,7 +264,10 @@ public final class GameStateDeserializer {
         List<MovingBomb> movingBombs= new ArrayList<>();
         Iterator<Byte> it = deMovingBombs.iterator(); 
         for(int i=0; i<deMovingBombs.size()/3; i++){
-            movingBombs.add(new MovingBomb(EXPLOSION_COLLECTION.image(it.next()), new SubCell(it.next(), it.next())));
+            movingBombs.add(new MovingBomb(
+                    EXPLOSION_COLLECTION.image(Byte.toUnsignedInt(it.next())),
+                    new SubCell(Byte.toUnsignedInt(it.next()),
+                            Byte.toUnsignedInt(it.next()))));
         }
         return Collections.unmodifiableList(movingBombs);
     }

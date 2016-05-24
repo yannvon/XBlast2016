@@ -18,6 +18,7 @@ import javax.swing.JComponent;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.client.GameState.MovingBomb;
 import ch.epfl.xblast.client.GameState.Player;
 
 
@@ -47,6 +48,8 @@ public final class XBlastComponent extends JComponent {
     private static final UnaryOperator<Integer> X_FUNCTION = (x) -> 4 * x - 24;
     private static final UnaryOperator<Integer> Y_FUNCTION = (y) -> 3 * y - 52;
     
+    private static final UnaryOperator<Integer> X_FUNCTION_BOMB = (x) -> 4 * x - 32;
+    private static final UnaryOperator<Integer> Y_FUNCTION_BOMB = (y) -> 3 * y - 24;
     // --- scorLine
     private static final int SCORELINE_HEIGHT = 48;
     private static final int SCORELINE_IMAGE_WIDTH = BOARD_WIDTH / GameStateDeserializer.SCORELINE_LENGTH;   //FIXME needed?
@@ -120,6 +123,14 @@ public final class XBlastComponent extends JComponent {
                 g.drawImage(bloc.next(), x, y, null);
                 g.drawImage(explosion.next(), x, y, null);
             }
+        }
+        
+        /*
+         * Draw MovingBombs
+         */
+        for(MovingBomb b: gameState.movingBombs()){
+            g.drawImage(b.image(),X_FUNCTION_BOMB.apply(b.position().x()),Y_FUNCTION_BOMB.apply(b.position().y()),null);
+            System.out.println(b.position());
         }
         
         /*
