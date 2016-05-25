@@ -148,11 +148,6 @@ public final class GameState {
                 || scoreLine.size() != GameStateDeserializer.SCORELINE_LENGTH)
             throw new IllegalArgumentException("Incorrect list size.");
     
-        //2) verify that the players are ordered correctly (natural order) FIXME
-        for(int i = 0; i < NUMBER_OF_PLAYERS; i++){
-            if(players.get(i).id().ordinal() != i)
-                throw new IllegalArgumentException("The players are not correctly sorted.");
-        }
         
         this.players = Collections.unmodifiableList(
                 new ArrayList<>(players));
