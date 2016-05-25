@@ -41,7 +41,6 @@ public class Main {
     private static final int MAX_SENDING_BYTES = 2 * (Cell.COUNT + 1)
             + 4 * NUMBER_OF_PLAYERS + 2;
     private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(2016);
-    private static final UnaryOperator<Integer> MOUVEMENT_TO_DIR_ORDINAL = x -> x - 1;
 
     /**
      * Main method of the XBlast 2016 Server. TODO better comments
@@ -176,10 +175,9 @@ public class Main {
                     // If the id was valid, check that what the player wants to do is a valid action.
                     if (id != null && oneByteBuffer.hasRemaining()) {
                         byte receivedValue = oneByteBuffer.get();
-                        oneByteBuffer.clear();
                         
                         PlayerAction action = null;
-                        if (0 < receivedValue
+                        if (0 <= receivedValue
                                 && receivedValue < PlayerAction.values().length)
                             action = PlayerAction.values()[receivedValue];
                         
@@ -188,13 +186,16 @@ public class Main {
                             bombDrpEvents.add(id);
                             break;
                         case MOVE_S:
+                            speedChangeEvents.put(id, Optional.of(Direction.S));//FIXME
+                            break;
                         case MOVE_N:
+                            speedChangeEvents.put(id, Optional.of(Direction.N));
+                            break;
                         case MOVE_W:
+                            speedChangeEvents.put(id, Optional.of(Direction.W));
+                            break;
                         case MOVE_E:
-                            int dirOrdinal = MOUVEMENT_TO_DIR_ORDINAL
-                                    .apply(action.ordinal());
-                            speedChangeEvents.put(id, Optional
-                                    .of(Direction.values()[dirOrdinal]));
+                            speedChangeEvents.put(id, Optional.of(Direction.E));
                             break;
                         case STOP:
                             speedChangeEvents.put(id, Optional.empty());
@@ -202,6 +203,7 @@ public class Main {
                             break;         
                         }
                     }
+                    oneByteBuffer.clear();
                 }
 
                 /*
