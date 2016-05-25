@@ -47,22 +47,23 @@ public class Main {
 
     /**
      * Main method of the XBlast 2016 Server.
-     * 
+     * TODO better comments
      * @param args
      *            Amount of clients that should connect before the game
      *            launches. If this argument is omitted the server waits for the
      *            default amount of players.
-     * @throws Exception
+     * @throws Exception    TODO
      */
     public static void main(String[] args) throws Exception {
 
         /*
          * PHASE 1 
          * 1.1) Determine how many player will be playing.
+         * TODO comment: if incorrect agrument programm stops
          */
         int numberOfClients = (args.length != 0) ? Integer.parseInt(args[0])
                 : DEFAULT_NUMBER_OF_CLIENTS;
-        if (numberOfClients > NUMBER_OF_PLAYERS)
+        if (numberOfClients > NUMBER_OF_PLAYERS)    //FIXME require nonnegative
             throw new IllegalArgumentException("There cannot be more than "
                     + NUMBER_OF_PLAYERS + " players.");
 
@@ -76,7 +77,7 @@ public class Main {
             channel.bind(PORT_ADDRESS);
 
             // Enable blocking mode, since the server waits for the clients.
-            channel.configureBlocking(true);
+            channel.configureBlocking(true);    //FIXME true by default
 
             /*
              * 1.3) Look for clients that want to join the game and save them in
@@ -88,8 +89,11 @@ public class Main {
             while (clientAdresses.size() != numberOfClients) {
                 SocketAddress senderAddress = channel.receive(oneByteBuffer);
                 oneByteBuffer.flip();
-                if (!clientAdresses.containsKey(senderAddress) && oneByteBuffer
-                        .get() == PlayerAction.JOIN_GAME.ordinal()) {
+
+                //TODO comment has Remaining
+                if (!clientAdresses.containsKey(senderAddress)
+                        && oneByteBuffer.hasRemaining() && oneByteBuffer
+                                .get() == PlayerAction.JOIN_GAME.ordinal()) {
                     clientAdresses.put(senderAddress,
                             PlayerID.values()[clientAdresses.size()]);
                 }
@@ -118,16 +122,17 @@ public class Main {
             while (!gameState.isGameOver()) {
 
                 /*
-                 * 2.2) Serialize the current GameState and prepare buffer.
+                 * 2.2) Serialize the current GameState and prepare buffer. FIXME method 
                  */
                 List<Byte> serialized = GameStateSerializer
                         .serialize(LEVEL.boardPainter(), gameState);
-                gameStateBuffer.put((byte) 0); // Placeholder where PlayerID belongs
+                // Placeholder where PlayerID belongs
+                gameStateBuffer.put((byte) 0);
                 serialized.forEach(gameStateBuffer::put);
                 gameStateBuffer.flip();
 
                 /*
-                 * 2.2) Send the GameState to each client, the first byte
+                 * 2.3) Send the GameState to each client, the first byte
                  * represents the playerID, for which the GameState is meant.
                  */
                 for (Entry<SocketAddress, PlayerID> e : clientAdresses
@@ -139,17 +144,17 @@ public class Main {
                 gameStateBuffer.clear();
 
                 /*
-                 * 2.3) Wait the correct amount of time, so that the tick
+                 * 2.4) Wait the correct amount of time, so that the tick
                  * duration is correct. We add one to the amount of ticks
                  * already played, in order to have a break between the first
                  * and second GameState.
                  */
                 long timeForNextTick = startingTime
                         + ((long) gameState.ticks() + 1)
-                                * ((long) Ticks.TICK_NANOSECOND_DURATION);
+                                * Ticks.TICK_NANOSECOND_DURATION;   //FIXME only one cast works?
                 long waitingTime = timeForNextTick - System.nanoTime();
                 if (waitingTime > 0)
-                    Thread.sleep(waitingTime / Time.US_PER_S);
+                    Thread.sleep(waitingTime / Time.US_PER_S);  //FIXME NS_PER_MS , %
 
                 /*
                  * 2.4) Check if the clients sent an action they want to
@@ -157,21 +162,21 @@ public class Main {
                  * are none left.
                  */
                 Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
-                Set<PlayerID> bombDrpEvent = new HashSet<>();
+                Set<PlayerID> bombDrpEvents = new HashSet<>();
                 SocketAddress senderAddress;
 
                 while ((senderAddress = channel
-                        .receive(oneByteBuffer)) != null) {
+                        .receive(oneByteBuffer)) != null) { //FIXME affectation dans while?
                     oneByteBuffer.flip();
-                    PlayerID id = clientAdresses.get(senderAddress);
+                    PlayerID id = clientAdresses.get(senderAddress);    //FIXME check hasRemaining and contains
 
                     // If the id was valid, check what the player wants to do.
                     if (id != null) {
                         PlayerAction action = PlayerAction
-                                .values()[oneByteBuffer.get()];
+                                .values()[oneByteBuffer.get()]; //FIXME can throw undesired error?
                         switch (action) {
                         case DROP_BOMB:
-                            bombDrpEvent.add(id);
+                            bombDrpEvents.add(id);
                             break;
                         case MOVE_S:
                         case MOVE_N:
@@ -185,7 +190,7 @@ public class Main {
                         case STOP:
                             speedChangeEvents.put(id, Optional.empty());
                         default:
-                            break;
+                            break;  //FIXME throw error?
                         }
                     }
                     oneByteBuffer.clear();
@@ -194,7 +199,7 @@ public class Main {
                 /*
                  * 2.4) Evolve GameState to the next Tick.
                  */
-                gameState = gameState.next(speedChangeEvents, bombDrpEvent);
+                gameState = gameState.next(speedChangeEvents, bombDrpEvents);
             }
 
             /*
@@ -202,7 +207,8 @@ public class Main {
              */
             Optional<PlayerID> winner = gameState.winner();
             System.out.println(
-                    winner.isPresent() ? winner.get() : "There was no winner.");
-        } 
+                    winner.isPresent() ? "The winner is: " + winner.get()
+                            : "There was no winner.");  //FIXME nicer? constant?
+        }
     }
 }
