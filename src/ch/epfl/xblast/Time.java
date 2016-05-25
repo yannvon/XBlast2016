@@ -24,4 +24,8 @@ public interface Time {
      * nanoseconds per second
      */
     public static final int NS_PER_S = 1000 * US_PER_S;
+    /**
+     * Additional (used for main of server): nanoseconds per microsecond
+     */
+    public static final int NS_PER_MS = NS_PER_S / MS_PER_S;
 }

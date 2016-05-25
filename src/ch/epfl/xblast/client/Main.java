@@ -56,12 +56,14 @@ public class Main {
      *            address.
      * @throws Exception    //TODO
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {   //FIXME detail
 
         /*
-         * PHASE 1 
-         * 1.1) retrieve IP-address and open channel
-         *  FIXME if the arguemnts..
+         * PHASE 1
+         *  
+         * 1.1) retrieve IP-address and open channel 
+         *      If there was no input or it was not of length 1 
+         *      we assign a default host.
          */
         String hostName = (args.length == 1) ? args[0] : DEFAULT_HOST;
         serverAddress = new InetSocketAddress(hostName, PORT);
@@ -82,10 +84,10 @@ public class Main {
             sendByteBuffer.flip();
             
             do {
-                channel.send(sendByteBuffer, serverAddress);    //FIXME senb byte method
-                sendByteBuffer.rewind();    //FIXME works without?
+                channel.send(sendByteBuffer, serverAddress);
+                //sendByteBuffer.rewind();                    //FIXME
                 Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
-            } while ((channel.receive(receiveByteBuffer)) == null);
+            } while (channel.receive(receiveByteBuffer) == null);
 
             /*
              * PHASE 2 
@@ -102,15 +104,15 @@ public class Main {
              * GameState and shares it with the parallel Swing thread.
              */
             while (true) {
-                receiveByteBuffer.flip();
-                PlayerID id = PlayerID.values()[receiveByteBuffer.get()]; // FIXME
+                receiveByteBuffer.flip();   //FIXME hasRemaining?
+                PlayerID id = PlayerID.values()[receiveByteBuffer.get()];
                 List<Byte> serialized = new ArrayList<>();
                 while (receiveByteBuffer.hasRemaining()) {
                     serialized.add(receiveByteBuffer.get());
                 }
                 GameState gameState = GameStateDeserializer
                         .deserializeGameState(serialized);
-                xbc.setGameState(gameState, id); // FIXME invokeAndWait?
+                SwingUtilities.invokeLater(() -> xbc.setGameState(gameState, id));
                 receiveByteBuffer.clear();
                 channel.receive(receiveByteBuffer);
             }
@@ -132,8 +134,8 @@ public class Main {
         xbc = new XBlastComponent();
         f.getContentPane().add(xbc);
         
-        f.pack();
         f.setResizable(false);
+        f.pack();
         f.setVisible(true);
         xbc.requestFocusInWindow();
 
@@ -143,7 +145,7 @@ public class Main {
          * key was pressed.
          */
         Consumer<PlayerAction> c = (playerAction) -> {
-            ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);  //FIXME in same method?
+            ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);
             oneByteBuffer.put((byte) playerAction.ordinal());
             oneByteBuffer.flip();
             try {
