@@ -1,6 +1,7 @@
 package ch.epfl.xblast.client;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -144,7 +145,11 @@ public class Main {
             try {
                 channel.send(oneByteBuffer, serverAddress);
             } catch (IOException e) {
-                e.printStackTrace();
+                /*
+                 * Since we cannot treat the exception, nor add the throws tag,
+                 * we throw an unchecked expression.
+                 */
+                throw new UncheckedIOException(e);
             }
         };
         xbc.addKeyListener(new KeyboardEventHandler(
