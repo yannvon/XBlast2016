@@ -49,6 +49,8 @@ public class Main {
     /**
      * Main method of the XBlast 2016 Client.
      * 
+     * TODO better comment
+     * 
      * @param args
      *            IP-address of the Server. If none localhost is used as default
      *            address.
@@ -58,7 +60,8 @@ public class Main {
 
         /*
          * PHASE 1 
-         * 1.1) retrieve IP-address and open channel    FIXME inside try catch?
+         * 1.1) retrieve IP-address and open channel
+         *  FIXME if the arguemnts..
          */
         String hostName = (args.length == 1) ? args[0] : DEFAULT_HOST;
         serverAddress = new InetSocketAddress(hostName, PORT);
@@ -77,9 +80,10 @@ public class Main {
                     .allocate(MAX_RECEIVING_BYTES);
             sendByteBuffer.put((byte) PlayerAction.JOIN_GAME.ordinal());
             sendByteBuffer.flip();
+            
             do {
-                channel.send(sendByteBuffer, serverAddress);
-                sendByteBuffer.rewind();
+                channel.send(sendByteBuffer, serverAddress);    //FIXME senb byte method
+                sendByteBuffer.rewind();    //FIXME works without?
                 Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
             } while ((channel.receive(receiveByteBuffer)) == null);
 
@@ -97,7 +101,7 @@ public class Main {
              * 2.2) As long as the program runs the client waits for a new
              * GameState and shares it with the parallel Swing thread.
              */
-            do {
+            while (true) {
                 receiveByteBuffer.flip();
                 PlayerID id = PlayerID.values()[receiveByteBuffer.get()]; // FIXME
                 List<Byte> serialized = new ArrayList<>();
@@ -106,10 +110,10 @@ public class Main {
                 }
                 GameState gameState = GameStateDeserializer
                         .deserializeGameState(serialized);
-                xbc.setGameState(gameState, id); // FIXME
+                xbc.setGameState(gameState, id); // FIXME invokeAndWait?
                 receiveByteBuffer.clear();
                 channel.receive(receiveByteBuffer);
-            } while (true);
+            }
         }
     }
 
@@ -128,8 +132,8 @@ public class Main {
         xbc = new XBlastComponent();
         f.getContentPane().add(xbc);
         
-        f.setResizable(false);
         f.pack();
+        f.setResizable(false);
         f.setVisible(true);
         xbc.requestFocusInWindow();
 
@@ -139,7 +143,7 @@ public class Main {
          * key was pressed.
          */
         Consumer<PlayerAction> c = (playerAction) -> {
-            ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);
+            ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);  //FIXME in same method?
             oneByteBuffer.put((byte) playerAction.ordinal());
             oneByteBuffer.flip();
             try {
