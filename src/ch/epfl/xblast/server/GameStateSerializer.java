@@ -27,8 +27,7 @@ public final class GameStateSerializer {
     /**
      * Private Constructor: non instantiable class.
      */
-    private GameStateSerializer() {
-    }
+    private GameStateSerializer() {}
 
     /**
      * Given a BoardPainter and a GameState this method returns a serialized
@@ -99,8 +98,9 @@ public final class GameStateSerializer {
                 Math.ceil(gameState.remainingTime() / REMAINING_TIME_COMPRESSION);
 
         /*
-         * CONSTRUCT OUTPUT Add the size of the variable length lists in front
-         * of them.
+         * CONSTRUCT OUTPUT
+         * 
+         * Add the size of the variable length lists in front of them.
          */
         List<Byte> output = new ArrayList<>();
         output.add((byte) serializedBoard.size());
@@ -109,6 +109,7 @@ public final class GameStateSerializer {
         output.addAll(serialisedExplosions);
         output.addAll(serialisedPlayers);
         output.add(serialisedTime);
+        
         return Collections.unmodifiableList(output);
     }
 }

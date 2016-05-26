@@ -69,7 +69,7 @@ public final class XBlastComponent extends JComponent {
     /**
      * Constructor of an XBlastComponent. Initialises all attributes to null.
      */
-    public XBlastComponent() {
+    public XBlastComponent() {  //FIXME useful constructor?
         gameState = null;
         playerId = null;
     }
