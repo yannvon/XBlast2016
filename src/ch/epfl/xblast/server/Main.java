@@ -1,5 +1,6 @@
 package ch.epfl.xblast.server;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -12,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
@@ -32,8 +32,8 @@ public class Main {
     /*
      * Constants
      * 
-     * The max amount of sending bytes consists of the worst case encoding + one
-     * first byte that represents the playerID of the recipient.
+     * The max amount of sending bytes consists of the worst case encoding plus
+     * one first byte that represents the playerID of the recipient.
      */
     private static final Level LEVEL = Level.DEFAULT_LEVEL;
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
@@ -43,31 +43,46 @@ public class Main {
     private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(2016);
 
     /**
-     * Main method of the XBlast 2016 Server. TODO better comments
+     * Main method of the XBlast 2016 Server. Is separated in two phases. First
+     * the server waits for the specified amount of players to join the game,
+     * then the server is in charge of evolving the game and sending the
+     * information to each client.
+     * 
+     * Note: There will always be 4 players on the map, but if a number smaller
+     * than 4 was specified, some players won't move.
      * 
      * @param args
-     *            Amount of clients that should connect before the game
+     *            amount of clients that should connect before the game
      *            launches. If this argument is omitted the server waits for the
      *            default amount of players.
-     * @throws Exception
-     *             TODO
+     * @throws IOException
+     *             if the channel cannot be opened
+     * @throws InterruptedException
+     *             if any thread has interrupted this thread
+     * @throws IllegalArgumentException
+     *             if the given amount of players doesn't lay in the correct
+     *             range
+     * @throws NumberFormatException
+     *             if the given argument was not an integer //FIXME should we write this or not?
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         /*
          * PHASE 1 
          * 
-         * 1.1) Determine how many player will be playing. 
+         * 1.1) Determine how many player will be playing.
+         * 
+         * If they were multiple arguments we read the first one only.
          * If an incorrect argument is given, the client halts.
          */
         int numberOfClients = (args.length != 0) ? Integer.parseInt(args[0])
                 : DEFAULT_NUMBER_OF_CLIENTS;
-        if (numberOfClients <= 0 || numberOfClients > NUMBER_OF_PLAYERS)
+        if (numberOfClients < 0 || numberOfClients > NUMBER_OF_PLAYERS) //FIXME <= or <
             throw new IllegalArgumentException("There cannot be more than "
                     + NUMBER_OF_PLAYERS + " players nor less than 1 player");
 
         /*
-         * 1.2) Open channel in charge of communication with the clients.
+         * 1.2) Open channel in charge of the communication with the clients.
          */
         try (DatagramChannel channel = DatagramChannel
                 .open(StandardProtocolFamily.INET)) {
@@ -80,7 +95,7 @@ public class Main {
 
             /*
              * 1.3) Look for clients that want to join the game and save them in
-             * an "address book".
+             * an address book.
              */
             Map<SocketAddress, PlayerID> clientAdresses = new HashMap<>();
             ByteBuffer oneByteBuffer = ByteBuffer.allocate(1);
@@ -92,11 +107,13 @@ public class Main {
                 // To prevent an error due to incorrectly sent buffer, we first check
                 // if the buffer has a remaining element.
                 if (!clientAdresses.containsKey(senderAddress)
-                        && oneByteBuffer.hasRemaining() && oneByteBuffer    //FIXME hasRemaing/ get(0)
-                                .get() == PlayerAction.JOIN_GAME.ordinal()) {
+                        && oneByteBuffer.hasRemaining() 
+                        && oneByteBuffer.get() == PlayerAction.JOIN_GAME.ordinal()) {
+                    
                     clientAdresses.put(senderAddress,
                             PlayerID.values()[clientAdresses.size()]);
                 }
+                
                 // Clear oneByteBuffer for next client and for later use in Phase 2
                 oneByteBuffer.clear();
             }
@@ -104,8 +121,8 @@ public class Main {
             /*
              * Phase 2
              * 
-             * 2.1) Start the game and save the starting time for later
-             * time management.
+             * 2.1) Start the game using the default initial GameState and save
+             * the starting time for later time management.
              */
             GameState gameState = LEVEL.initialGameState();
             BoardPainter boardPainter = LEVEL.boardPainter();
@@ -115,9 +132,7 @@ public class Main {
             // required to send anything.
             channel.configureBlocking(false);
 
-            // Prepare Buffer in order to send the GameState. The maximal
-            // transmission size equals the max GameState size + 1 byte for the
-            // playerID.
+            // Declare buffer used to send the GameState to the clients.
             ByteBuffer gameStateBuffer = ByteBuffer.allocate(MAX_SENDING_BYTES);
 
             while (!gameState.isGameOver()) {
@@ -127,7 +142,7 @@ public class Main {
                  */
                 List<Byte> serialized = GameStateSerializer
                         .serialize(boardPainter, gameState);
-                // Placeholder where PlayerID belongs
+                // Put any byte as Placeholder where the PlayerID belongs
                 gameStateBuffer.put((byte) 0);
                 serialized.forEach(gameStateBuffer::put);
                 gameStateBuffer.flip();
@@ -145,8 +160,8 @@ public class Main {
                 gameStateBuffer.clear();
 
                 /*
-                 * 2.4) Wait the correct amount of time, so that the tick
-                 * duration is correct. We add one to the amount of ticks
+                 * 2.4) Wait the correct amount of time, so that the actual tick
+                 * duration stays the same. We add one to the amount of ticks
                  * already played, in order to have a break between the first
                  * and second GameState.
                  */
@@ -156,10 +171,10 @@ public class Main {
                 long waitingTime = timeForNextTick - System.nanoTime();
                 if (waitingTime > 0)
                     Thread.sleep(waitingTime / Time.NS_PER_MS,
-                            (int) waitingTime % Time.NS_PER_MS);//FIXME
+                            (int) waitingTime % Time.NS_PER_MS);// FIXME correct way?
 
                 /*
-                 * 2.4) Check if the clients sent an action they want to
+                 * 2.5) Check if the clients sent an action they want to
                  * execute. This is done by receiving the messages until there
                  * are none left.
                  */
@@ -172,21 +187,22 @@ public class Main {
                     oneByteBuffer.flip();
                     PlayerID id = clientAdresses.get(senderAddress);
 
-                    // If the id was valid, check that what the player wants to do is a valid action.
-                    if (id != null && oneByteBuffer.hasRemaining()) {
+                    // If the id is valid, check that what the player wants to
+                    // do is a valid action.
+                    if (id != null && oneByteBuffer.hasRemaining()) {   //FIXME too many if
                         byte receivedValue = oneByteBuffer.get();
-                        
+
                         PlayerAction action = null;
                         if (0 <= receivedValue
-                                && receivedValue < PlayerAction.values().length)
+                                && receivedValue < PlayerAction.values().length)//FIXME not very clean
                             action = PlayerAction.values()[receivedValue];
-                        
+
                         switch (action) {
                         case DROP_BOMB:
                             bombDrpEvents.add(id);
                             break;
                         case MOVE_S:
-                            speedChangeEvents.put(id, Optional.of(Direction.S));//FIXME
+                            speedChangeEvents.put(id, Optional.of(Direction.S));
                             break;
                         case MOVE_N:
                             speedChangeEvents.put(id, Optional.of(Direction.N));
@@ -200,14 +216,14 @@ public class Main {
                         case STOP:
                             speedChangeEvents.put(id, Optional.empty());
                         default:
-                            break;         
+                            break;
                         }
                     }
                     oneByteBuffer.clear();
                 }
 
                 /*
-                 * 2.4) Evolve GameState to the next Tick.
+                 * 2.6) Evolve GameState to the next Tick.
                  */
                 gameState = gameState.next(speedChangeEvents, bombDrpEvents);
             }
