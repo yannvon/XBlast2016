@@ -85,7 +85,7 @@ public class Main {
             
             do {
                 channel.send(sendByteBuffer, serverAddress);
-                //sendByteBuffer.rewind();                    //FIXME
+                sendByteBuffer.rewind();            //FIXME
                 Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
             } while (channel.receive(receiveByteBuffer) == null);
 
@@ -137,7 +137,6 @@ public class Main {
         f.setResizable(false);
         f.pack();
         f.setVisible(true);
-        xbc.requestFocusInWindow();
 
         /*
          * Manage the Keyboard input by adding a keyListener to the
@@ -160,5 +159,6 @@ public class Main {
         };
         xbc.addKeyListener(new KeyboardEventHandler(
                 KeyboardEventHandler.DEFAULT_CONTROL_MAP, c));
+        xbc.requestFocusInWindow();
     }
 }
