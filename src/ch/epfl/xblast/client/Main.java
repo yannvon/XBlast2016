@@ -2,6 +2,7 @@ package ch.epfl.xblast.client;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.StandardProtocolFamily;
@@ -31,13 +32,13 @@ public class Main {
     /*
      * Constants.
      * 
-     * The max amount of receiving bytes consists of the worst case encoding +
-     * one first byte that represents the playerID of the recipient.
+     * The max amount of receiving bytes consists of the worst case encoding
+     * plus one first byte that represents the playerID of the recipient.
      */
     private static final int PORT = 2016;
     private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
             + 4 * PlayerID.values().length + 2;
-    private static final int GAME_JOIN_REQUEST_REPEATING_TIME = 1000;
+    private static final int JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
 
     /*
@@ -47,56 +48,67 @@ public class Main {
     private static SocketAddress serverAddress;
 
     /**
-     * Main method of the XBlast 2016 Client.
-     * 
-     * TODO better comment
+     * Main method of the XBlast 2016 Client. In Phase 1 the client repeats the
+     * sending of a game join request. As soon as the first GameState was
+     * received Phase 2 starts: The client opens a parallel Swing thread in
+     * charge of displaying the GameState and managing the keyboard inputs. The
+     * main thread will keep receiving the GameStates.
      * 
      * @param args
-     *            IP-address of the Server. If none localhost is used as default
-     *            address.
-     * @throws Exception    //TODO
+     *            optional parameter: IP-address of the Server. If none is given
+     *            localhost is used as default address.
+     * @throws IOException
+     *             if the channel fails to open
+     * @throws InterruptedException
+     *             if this thread gets interrupted
+     * @throws InvocationTargetException
+     *             if the invocation of the parallel thread fails   //FIXME all exceptions or not?
      */
-    public static void main(String[] args) throws Exception {   //FIXME detail
+    public static void main(String[] args) throws IOException,
+            InterruptedException, InvocationTargetException {
 
         /*
          * PHASE 1
-         *  
-         * 1.1) retrieve IP-address and open channel 
-         *      If there was no input or it was not of length 1 
-         *      we assign a default host.
+         * 
+         * 1.1) retrieve IP-address and open channel. If there was more than one
+         * argument we take the first, if there was none we assign a default
+         * host.
          */
-        String hostName = (args.length == 1) ? args[0] : DEFAULT_HOST;
+        String hostName = (args.length != 0) ? args[0] : DEFAULT_HOST;
         serverAddress = new InetSocketAddress(hostName, PORT);
 
         try (DatagramChannel channel = DatagramChannel
                 .open(StandardProtocolFamily.INET)) {
 
-            /*
-             * 1.2) Send request to join game to Server as long as the server
-             * doesn't send the initial GameState.
-             */
+            // Switch to non-blocking mode
             channel.configureBlocking(false);
-
-            ByteBuffer sendByteBuffer = ByteBuffer.allocate(1);
-            ByteBuffer receiveByteBuffer = ByteBuffer
+            
+            /*
+             * 1.2) Send request to join game to the Server as long as the
+             * server doesn't send the initial GameState.
+             */
+            ByteBuffer sendBuffer = ByteBuffer.allocate(1);
+            ByteBuffer receiveBuffer = ByteBuffer
                     .allocate(MAX_RECEIVING_BYTES);
-            sendByteBuffer.put((byte) PlayerAction.JOIN_GAME.ordinal());
-            sendByteBuffer.flip();
+            
+            sendBuffer.put((byte) PlayerAction.JOIN_GAME.ordinal());
+            sendBuffer.flip();
             
             do {
-                channel.send(sendByteBuffer, serverAddress);
-                sendByteBuffer.rewind();            //FIXME
-                Thread.sleep(GAME_JOIN_REQUEST_REPEATING_TIME);
-            } while (channel.receive(receiveByteBuffer) == null);
+                channel.send(sendBuffer, serverAddress);
+                sendBuffer.rewind();
+                Thread.sleep(JOIN_REQUEST_REPEATING_TIME);
+            } while (channel.receive(receiveBuffer) == null);
 
             /*
              * PHASE 2 
+             * 
              * 2.1) Start by invoking the parallel EDT Swing thread.
              */
             SwingUtilities.invokeAndWait(() -> createUI(channel));
 
-            // From now one the client will wait to get the next GameState from
-            // the server.
+            // From now one the client will wait until he gets the next
+            // GameState from the server.
             channel.configureBlocking(true);
 
             /*
@@ -104,29 +116,29 @@ public class Main {
              * GameState and shares it with the parallel Swing thread.
              */
             while (true) {
-                receiveByteBuffer.flip();   //FIXME hasRemaining?
-                PlayerID id = PlayerID.values()[receiveByteBuffer.get()];
+                receiveBuffer.flip();   //FIXME hasRemaining?
+                PlayerID id = PlayerID.values()[receiveBuffer.get()];
                 List<Byte> serialized = new ArrayList<>();
-                while (receiveByteBuffer.hasRemaining()) {
-                    serialized.add(receiveByteBuffer.get());
+                while (receiveBuffer.hasRemaining()) {
+                    serialized.add(receiveBuffer.get());
                 }
                 GameState gameState = GameStateDeserializer
                         .deserializeGameState(serialized);
                 SwingUtilities.invokeLater(() -> xbc.setGameState(gameState, id));
-                receiveByteBuffer.clear();
-                channel.receive(receiveByteBuffer);
+                receiveBuffer.clear();
+                channel.receive(receiveBuffer);
             }
         }
     }
 
     /**
-     * Method invoked by the main in a other thread in charge of managing the
-     * Swing graphical interface.
+     * Method invoked by the main method in a other thread in charge of managing
+     * the Swing graphical interface.
      */
     public static void createUI(DatagramChannel channel) {
 
         /*
-         * Open new Window.
+         * Create new Window.
          */
         JFrame f = new JFrame("XBlast 2016");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

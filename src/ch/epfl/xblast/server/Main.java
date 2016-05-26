@@ -52,9 +52,9 @@ public class Main {
      * than 4 was specified, some players won't move.
      * 
      * @param args
-     *            amount of clients that should connect before the game
-     *            launches. If this argument is omitted the server waits for the
-     *            default amount of players.
+     *            optional parameter: amount of clients that should connect
+     *            before the game launches. If this argument is omitted the
+     *            server waits for the default amount of players.
      * @throws IOException
      *             if the channel cannot be opened
      * @throws InterruptedException
@@ -63,9 +63,13 @@ public class Main {
      *             if the given amount of players doesn't lay in the correct
      *             range
      * @throws NumberFormatException
-     *             if the given argument was not an integer //FIXME should we write this or not?
+     *             if the given argument was not an integer 
+     *             
+     *             //FIXME should we
+     *             write all exceptions or not?
      */
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args)
+            throws IOException, InterruptedException {
 
         /*
          * PHASE 1 
