@@ -109,11 +109,19 @@ public final class GameStateSerializer {
          * Add the size of the variable length lists in front of them.
          */
         List<Byte> output = new ArrayList<>();
+        
+        // --- add serialized board
         output.add((byte) serializedBoard.size());
         output.addAll(serializedBoard);
+        
+        // --- add serialized explosions
         output.add((byte) serialisedExplosions.size());
         output.addAll(serialisedExplosions);
+        
+        // --- add serialized players
         output.addAll(serialisedPlayers);
+        
+        // --- add serialized time
         output.add(serialisedTime);
         
         return Collections.unmodifiableList(output);

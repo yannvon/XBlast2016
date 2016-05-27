@@ -71,7 +71,7 @@ public class Main {
         /*
          * PHASE 1 
          * 
-         * 1.1) Determine how many player will be playing.
+         * 1.1) Determine how many players will be playing.
          * 
          * If they were multiple arguments we read the first one only.
          * If an incorrect argument is given, the client halts.
