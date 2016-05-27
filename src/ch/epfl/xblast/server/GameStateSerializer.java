@@ -61,18 +61,24 @@ public final class GameStateSerializer {
         Set<Cell> blastedCells = gameState.blastedCells();
 
         for (Cell c : Cell.ROW_MAJOR_ORDER) {
+            
+            // --- don't display anything on non-free blocks.
             if (!gameState.board().blockAt(c).isFree())
                 serialisedExplosions.add(ExplosionPainter.BYTE_FOR_EMPTY);
+            // --- display a bomb
             else if (bombedCells.containsKey(c))
                 serialisedExplosions
                         .add(ExplosionPainter.byteForBomb(bombedCells.get(c)));
+            // --- display a blast
             else if (blastedCells.contains(c)) {
                 serialisedExplosions.add(ExplosionPainter.byteForBlast(
                         blastedCells.contains(c.neighbor(Direction.N)),
                         blastedCells.contains(c.neighbor(Direction.E)),
                         blastedCells.contains(c.neighbor(Direction.S)),
                         blastedCells.contains(c.neighbor(Direction.W))));
-            } else
+            }
+            // --- empty byte for block without explosions & bombs
+            else
                 serialisedExplosions.add(ExplosionPainter.BYTE_FOR_EMPTY);
         }
 
