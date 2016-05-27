@@ -57,6 +57,8 @@ public final class PlayerPainter {
         case INVULNERABLE:
             white = tick % 2 == 1;
         case VULNERABLE:
+        case SLOWED:
+        case WITH_ROLLER:
             // adjust image depending on direction
             imageByte += player.direction().ordinal() * NB_IMAGES_PER_DIRECTION;
             int pos = player.direction().isHorizontal() ? player.position().x()
