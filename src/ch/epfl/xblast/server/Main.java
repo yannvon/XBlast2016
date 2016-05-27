@@ -234,9 +234,30 @@ public class Main {
                  */
                 gameState = gameState.next(speedChangeEvents, bombDrpEvents);
             }
+            
+            /*
+             * 3) Send last GameState (this time it is mandatory due to winner
+             * message displaying)
+             */
+            List<Byte> serialized = GameStateSerializer
+                    .serialize(boardPainter, gameState);
+            
+            // Put any byte as Placeholder where the PlayerID belongs
+            gameStateBuffer.put((byte) 0);
+            serialized.forEach(gameStateBuffer::put);
+            gameStateBuffer.flip();
+
+            for (Entry<SocketAddress, PlayerID> e : clientAdresses
+                    .entrySet()) {
+                gameStateBuffer.put(0, (byte) e.getValue().ordinal());
+                channel.send(gameStateBuffer, e.getKey());
+                gameStateBuffer.rewind();
+            }
+            gameStateBuffer.clear();
+
 
             /*
-             * 3) Print winner in console if there was one.
+             * 4) Print winner in console if there was one.
              */
             Optional<PlayerID> winner = gameState.winner();
             if(winner.isPresent()){

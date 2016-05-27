@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
@@ -124,6 +126,14 @@ public final class GameState {
         public Image image() {
             return image;
         }
+        
+        /**
+         * Determines wheter a player is alive or not
+         * @return
+         */
+        public boolean isAlive(){
+            return lives > 0;
+        }
     }
     
     /*
@@ -237,4 +247,34 @@ public final class GameState {
     public List<Image> timeLine() {
         return timeLine;
     }
+    
+    /**
+     * Indicates whether the game is over or not.
+     * 
+     * @return true if game is over, false otherwise
+     */
+    public List<Player> alivePlayer() {
+        return players().stream().filter(Player::isAlive)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Indicates whether the game is over or not.
+     * 
+     * @return true if game is over, false otherwise
+     */
+    public boolean isGameOver() {
+        return alivePlayer().size() <= 1;   //FIXME not taking into account time over!
+    }
+    
+    /**
+     * Optional of the winner.
+     * 
+     * @return
+     */
+    public Optional<Player> winner() {
+        return alivePlayer().size() == 1 ? Optional.of(alivePlayer().get(0))
+                : Optional.empty();
+    }
+
 }

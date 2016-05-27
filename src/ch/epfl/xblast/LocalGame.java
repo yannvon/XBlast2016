@@ -133,13 +133,13 @@ public class LocalGame {
             gameState = gameState.next(speedChangeEvents, bombDrpEvent);
         }
 
-        Optional<PlayerID> winner = gameState.winner();
-        System.out.println(winner.isPresent() ? winner.get() : "There was no winner.");
-
-        
+        /*
+         *  3) Display last gameState (for winner message bonus)
+         */
+        List<Byte> serialized = GameStateSerializer
+                .serialize(lvl.boardPainter(), gameState);
+        xbc.setGameState(GameStateDeserializer.deserializeGameState(serialized), PlayerID.PLAYER_1);
     }
-    
-    
     
         
     /**

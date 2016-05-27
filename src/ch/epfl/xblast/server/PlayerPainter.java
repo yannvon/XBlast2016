@@ -1,5 +1,7 @@
 package ch.epfl.xblast.server;
 
+import java.util.Optional;
+
 /**
  * This non-instanciable class offers static methods to "paint" a player.
  * 
@@ -22,7 +24,7 @@ public final class PlayerPainter {
     private static final int BYTE_FOR_LOSING_LIFE = 12;
     private static final int BYTE_FOR_DYING = 13;
     private static final int BYTE_FOR_DEAD = 15;
-
+    
     // --- walking cycle image positions
     private static final int[] WALKING_CYCLE = { 0, 1, 0, 2 };
 

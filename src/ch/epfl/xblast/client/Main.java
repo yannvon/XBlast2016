@@ -127,6 +127,7 @@ public class Main {
                 }
                 GameState gameState = GameStateDeserializer
                         .deserializeGameState(serialized);
+                
                 SwingUtilities.invokeLater(() -> xbc.setGameState(gameState, id));
                 receiveBuffer.clear();
                 channel.receive(receiveBuffer);

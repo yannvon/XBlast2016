@@ -64,6 +64,11 @@ public final class XBlastComponent extends JComponent {
     private static final int TIMELINE_IMAGE_WIDTH = BOARD_WIDTH
             / GameStateDeserializer.TIMELINE_LENGTH;
     
+    // --- endGame message
+    private static final int CENTER_Y = 200;
+    private static final int CENTER_X = 425;
+    
+    
     /*
      * Attributes
      */
@@ -181,5 +186,15 @@ public final class XBlastComponent extends JComponent {
             g.drawImage(p.image(), X_FUNCTION.apply((p.position().x())),
                     Y_FUNCTION.apply((p.position().y())), null);
         }
+        
+        /*
+         * Draw winner message
+         */
+        if (gameState.isGameOver()) {
+            System.out.println("xbc gameState is over");
+            g.drawImage(GameEndPainter.imageForWinner(gameState.winner()),
+                    CENTER_X, CENTER_Y, null);
+        }
+
     }
 }
