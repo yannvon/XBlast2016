@@ -12,7 +12,8 @@ import java.util.function.Consumer;
 import ch.epfl.xblast.PlayerAction;
 
 /**
- * This class represents a Listener of Keyboard events and interpret them as PlayerAction
+ * This class represents a Listener of Keyboard events and interprets them as
+ * PlayerAction.
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
@@ -23,6 +24,9 @@ public final class KeyboardEventHandler extends KeyAdapter
     
     /*
      * Constants
+     * 
+     * This default map of the controls used for an XBlast game can be used when
+     * creating a KeyboardEventHandler.
      */
     public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls();
     

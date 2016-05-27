@@ -115,8 +115,8 @@ public class Main {
              * 2.2) As long as the program runs the client waits for a new
              * GameState and shares it with the parallel Swing thread.
              * 
-             * Note: we don't handle the case where an intruder sends a gameState.
-             * if the server send an incorrect gameState the program will halt.
+             * Note: We don't handle the case where an intruder sends a GameState.
+             * If the server sends an incorrect GameState the program will halt.
              */
             while (true) {
                 receiveBuffer.flip();

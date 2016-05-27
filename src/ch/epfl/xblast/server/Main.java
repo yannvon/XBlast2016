@@ -115,7 +115,7 @@ public class Main {
                             PlayerID.values()[clientAdresses.size()]);
                 }
                 
-                // Clear oneByteBuffer for next client and for later use in Phase 2
+                // Clear oneByteBuffer for next client
                 oneByteBuffer.clear();
             }
 

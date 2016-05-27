@@ -40,7 +40,7 @@ public final class GameState {
         private final Image image;
 
         /**
-         * Constructs a player with the values passed as arguments.
+         * Constructs an immutable player with the values passed as arguments.
          * 
          * @param playerId
          *            id of the player

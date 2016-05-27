@@ -147,6 +147,10 @@ public final class XBlastComponent extends JComponent {
         
         /*
          * Draw Players
+         * 
+         * To determine the order of display, we create two comparators: The
+         * players will be sorted according to the first one and if there are
+         * equalities, the second comparator will be used.
          */
         Comparator<Player> comparatorOfPosition = (p1, p2) -> Integer.compare(p1.position().y(),
                 p2.position().y());
@@ -156,11 +160,12 @@ public final class XBlastComponent extends JComponent {
                         NUMBER_OF_PLAYERS),
                 Math.floorMod(p2.id().ordinal() + (NUMBER_OF_PLAYERS - 1 - playerId.ordinal()),
                         NUMBER_OF_PLAYERS));
-
         Comparator<Player> finalComparator = comparatorOfPosition.thenComparing(comparatorOfIdentity);
+        
         List<Player> orderedPlayers = new ArrayList<>(gameState.players());
         Collections.sort(orderedPlayers, finalComparator);
 
+        // The position of the players is defined by two functions
         for (Player p : orderedPlayers) {
             g.drawImage(p.image(), X_FUNCTION.apply((p.position().x())),
                     Y_FUNCTION.apply((p.position().y())), null);

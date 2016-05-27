@@ -48,8 +48,11 @@ public final class ImageCollection {
                     int i = Integer.parseInt(f.getName().substring(0, 3));
                     images.put(i, ImageIO.read(f));
                 } catch (NumberFormatException | IOException e) {
-                    // do nothing, we don't want to abort the operation if one
-                    // image fails to load.
+                    /*
+                     * We don't want to abort the operation if one image fails
+                     * to load.
+                     */
+                    e.printStackTrace();
                 }
             }
         } catch (URISyntaxException e) {
@@ -63,6 +66,7 @@ public final class ImageCollection {
 
     /**
      * Method allowing to get an image for a specific integer value.
+     * This method throws an exception if the image was not found.
      * 
      * @param imageNumber
      *            integer value characterizing an image
@@ -80,6 +84,7 @@ public final class ImageCollection {
 
     /**
      * Method allowing to get an image for a specific integer value.
+     * This method return null if the image was not found.
      * 
      * @param imageNumber
      *            integer value characterizing an image

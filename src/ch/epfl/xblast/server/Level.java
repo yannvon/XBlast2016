@@ -65,8 +65,8 @@ public final class Level {
         int defaultLives = 3;
         int defaultBombs = 2;
         int defaultRange = 3;
-        List<Cell> startingPos = Arrays.asList(new Cell(1, 1), new Cell(13, 1),
-                new Cell(13, 11), new Cell(1, 11));
+        List<Cell> defaultStartingPos = Arrays.asList(new Cell(1, 1),
+                new Cell(13, 1), new Cell(13, 11), new Cell(1, 11));
 
         Board board = Board.ofQuadrantNWBlocksWalled(
                 Arrays.asList(
@@ -80,7 +80,8 @@ public final class Level {
         List<Player> players = new ArrayList<>();
         for (PlayerID id : PlayerID.values()) {
             players.add(new Player(id, defaultLives,
-                    startingPos.get(id.ordinal()), defaultBombs, defaultRange));
+                    defaultStartingPos.get(id.ordinal()), defaultBombs,
+                    defaultRange));
         }
 
         return new GameState(board, players);

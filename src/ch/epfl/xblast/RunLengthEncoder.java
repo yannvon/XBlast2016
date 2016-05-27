@@ -35,7 +35,7 @@ public final class RunLengthEncoder {
      * front of the compressed byte. The absolute value of the indicator byte
      * plus two corresponds to the amount of occurrences of said byte.
      * 
-     * This technique requires that the given list of byte does not contain any
+     * This technique requires that the given list of bytes does not contain any
      * negative bytes.
      * 
      * @param l
@@ -51,9 +51,11 @@ public final class RunLengthEncoder {
 
         for (Byte b : l) {
             ArgumentChecker.requireNonNegative(b);
-            
-            // since we can only use negative byte values as indicator, we can
-            // only encode 130 consecutive occurrences at once.
+
+            /*
+             * since we can only use negative byte values as indicator, we can
+             * only encode 130 consecutive occurrences at once.
+             */
             if (b == lastByte && ocount < LONGEST_RUN)
                 ocount++;
             else {
@@ -107,8 +109,8 @@ public final class RunLengthEncoder {
      * and an integer that represents the number of consecutive occurrences of
      * said byte.
      * 
-     * The returned list consists of maximum two bytes, the exacted technique
-     * used is described at {@link #encode(List)} the method.
+     * The returned list consists of maximum two bytes, the exact technique
+     * used is described at {@link #encode(List)}.
      * 
      * Careful: the count argument is not allowed to succeed LONGEST_RUN!
      * 
