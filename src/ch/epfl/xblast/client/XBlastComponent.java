@@ -66,13 +66,6 @@ public final class XBlastComponent extends JComponent {
     private GameState gameState;
     private PlayerID playerId;
 
-    /**
-     * Constructor of an XBlastComponent. Initialises all attributes to null.
-     */
-    public XBlastComponent() {  //FIXME useful constructor?
-        gameState = null;
-        playerId = null;
-    }
 
     /**
      * Allows to display a new GameState, and refreshes the Display accordingly.
