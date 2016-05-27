@@ -248,10 +248,11 @@ public final class GameStateDeserializer {
     private static List<Image> constructTimeLine(Byte time) {
         List<Image> scoreLine = new ArrayList<>();
         int unsignedTime = Byte.toUnsignedInt(time);
-        if(unsignedTime>0)
+        if(unsignedTime>0){
             scoreLine.addAll(Collections.nCopies(unsignedTime-1,
                     SCORE_COLLECTION.image(LED_ON)));
         scoreLine.add(SCORE_COLLECTION.image(22));
+        }
         scoreLine.addAll(Collections.nCopies(TIMELINE_LENGTH - unsignedTime,
                 SCORE_COLLECTION.image(LED_OFF)));
         return Collections.unmodifiableList(scoreLine);
