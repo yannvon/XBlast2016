@@ -128,6 +128,6 @@ public final class RunLengthEncoder {
             encoded.add((byte) (MAX_NON_ENCODED_RUN - count));
             encoded.add(b);
         }
-        return encoded; //FIXME unmodifiable or not?
+        return Collections.unmodifiableList(encoded);
     }
 }
