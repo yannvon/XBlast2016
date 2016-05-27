@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+import com.sun.xml.internal.ws.api.policy.AlternativeSelector;
+
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
@@ -335,7 +337,7 @@ public final class GameState {
              */
             boolean explode= false;
             //if touch a player
-            for(Player p : players1){
+            for(Player p : alivePlayers()){
                 explode |= p.position().distanceTo(newBomb.subCell())<6;
             }
             //if touch another movingBomb
@@ -353,7 +355,7 @@ public final class GameState {
             boolean stopped = !board1.blockAt(nextCentral.containingCell()).canHostPlayer() && newBomb.subCell().distanceToCentral()>=2;
             
             //Determine if the bomb is on contact with an fixed bomb
-            boolean ricochet= bombedCells1.containsKey(nextCentral.containingCell()) && newBomb.subCell().distanceToCentral()>=2; //FIXME ricochet?
+            boolean ricochet= bombedCells1.containsKey(nextCentral.containingCell()) && newBomb.subCell().distanceToCentral()>=2;
 
             
             if(explode)

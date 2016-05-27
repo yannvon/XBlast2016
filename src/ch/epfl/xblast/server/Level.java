@@ -48,7 +48,7 @@ public final class Level {
         palette.put(Block.BONUS_BOMB,BlockImage.BONUS_BOMB);
         palette.put(Block.BONUS_ROLLER,BlockImage.BONUS_ROLLER);
         palette.put(Block.BONUS_SNAIL,BlockImage.BONUS_SNAIL);
-        palette.put(Block.BONUS_KICKBOMB, BlockImage.RANDOM_BONUS); //TODO add image
+        palette.put(Block.BONUS_KICKBOMB, BlockImage.BONUS_KICKBOMB);
 
         return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
     }
