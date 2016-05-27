@@ -1,7 +1,5 @@
 package ch.epfl.xblast.server;
 
-import ch.epfl.xblast.server.Player.LifeState.State;
-
 /**
  * Enumeration that defines every bonus and gives the possibility to apply the
  * bonus to a player.
