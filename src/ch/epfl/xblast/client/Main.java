@@ -62,7 +62,7 @@ public class Main {
      * @throws InterruptedException
      *             if this thread gets interrupted
      * @throws InvocationTargetException
-     *             if the invocation of the parallel thread fails   //FIXME all exceptions or not?
+     *             if the invocation of the parallel thread fails 
      */
     public static void main(String[] args) throws IOException,
             InterruptedException, InvocationTargetException {
@@ -114,9 +114,12 @@ public class Main {
             /*
              * 2.2) As long as the program runs the client waits for a new
              * GameState and shares it with the parallel Swing thread.
+             * 
+             * Note: we don't handle the case where an intruder sends a gameState.
+             * if the server send an incorrect gameState the program will halt.
              */
             while (true) {
-                receiveBuffer.flip();   //FIXME hasRemaining?
+                receiveBuffer.flip();
                 PlayerID id = PlayerID.values()[receiveBuffer.get()];
                 List<Byte> serialized = new ArrayList<>();
                 while (receiveBuffer.hasRemaining()) {
