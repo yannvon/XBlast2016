@@ -503,7 +503,7 @@ public final class Player {
      * @return almost identical player but faster
      */
     public Player withRoller() {
-        Player p = withPowerUp(State.WITH_ROLLER);
+        Player p = withPowerUp(State.WITH_ROLLER, Ticks.ROLLER_DURATION_TICKS);
         return new Player(id(),p.lifeStates(),
                 DirectedPosition.movingFast(directedPositions().tail().head()), //tail is a necessity since the player must be on a pair subcell
                 maxBombs(), bombRange(), canKickBomb());
@@ -517,7 +517,7 @@ public final class Player {
      * @return almost identical player but slower
      */
     public Player withSnail() {
-        Player p = withPowerUp(State.SLOWED);
+        Player p = withPowerUp(State.SLOWED,Ticks.SNAIL_DURATION_TICKS);
         return new Player(id(), p.lifeStates(),
                 DirectedPosition.movingSlow(p.directedPositions().head()),
                 maxBombs(), bombRange(), canKickBomb());
@@ -543,9 +543,9 @@ public final class Player {
      *
      * @return almost identical player but with the new State
      */
-    private Player withPowerUp(State powerUp) {
+    private Player withPowerUp(State powerUp, int time) {
         Sq<LifeState> newLifeStates = Sq
-                .repeat(Ticks.BONUS_DURATION_TICKS,
+                .repeat(time,
                         new LifeState(lives(), powerUp))
                 .concat(Sq.constant(
                         new LifeState(lives(), LifeState.State.VULNERABLE)));

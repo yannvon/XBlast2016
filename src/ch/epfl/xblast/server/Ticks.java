@@ -23,5 +23,6 @@ public interface Ticks {
     public static final int TOTAL_TICKS = TICKS_PER_SECOND * Time.S_PER_MIN * 2;
     
     //BONUS
-    public static final int BONUS_DURATION_TICKS = 100;//FIXME
+    public static final int SNAIL_DURATION_TICKS = 70;
+    public static final int ROLLER_DURATION_TICKS = 150;
 }
