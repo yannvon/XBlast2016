@@ -64,9 +64,6 @@ public class Main {
      *             range
      * @throws NumberFormatException
      *             if the given argument was not an integer 
-     *             
-     *             //FIXME should we
-     *             write all exceptions or not?
      */
     public static void main(String[] args)
             throws IOException, InterruptedException {
@@ -81,9 +78,9 @@ public class Main {
          */
         int numberOfClients = (args.length != 0) ? Integer.parseInt(args[0])
                 : DEFAULT_NUMBER_OF_CLIENTS;
-        if (numberOfClients < 0 || numberOfClients > NUMBER_OF_PLAYERS) //FIXME <= or <
+        if (numberOfClients < 0 || numberOfClients > NUMBER_OF_PLAYERS)
             throw new IllegalArgumentException("There cannot be more than "
-                    + NUMBER_OF_PLAYERS + " players nor less than 1 player");
+                    + NUMBER_OF_PLAYERS + " players nor a negative amount of players");
 
         /*
          * 1.2) Open channel in charge of the communication with the clients.
@@ -175,7 +172,7 @@ public class Main {
                 long waitingTime = timeForNextTick - System.nanoTime();
                 if (waitingTime > 0)
                     Thread.sleep(waitingTime / Time.NS_PER_MS,
-                            (int) waitingTime % Time.NS_PER_MS);// FIXME correct way?
+                            (int) waitingTime % Time.NS_PER_MS);
 
                 /*
                  * 2.5) Check if the clients sent an action they want to
@@ -191,14 +188,18 @@ public class Main {
                     oneByteBuffer.flip();
                     PlayerID id = clientAdresses.get(senderAddress);
 
-                    // If the id is valid, check that what the player wants to
-                    // do is a valid action.
-                    if (id != null && oneByteBuffer.hasRemaining()) {   //FIXME too many if
+                    /*
+                     *  Check that a participating player correctly sent a byte.
+                     */
+                    if (id != null && oneByteBuffer.hasRemaining()) {
                         byte receivedValue = oneByteBuffer.get();
-
                         PlayerAction action = null;
+                        
+                        /*
+                         * Check that the sent value corresponds to an action.
+                         */
                         if (0 <= receivedValue
-                                && receivedValue < PlayerAction.values().length)//FIXME not very clean
+                                && receivedValue < PlayerAction.values().length)
                             action = PlayerAction.values()[receivedValue];
 
                         switch (action) {
