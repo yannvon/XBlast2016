@@ -1,0 +1,63 @@
+Bonus XBlasts:
+
+1)Main classes
+	1)LocalGame
+	Class that manage a game without server and client, we can control two player on the same computer
+		
+
+	2)MainGUI
+	Main class that represent a menu  to set the parameters of a party ( Level, number of client...) 
+	and launch one of the following Programs: Main(server), Main(client), LocalGame
+	
+	
+	
+	
+	
+2)Bonuses
+	1)Snail:
+		Bonus that slow a player if taken for a while.
+		
+		modified/added method to implement this bonus:
+			-State:
+				-add new State SLOWED
+				-boolean isPowerUp()  
+					return true if the state is a powerUp (or PowerLow)
+			-DirectedPosition:
+				-static Sq<DirectedPosition> movingSlow(DirectedPosition p)
+					return a sequence of directed position where the player is moving of 
+					one SubCell every 2 ticks  
+			-Player:
+				-Player withPowerUp(State state) 
+					that return a player with new Sq<LifeState> with the given 
+					state for the time TICKS.BONUSDURATION
+				-Player withSnail() 
+					return the player with the new State (call withPowerUp(State.SNAIL)) 
+					and a new DirectedPosition slowed
+			
+			-GameState:
+				-modified Sq<DirectedPosition> constructDPSeq(Player p, Optional<Direction> speedChange) 
+					such that the method return a slowed sequence of DirectedPositionif the player is slowed
+			
+		
+	2)Roller:
+		Bonus that increase the speed of a player for a while
+		
+		modified/added method to implement this bonus:
+			-State:
+				-add new State WITHROLLER
+			-DirectedPosition:
+				-static Sq<DirectedPosition> movingFast(DirectedPosition p)
+					return a sequence of directed position where the player is moving of 
+					two SubCell every ticks  
+			-Player:
+				-Player withRoller() 
+					return the player with the new State (call withPowerUp(State.Roller)) 
+					and a new DirectedPosition faster than the original
+			
+			-GameState:
+				-modified Sq<DirectedPosition> constructDPSeq(Player p, Optional<Direction> speedChange) 
+					such that the method return a fast moving sequence of DirectedPosition
+					if the player is WITHROLLER
+	
+	
+3)additional method:

@@ -8,6 +8,7 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.server.Player.LifeState.State;
 
 /**
  * A player being characterized by a multitude of attributes. This is an
@@ -29,7 +30,7 @@ public final class Player {
          * An enumeration of all possible states that the player can be in.
          */
         public enum State {
-            INVULNERABLE, VULNERABLE, DYING, DEAD;
+            INVULNERABLE, VULNERABLE, DYING, DEAD, WITH_ROLLER, SLOWED;
         }
 
         // Attributes
@@ -77,7 +78,34 @@ public final class Player {
          * @return true if the player is allowed to move, false otherwise
          */
         public boolean canMove() {
-            return state() == State.VULNERABLE || state() == State.INVULNERABLE;
+            return state() != State.DYING && state() != State.DEAD;
+        }
+        
+        /**
+         * BONUS METHOD: Determines if the player have a power up or not.
+         * 
+         * @return true if the player have a power up
+         */
+        public boolean isPowerUp() {
+            return this.state() == State.SLOWED || this.state() == State.WITH_ROLLER;
+        }
+        
+        
+        
+        /**
+         * BONUS METHOD: Determines if the player is vulnerable or not.
+         * 
+         * @return true if the player is allowed to move, false otherwise
+         */
+        public boolean isVulnerable() {
+            switch(this.state()){
+            case INVULNERABLE:
+            case DYING:
+            case DEAD:
+                return false;
+            default:
+                return true;
+            }
         }
     }
 
@@ -113,6 +141,42 @@ public final class Player {
                     pos -> new DirectedPosition(
                             pos.position.neighbor(pos.direction),
                             pos.direction));
+        }
+        
+        /**
+         * BONUS: static method that returns an infinite sequence representing the
+         * Player moving twice faster than usually
+         * 
+         * @param p
+         *            directed Position
+         * @return Sequence of directed position representing the player moving
+         *         fast
+         */
+        public static Sq<DirectedPosition> movingFast(DirectedPosition p) {
+            return Sq.iterate(p,
+                    pos -> new DirectedPosition(
+                            pos.position.neighbor(p.direction).neighbor(p.direction),
+                            p.direction));
+        }
+        
+        /**
+         * BONUS: static method that returns an infinite sequence representing the
+         * Player moving twice slower than usually
+         * 
+         * @param p
+         *            directed Position
+         * @return Sequence of directed position representing the player moving
+         *         slow
+         */
+        public static Sq<DirectedPosition> movingSlow(DirectedPosition p) {
+            Sq<DirectedPosition> directedPositions = Sq.empty();
+            SubCell pos = p.position();
+            Direction dir = p.direction();
+            for(int i=0; i<Ticks.TOTAL_TICKS/2;i++){
+                directedPositions = directedPositions.concat(Sq.repeat(2,new DirectedPosition(pos, dir))); 
+                pos=pos.neighbor(dir);
+            }
+            return directedPositions;
         }
 
         // Attributes
@@ -182,6 +246,7 @@ public final class Player {
     private final Sq<DirectedPosition> directedPos;
     private final int maxBombs;
     private final int bombRange;
+    private final boolean canKickBomb;
 
     /**
      * Constructs a player from given arguments.
@@ -196,19 +261,22 @@ public final class Player {
      *            maximal number of bombs the player can drop
      * @param bombRange
      *            range of the players bombs
+     * @param canKickBomb 
+     *            if the player can kick bomb
      * @throws NullPointerException
      *             if one of the first three arguments is null.
      * @throws IllegalArgumentException
      *             if one of the last two arguments is negative.
      */
     public Player(PlayerID id, Sq<LifeState> lifeStates,
-            Sq<DirectedPosition> directedPos, int maxBombs, int bombRange) {
+            Sq<DirectedPosition> directedPos, int maxBombs, int bombRange, boolean canKickBomb) {
 
         this.id = Objects.requireNonNull(id);
         this.lifeStates = Objects.requireNonNull(lifeStates);
         this.directedPos = Objects.requireNonNull(directedPos);
         this.maxBombs = ArgumentChecker.requireNonNegative(maxBombs);
         this.bombRange = ArgumentChecker.requireNonNegative(bombRange);
+        this.canKickBomb = canKickBomb;
     }
 
     /**
@@ -239,8 +307,9 @@ public final class Player {
              DirectedPosition.stopped(new DirectedPosition(
                      SubCell.centralSubCellOf(position), Direction.S)),
              maxBombs, 
-             bombRange);
+             bombRange, false);
     }
+    
 
     /**
      * Returns the id of the player.
@@ -358,7 +427,7 @@ public final class Player {
      */
     public Player withMaxBombs(int newMaxBombs) {
         return new Player(id(), lifeStates(), directedPositions(), newMaxBombs,
-                bombRange());
+                bombRange(), canKickBomb());
     }
 
     /**
@@ -381,8 +450,10 @@ public final class Player {
      */
     public Player withBombRange(int newBombRange) {
         return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
-                newBombRange);
+                newBombRange, canKickBomb());
     }
+    
+    
 
     /**
      * Returns a bomb, placed on the players current location. The fuseLength of
@@ -419,4 +490,73 @@ public final class Player {
                             new LifeState(lives, LifeState.State.VULNERABLE)));
         }
     }
+
+    /*
+     * BONUS
+     */
+
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he's faster for a while
+     *
+     *
+     * @return almost identical player but faster
+     */
+    public Player withRoller() {
+        Player p = withPowerUp(State.WITH_ROLLER, Ticks.ROLLER_DURATION_TICKS);
+        return new Player(id(),p.lifeStates(),
+                DirectedPosition.movingFast(directedPositions().tail().head()), //tail is a necessity since the player must be on a pair subcell
+                maxBombs(), bombRange(), canKickBomb());
+    }
+
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he's slower for a while
+     *
+     *
+     * @return almost identical player but slower
+     */
+    public Player withSnail() {
+        Player p = withPowerUp(State.SLOWED,Ticks.SNAIL_DURATION_TICKS);
+        return new Player(id(), p.lifeStates(),
+                DirectedPosition.movingSlow(p.directedPositions().head()),
+                maxBombs(), bombRange(), canKickBomb());
+    }
+
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he can kick bombs
+     *
+     * @return almost identical player but with the ability to kick bombs
+     */
+    public Player kickingBomb() {
+        return new Player(id(), lifeStates(), directedPositions(), maxBombs(),
+                bombRange(), true);
+    }
+
+    /**
+     * BONUS METHOD : Returns a new player that is completely identical except
+     * that he's powered with a bonus for a while
+     *
+     * @param powerUp
+     *            The new State of the player for a while
+     *
+     * @return almost identical player but with the new State
+     */
+    private Player withPowerUp(State powerUp, int time) {
+        Sq<LifeState> newLifeStates = Sq
+                .repeat(time,
+                        new LifeState(lives(), powerUp))
+                .concat(Sq.constant(
+                        new LifeState(lives(), LifeState.State.VULNERABLE)));
+        return new Player(id(), newLifeStates, directedPositions(), maxBombs(),
+                bombRange(), false);
+    }
+
+    public boolean canKickBomb() {
+        return canKickBomb;
+    }
+    
+
+
 }

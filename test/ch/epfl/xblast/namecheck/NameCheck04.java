@@ -1,5 +1,6 @@
 package ch.epfl.xblast.namecheck;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +67,7 @@ abstract class NameCheck04 {
         List<Bomb> bs = null;
         List<Sq<Sq<Cell>>> es = null;
         List<Sq<Cell>> xs = null;
-        GameState s = new GameState(ts, b, ps, bs, es, xs);
+        GameState s = new GameState(ts, b, ps, bs, es, xs, Collections.emptyList());
         s = new GameState(b, ps);
         ts = s.ticks();
         if (s.isGameOver()) {

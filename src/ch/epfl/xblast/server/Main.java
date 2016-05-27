@@ -125,7 +125,9 @@ public class Main {
              * 2.1) Start the game using the default initial GameState and save
              * the starting time for later time management.
              */
-            GameState gameState = LEVEL.initialGameState();
+            GameState gameState = (args.length < 2)
+                    ? LEVEL.initialGameState()
+                    : Level.chargeGameState(args[1]);
             BoardPainter boardPainter = LEVEL.boardPainter();
             long startingTime = System.nanoTime();
 

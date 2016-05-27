@@ -35,6 +35,15 @@ public final class ExplosionPainter {
         boolean white = Integer.bitCount(bomb.fuseLength()) == 1;
         return (byte) (white ? BYTE_FOR_WHITE_BOMB : BYTE_FOR_BLACK_BOMB);
     }
+    
+    /**
+     * BONUS METHOD: return the byte identifying the image to represent the given Bomb
+     * @param movingBomb
+     * @return
+     */
+    public static byte byteForBomb(MovingBomb movingBomb){
+        return byteForBomb(movingBomb.bomb());
+    }
 
     /**
      * Give the image of a blast according to the presence or absence of blasts

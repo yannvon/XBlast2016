@@ -68,7 +68,7 @@ public class PlayerTest {
 
         lifeStates = Sq.constant(new LifeState(lives, LifeState.State.VULNERABLE));
         directedPos = DirectedPosition.stopped(new DirectedPosition(subCellPosition, direction));
-        player = new Player(id, lifeStates, directedPos, maxBombs, bombRange);
+        player = new Player(id, lifeStates, directedPos, maxBombs, bombRange, false);
         player2 = new Player(id, lives, cellPosition, maxBombs, bombRange);
         deadPlayer = new Player(id, 0, cellPosition, maxBombs, bombRange);
     }
@@ -259,7 +259,7 @@ public class PlayerTest {
         Sq<LifeState> lifeStates = Sq.repeat(3, new LifeState(3, State.DYING))
             .concat(Sq.repeat(2, new LifeState(3, State.DEAD)))
             .concat(Sq.repeat(5, new LifeState(3, State.INVULNERABLE)));
-        Player player = new Player(id, lifeStates, directedPos, maxBombs, bombRange);
+        Player player = new Player(id, lifeStates, directedPos, maxBombs, bombRange, false);
 
         Sq<LifeState> playerLifeStates = player.lifeStates();
         // We know lifeStates is not infinite
@@ -279,7 +279,7 @@ public class PlayerTest {
 
         // We know lifeStates is not infinite
         while (! lifeStates.isEmpty()) {
-            LifeState playerLifeState = new Player(id, lifeStates, directedPos, maxBombs, bombRange).lifeState();
+            LifeState playerLifeState = new Player(id, lifeStates, directedPos, maxBombs, bombRange, false).lifeState();
             assertEquals(lifeStates.head().state(), playerLifeState.state());
             assertEquals(lifeStates.head().lives(), playerLifeState.lives());
             lifeStates = lifeStates.tail();
@@ -291,27 +291,27 @@ public class PlayerTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructorWithNullPlayerIdThrowsException() {
-        new Player(null, lifeStates, directedPos, maxBombs, bombRange);
+        new Player(null, lifeStates, directedPos, maxBombs, bombRange, false);
     }
 
     @Test(expected = NullPointerException.class)
     public void constructorWithNullLifeStatesThrowsException() {
-        new Player(id, null, directedPos, maxBombs, bombRange);
+        new Player(id, null, directedPos, maxBombs, bombRange, false);
     }
 
     @Test(expected = NullPointerException.class)
     public void constructorWithNullDirectedPositionThrowsException() {
-        new Player(id, lifeStates, null, maxBombs, bombRange);
+        new Player(id, lifeStates, null, maxBombs, bombRange, false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorWithNegativeMaxBombsThrowsException() {
-        new Player(id, lifeStates, directedPos, -1, bombRange);
+        new Player(id, lifeStates, directedPos, -1, bombRange, false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorWithNegativeBombRangeThrowsException() {
-        new Player(id, lifeStates, directedPos, maxBombs, -1);
+        new Player(id, lifeStates, directedPos, maxBombs, -1, false);
     }
 
     /*

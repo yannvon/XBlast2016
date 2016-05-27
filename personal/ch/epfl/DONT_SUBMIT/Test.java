@@ -1,14 +1,15 @@
 
 package ch.epfl.DONT_SUBMIT;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.server.GameState;
+import ch.epfl.xblast.server.Level;
+import ch.epfl.xblast.server.debug.GameStatePrinterwithoutColor;
 
 /**
  * @author LoicVandenberghe (257742)
@@ -20,10 +21,8 @@ import ch.epfl.xblast.PlayerID;
  */
 public class Test {
     public static void main(String[] args) {
-        List<Byte> c = new ArrayList<>();
-        c.add(null);
-        System.out.println(c.size());
-        
+       // GameState lvl= Level.chargeGameState("test");
+        //GameStatePrinterwithoutColor.printGameState(lvl);
     }
     
     /**

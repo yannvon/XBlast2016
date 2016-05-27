@@ -22,6 +22,32 @@ import ch.epfl.xblast.SubCell;
  */
 public final class GameState {
 
+    public static final class MovingBomb{
+        /*
+         * Attributes
+         */
+        private final Image image;
+        private final SubCell position;
+        
+        public MovingBomb(Image image, SubCell position){
+            this.position = Objects.requireNonNull(position);
+            this.image = image;
+        }
+
+        public Image image() {
+            return image;
+        }
+
+        public SubCell position() {
+            return position;
+        }
+        
+        
+    }
+    
+    
+    
+    
     /**
      * This immutable, statically embedded class represents a Player from the
      * point of view of the client. Therefore it is way less sophisticated than
@@ -113,6 +139,7 @@ public final class GameState {
     private final List<Image> explosions;
     private final List<Image> scoreLine;
     private final List<Image> timeLine;
+    private final List<MovingBomb> movingBombs;
     
     /**
      * Constructs a GameState given the five lists that define a GameState in
@@ -131,16 +158,15 @@ public final class GameState {
      *            list of the images representing the ScoreLine.
      * @param timeLine
      *            list of the images representing the time line (60 LED's).
+     * @param movingBombs TODO
      * @throws NullPointerException
      *             if one of the arguments is null
      * @throws IllegalArgumentException
      *             if one of the lists does not have the correct size
      */
     public GameState(List<Player> players, List<Image> board,
-            List<Image> explosions, List<Image> scoreLine, List<Image> timeLine) {
+            List<Image> explosions, List<Image> scoreLine, List<Image> timeLine, List<MovingBomb> movingBombs) {
 
-        // 1) verify that all the lists have the correct size and that they are
-        //    not null
         if (players.size() != NUMBER_OF_PLAYERS
                 || board.size() != Cell.COUNT 
                 || explosions.size() != Cell.COUNT
@@ -159,6 +185,12 @@ public final class GameState {
                 new ArrayList<>(scoreLine));
         this.timeLine = Collections.unmodifiableList(
                 new ArrayList<>(timeLine));
+        this.movingBombs=Collections.unmodifiableList(
+                new ArrayList<>(movingBombs));
+    }
+
+    public List<MovingBomb> movingBombs() {
+        return movingBombs;
     }
 
     /**

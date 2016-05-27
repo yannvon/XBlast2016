@@ -56,7 +56,7 @@ abstract class NameCheck03 {
         PlayerID pid = null;
         Sq<Player.LifeState> s = null;
         Sq<Player.DirectedPosition> d = null;
-        Player p = new Player(pid, s, d, -1, -1);
+        Player p = new Player(pid, s, d, -1, -1, false);
         Cell c = null;
         p = new Player(pid, -1, c, -1, -1);
         pid = p.id();

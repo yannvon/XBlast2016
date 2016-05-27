@@ -9,6 +9,7 @@ import java.util.Set;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.RunLengthEncoder;
+import ch.epfl.xblast.SubCell;
 
 /**
  * This public, final and non intantiable class offers a unique static method
@@ -39,8 +40,8 @@ public final class GameStateSerializer {
      *            that has to be serialized
      * @return a list of bytes representing the serialized GameState
      */
-    public static List<Byte> serialize(BoardPainter boardPainter,
-            GameState gameState) {
+
+    public static List<Byte> serialize(BoardPainter boardPainter,GameState gameState){
 
         /*
          * SERIALIZING BOARD
@@ -86,6 +87,17 @@ public final class GameStateSerializer {
         serialisedExplosions = RunLengthEncoder.encode(serialisedExplosions);
 
         /*
+         * SERIALIZING MOVING BOMBS
+         */
+        List<Byte> serialisedMovingBombs = new ArrayList<>();
+        Map<SubCell,MovingBomb> movingsBombs = gameState.movingBombsSubCells();
+        for(Map.Entry<SubCell, MovingBomb> e : movingsBombs.entrySet()){
+            serialisedMovingBombs.add(ExplosionPainter.byteForBomb(e.getValue()));
+            serialisedMovingBombs.add((byte)e.getKey().x());
+            serialisedMovingBombs.add((byte)e.getKey().y());
+        }
+        
+        /*
          * SERIALIZNG PLAYERS
          */
         List<Byte> serialisedPlayers = new ArrayList<>();
@@ -117,8 +129,10 @@ public final class GameStateSerializer {
         // --- add serialized explosions
         output.add((byte) serialisedExplosions.size());
         output.addAll(serialisedExplosions);
-        
-        // --- add serialized players
+
+        output.add((byte)serialisedMovingBombs.size());
+        output.addAll(serialisedMovingBombs);
+
         output.addAll(serialisedPlayers);
         
         // --- add serialized time

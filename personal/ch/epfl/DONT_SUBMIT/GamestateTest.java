@@ -143,7 +143,7 @@ public class GamestateTest {
         }
         Set<PlayerID> bombDropEvents = new HashSet<>();
         
-        GameState g = new GameState(0,board,p,bombList,explosions,blasts);
+        GameState g = new GameState(0,board,p,bombList,explosions,blasts, Collections.emptyList());
         for(int i = 0;i<34;++i){
             g = g.next(m, bombDropEvents);
             System.out.println(g.blastedCells());

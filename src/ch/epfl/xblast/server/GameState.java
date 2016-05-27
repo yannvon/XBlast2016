@@ -14,6 +14,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.sun.xml.internal.ws.api.policy.AlternativeSelector;
+
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.ArgumentChecker;
 import ch.epfl.xblast.Cell;
@@ -23,7 +25,6 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.Player.LifeState;
-import ch.epfl.xblast.server.Player.LifeState.State;
 
 /**
  * This class represents the current state of a game.
@@ -39,8 +40,9 @@ public final class GameState {
     private static final List<List<PlayerID>> PLAYER_PERMUTATION = Collections
             .unmodifiableList(Lists.permutations(Arrays.asList(PlayerID.values())));
     private static final Random RANDOM = new Random(2016);
-    private static final Block[] BONUS_GENERATOR = 
-            { Block.BONUS_BOMB, Block.BONUS_RANGE, Block.FREE };
+    private static final Block[] BONUS_GENERATOR = { Block.BONUS_BOMB,
+            Block.BONUS_RANGE, Block.BONUS_ROLLER, Block.BONUS_SNAIL,
+            Block.FREE, Block.BONUS_KICKBOMB };
 
     // Instance attributes
     private final int ticks;
@@ -49,6 +51,7 @@ public final class GameState {
     private final List<Bomb> bombs;
     private final List<Sq<Sq<Cell>>> explosions;
     private final List<Sq<Cell>> blasts;
+    private final List<MovingBomb> movingBombs;
 
     /**
      * Principal constructor of a GameState.
@@ -65,6 +68,7 @@ public final class GameState {
      *            current explosions
      * @param blasts
      *            current blasts
+     * @param movingBombs TODO
      * @throws IllegalArgumentException
      *             if the number of players is not 4 or if the ticks value is
      *             negative.
@@ -73,7 +77,7 @@ public final class GameState {
      */
     public GameState(int ticks, Board board, List<Player> players,
             List<Bomb> bombs, List<Sq<Sq<Cell>>> explosion,
-            List<Sq<Cell>> blasts) {
+            List<Sq<Cell>> blasts, List<MovingBomb> movingBombs) {
 
         // 1) copy lists and save an unmodifiable view of them
         this.players = Collections.unmodifiableList(
@@ -84,6 +88,8 @@ public final class GameState {
                 new ArrayList<>(Objects.requireNonNull(bombs)));
         this.blasts = Collections.unmodifiableList(
                 new ArrayList<>(Objects.requireNonNull(blasts)));
+        this.movingBombs= Collections.unmodifiableList(
+                new ArrayList<>(Objects.requireNonNull(movingBombs)));
 
         // 2) check ticks, players and board requirements
         this.ticks = ArgumentChecker.requireNonNegative(ticks);
@@ -115,7 +121,7 @@ public final class GameState {
              players,
              Collections.emptyList(),
              Collections.emptyList(),
-             Collections.emptyList());
+             Collections.emptyList(), Collections.emptyList());
     }
 
     /**
@@ -175,6 +181,7 @@ public final class GameState {
     public List<Player> players() {
         return players;
     }
+    
 
     /**
      * Returns a List containing all currently alive players only.
@@ -185,7 +192,21 @@ public final class GameState {
         return players().stream().filter(Player::isAlive)
                 .collect(Collectors.toList());
     }
-
+    
+    /**TODO
+     * @return
+     */
+    public Map<Cell,MovingBomb> movingBombsCells(){
+        return movingBombsCells(movingBombs);
+    }
+    
+    /**TODO
+     * @return
+     */
+    public Map<SubCell,MovingBomb> movingBombsSubCells(){
+        return movingBombsSubCells(movingBombs);
+    }
+    
     /**
      * Returns a map that associates the bombs to the Cells they occupy.
      * 
@@ -253,7 +274,7 @@ public final class GameState {
 
         // 4.1) add all newly dropped bombs (using sortedPlayers method to
         // resolve conflicts)
-        bombs0.addAll(newlyDroppedBombs(sortedPlayers, bombDrpEvents, bombs));
+        bombs0.addAll(newlyDroppedBombs(sortedPlayers, bombDrpEvents, bombs,movingBombs));
 
         // 4.2) every bomb either explodes (and disappears) or evolves (fuse-1).
         for (Bomb b : bombs0) {
@@ -269,14 +290,88 @@ public final class GameState {
                 bombs1.add(new Bomb(b.ownerId(), b.position(), newFuse, b.range()));
             }
         }
-
+        Map<Cell,Bomb> bombedCells1 = bombedCells(bombs1);
         // 5) evolve players
         List<Player> players1 = nextPlayers(players(), playerBonuses,
-                bombedCells(bombs1).keySet(), board1, blastedCells1,
+                bombedCells1.keySet(), board1, blastedCells1,
                 speedChangeEvents);
 
+        //7)evolve moving bombs
+
+        /*
+         * add new kickedBomb
+         */
+        List<MovingBomb> movingBombs0 = new ArrayList<>(movingBombs);
+        for(Player p:sortedPlayers){
+            SubCell nextSubCell = p.directedPositions().tail().head().position();
+            SubCell currentSubCell = p.position();
+            boolean movingTowardsCentral = currentSubCell
+                    .distanceToCentral() > nextSubCell.distanceToCentral();
+            boolean blockedByBomb = bombedCells1
+                    .containsKey(currentSubCell.containingCell())
+                    && currentSubCell
+                            .distanceToCentral() == ALLOWED_DISTANCE_TO_BOMB
+                    && movingTowardsCentral;
+            if(blockedByBomb && p.canKickBomb()){
+                movingBombs0.add(bombedCells1.get(currentSubCell.containingCell()).kickedBomb(p.direction()));
+                bombs1.remove(bombedCells1.get(currentSubCell.containingCell())) ;//FIXME aie
+            }
+        }
+        /*
+         * Evolve movingBombs
+         */
+        List<MovingBomb> movingBombs1= new ArrayList<>();
+        for(Map.Entry<SubCell,MovingBomb> cb: movingBombsSubCells(movingBombs0).entrySet()){
+            
+            MovingBomb newBomb = cb.getValue();
+            if (!newBomb.fuseLengths().tail().isEmpty()){
+                newBomb=newBomb.next();
+            }
+            SubCell subCell = cb.getKey();
+            /*
+             * determine if the moving bomb should explode
+             */
+            boolean explode= false;
+            //if touch a player
+            for(Player p : alivePlayers()){
+                explode |= p.position().distanceTo(newBomb.subCell())<6;
+            }
+            //if touch another movingBomb
+            for(MovingBomb mb : movingBombs1){
+                explode |= mb.subCell().distanceTo(newBomb.subCell())<=8;
+            }
+            //if his fuselength is empty or the bomb is blasted
+            explode |= newBomb.bomb().fuseLengths().tail().isEmpty();
+            explode |= blastedCells1.contains(subCell.containingCell());
+            
+            /*
+             * determine if the bomb should stop (if blocked by a wall)
+             */
+            SubCell nextCentral = newBomb.getDirectedPosition().findFirst(d->d.position().isCentral()).position();
+            boolean stopped = !board1.blockAt(nextCentral.containingCell()).canHostPlayer() && newBomb.subCell().distanceToCentral()>=2;
+            
+            //Determine if the bomb is on contact with an fixed bomb
+            boolean ricochet= bombedCells1.containsKey(nextCentral.containingCell()) && newBomb.subCell().distanceToCentral()>=2;
+
+            
+            if(explode)
+                explosions1.addAll(newBomb.explosion());
+            else if(ricochet){
+                bombs1.add(newBomb.bomb());
+                bombs1.remove(bombedCells1.get(nextCentral.containingCell()));
+                movingBombs1.add(bombedCells1.get(nextCentral.containingCell()).kickedBomb(newBomb.getDirectedPosition().head().direction()));
+            }else if(stopped){
+                bombs1.add(newBomb.bomb());
+            }else
+                movingBombs1.add(newBomb);
+        }
+            
+                
+                
+        
+        
         // 6) construct and return the new GameStates
-        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1);
+        return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1, movingBombs1);
     }
 
     /*
@@ -427,10 +522,11 @@ public final class GameState {
      *            events of players wanting to drop bombs
      * @param bombs0
      *            bombs that are currently placed
+     * @param movingBombs0 
      * @return a list of all the newly dropped bombs
      */
     private static List<Bomb> newlyDroppedBombs(List<Player> players0,
-            Set<PlayerID> bombDropEvents, List<Bomb> bombs0) {
+            Set<PlayerID> bombDropEvents, List<Bomb> bombs0, List<MovingBomb> movingBombs0) {
 
         // Create a set containing all currently placed bombs
         Set<Cell> placedBombs = new HashSet<>(bombedCells(bombs0).keySet());
@@ -452,6 +548,11 @@ public final class GameState {
             int placedBombsNb = 0;
             for (Bomb b : bombs0) {
                 if (b.ownerId() == p.id()) {
+                    ++placedBombsNb;
+                }
+            }
+            for (MovingBomb mb : movingBombs0) {
+                if (mb.ownerId() == p.id()) {
                     ++placedBombsNb;
                 }
             }
@@ -549,7 +650,7 @@ public final class GameState {
             // defining some useful variables
             SubCell currentSubCell = p.position();
             SubCell nextSubCell = directedPositions1.tail().head().position();
-            Block nextBlock = board1.blockAt(directedPositions1.tail()
+            Block nextBlock = board1.blockAt(directedPositions1.tail().tail()
                     .findFirst(d -> d.position().isCentral()).position()
                     .containingCell());
             
@@ -572,7 +673,7 @@ public final class GameState {
 
             // Finally add the new moved player to the list
             players1.add(new Player(p.id(), p.lifeStates(), directedPositions1,
-                    p.maxBombs(), p.bombRange()));
+                    p.maxBombs(), p.bombRange(), p.canKickBomb()));
         }
         return Collections.unmodifiableList(players1);
     }
@@ -606,7 +707,15 @@ public final class GameState {
          * 2) a player can immediately go back or continue in same direction
          */
         if (speedChange.isPresent() && d.isParallelTo(p.direction())) {
+            //BONUS
+            switch(p.lifeState().state()){
+            case SLOWED:
+                return DirectedPosition.movingSlow(new DirectedPosition(p.position(),d));
+            case WITH_ROLLER:
+                return DirectedPosition.movingFast(new DirectedPosition(p.position(),d));
+            default:
             return DirectedPosition.moving(new DirectedPosition(p.position(),d));
+            }
         }
 
         /*
@@ -617,15 +726,28 @@ public final class GameState {
             /*
              * 3.1) compute first part of the sequence
              */
-            Sq<DirectedPosition> dp1 = sq
-                    .takeWhile(t -> !t.position().isCentral());
+            Sq<DirectedPosition> dp1= sq.takeWhile(t -> !t.position().isCentral());
+            
             /*
-             * 3.2) compute second part: the player either stays at the central
+             * Bonus choose the speed of the player
+             */
+            Sq<DirectedPosition> moving;
+            switch(p.lifeState().state()){
+            case SLOWED:
+                moving= DirectedPosition.movingSlow(new DirectedPosition(nextCentral.position(),d));
+                break;
+            case WITH_ROLLER:
+                moving= DirectedPosition.movingFast(new DirectedPosition(nextCentral.position(),d));
+                break;
+            default:
+                moving=DirectedPosition.moving(new DirectedPosition(nextCentral.position(), d)); 
+            }
+            /*
+             * 3.3) compute second part: the player either stays at the central
              * SubCell or takes a turn.
              */
             Sq<DirectedPosition> dp2 = speedChange.isPresent()
-                    ? DirectedPosition.moving(
-                            new DirectedPosition(nextCentral.position(), d))
+                    ? moving
                     : DirectedPosition.stopped(nextCentral);
             return dp1.concat(dp2);
         }
@@ -652,13 +774,13 @@ public final class GameState {
 
             boolean blasted = blastedCells1
                     .contains(p.position().containingCell());
-            boolean vulnerable = p.lifeState().state() == State.VULNERABLE;
+            boolean vulnerable = p.lifeState().isVulnerable();
 
             Sq<LifeState> lifeStates1 = (blasted && vulnerable)
                     ? p.statesForNextLife() : p.lifeStates().tail();
 
             newStatePlayer.add(new Player(p.id(), lifeStates1,
-                    p.directedPositions(), p.maxBombs(), p.bombRange()));
+                    p.directedPositions(), p.maxBombs(), p.bombRange(), p.canKickBomb()));
         }
         return Collections.unmodifiableList(newStatePlayer);
     }
@@ -699,6 +821,33 @@ public final class GameState {
         Map<Cell, Bomb> bombedCells = bombs.stream()
                 .collect(Collectors.toMap(Bomb::position, b -> b));
         return Collections.unmodifiableMap(bombedCells);
+    }
+    
+    /**
+     * BONUS METHOD
+     * @param movingBombs
+     * @return
+     */
+    private static Map<Cell, MovingBomb> movingBombsCells(List<MovingBomb> movingBombs) {
+
+        Map<Cell, MovingBomb> bombedcells = new HashMap<>();
+        for (MovingBomb bomb : movingBombs) {
+            bombedcells.put(bomb.cell(), bomb);
+        }
+        return Collections.unmodifiableMap(bombedcells);
+    }
+    /**
+     * BONUS METHOD
+     * @param movingBombs
+     * @return
+     */
+    private static Map<SubCell, MovingBomb> movingBombsSubCells(List<MovingBomb> movingBombs) {
+
+        Map<SubCell, MovingBomb> bombedcells = new HashMap<>();
+        for (MovingBomb bomb : movingBombs) {
+            bombedcells.put(bomb.subCell(), bomb);
+        }
+        return Collections.unmodifiableMap(bombedcells);
     }
 
     /**

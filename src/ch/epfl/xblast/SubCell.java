@@ -55,6 +55,17 @@ public final class SubCell {
         return Math.abs(x() % SUBDIVISION - CENTRAL)
                 + Math.abs(y() % SUBDIVISION - CENTRAL);
     }
+    
+    
+    /**
+     * Determines the Manhattan distance to the SubCell.
+     * 
+     * @return length of shortest Manhattan path to a central SubCell
+     */
+    public int distanceTo(SubCell subCell) {
+        return Math.abs(x() - subCell.x())
+                + Math.abs(y()- subCell.y());
+    }
 
     /**
      * Determine whether this SubCell is a central SubCell or not.
