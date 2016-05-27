@@ -52,7 +52,7 @@ public final class ImageCollection {
                      * We don't want to abort the operation if one image fails
                      * to load.
                      */
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         } catch (URISyntaxException e) {
