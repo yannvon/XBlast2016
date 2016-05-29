@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import ch.epfl.xblast.server.Level;
@@ -224,8 +225,9 @@ public class MainGUI {
             e1.printStackTrace();
         }
         
-        JFormattedTextField textIP = new JFormattedTextField();
-        textIP.setValue(myip);
+        JTextArea textIP = new JTextArea();
+        textIP.insert(myip, 0);
+        textIP.setEditable(false);
         ImageIcon ipIcon = new ImageIcon(GUI_COLLECTION.image((byte) 004)
                 .getScaledInstance(50, 50,
                         Image.SCALE_SMOOTH));
