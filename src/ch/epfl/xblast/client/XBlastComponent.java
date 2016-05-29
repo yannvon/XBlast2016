@@ -191,7 +191,6 @@ public final class XBlastComponent extends JComponent {
          * Draw winner message
          */
         if (gameState.isGameOver()) {
-            System.out.println("xbc gameState is over");
             g.drawImage(GameEndPainter.imageForWinner(gameState.winner()),
                     CENTER_X, CENTER_Y, null);
         }
