@@ -111,9 +111,7 @@ public class LocalGame {
                     speedChangeEvents.put(id, Optional.empty());
                 default:
                     break;
-
                 }
-
             }
             actions.clear();
 
@@ -133,7 +131,7 @@ public class LocalGame {
     }
 
     /**
-     * 
+     * Method called in EDT thread in charge of the Swing part.
      */
     public static void createUI() {
 
@@ -143,13 +141,11 @@ public class LocalGame {
         JFrame f = new JFrame("XBlast 2016");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         xbc = new XBlastComponent();
-
         f.getContentPane().add(xbc);
 
+        f.pack();
         f.setResizable(false);
         f.setVisible(true);
-        f.pack();
-        xbc.requestFocusInWindow();
 
         /*
          * Consumers
@@ -166,6 +162,7 @@ public class LocalGame {
                 KeyboardEventHandler.CONTROL_MAP_MULTI.get(0), CONSP1));
         xbc.addKeyListener(new KeyboardEventHandler(
                 KeyboardEventHandler.CONTROL_MAP_MULTI.get(1), CONSP2));
+        xbc.requestFocusInWindow();
 
     }
 }

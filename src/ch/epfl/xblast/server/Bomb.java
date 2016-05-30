@@ -155,14 +155,17 @@ public final class Bomb {
 
         return Sq.repeat(Ticks.EXPLOSION_TICKS, arm);
     }
-    
-    
+
     /**
-     * BONUS METHOD: return a moving version of the bomb
+     * BONUS METHOD: returns a moving version of this bomb.
+     * 
      * @param dir
-     * @return
+     *            direction to which the bomb was kicked
+     * @return moving bomb
      */
-    public MovingBomb kickedBomb(Direction dir){
-        return new MovingBomb(this,DirectedPosition.movingFast(new DirectedPosition(SubCell.centralSubCellOf(position()),dir)));
+    public MovingBomb kickedBomb(Direction dir) {
+        return new MovingBomb(this,
+                DirectedPosition.movingFast(new DirectedPosition(
+                        SubCell.centralSubCellOf(position()), dir)));
     }
 }

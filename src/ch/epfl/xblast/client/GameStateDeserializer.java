@@ -28,7 +28,7 @@ public final class GameStateDeserializer {
     /*
      * General constants
      */
-    public static final int TIMELINE_LENGTH = 60;   //FIXME public for GameState
+    public static final int TIMELINE_LENGTH = 60;   // public for GameState
     public static final int SCORELINE_LENGTH = 20;
     
     private static final int BYTES_PER_PLAYER = 4;
@@ -138,7 +138,7 @@ public final class GameStateDeserializer {
             boardRepresentation[c.rowMajorIndex()] = BLOCK_COLLECTION
                     .image(boardIterator.next());
         }
-        return Collections.unmodifiableList(Arrays.asList(boardRepresentation)); //FIXME unmodifiable
+        return Collections.unmodifiableList(Arrays.asList(boardRepresentation));
     }
 
     /**
@@ -259,9 +259,11 @@ public final class GameStateDeserializer {
     }
 
     /**
-     * BONUS METHOD
+     * BONUS METHOD: deserializes moving bombs.
+     * 
      * @param subList
-     * @return
+     *            list of bytes containing all moving bombs
+     * @return list of all moving bombs
      */
     private static List<MovingBomb> deserializeMovingBombs(List<Byte> deMovingBombs) {
         List<MovingBomb> movingBombs= new ArrayList<>();

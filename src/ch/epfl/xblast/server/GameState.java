@@ -360,7 +360,7 @@ public final class GameState {
                 movingBombs1.add(newBomb);
         }
             
-        // 8) construct and return the new GameStates
+        // 7) construct and return the new GameStates
         return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1, movingBombs1);
     }
 

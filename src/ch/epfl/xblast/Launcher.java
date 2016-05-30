@@ -50,11 +50,9 @@ public class Launcher {
     private static final String NO_IP_MESSAGE = "No IP address found.";
 
     /**
-     * Main method of the XBlast 2016.
+     * Main method of the XBlast 2016. This is the class that should be called
+     * when starting a game. It is in charge of everything.
      * 
-     * @param args
-     *            IP-address of the Server. If none localhost is used as default
-     *            address.
      * @throws Exception
      */
     public static void main(String[] args) throws Exception{

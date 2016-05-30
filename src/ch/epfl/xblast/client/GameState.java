@@ -24,30 +24,48 @@ import ch.epfl.xblast.SubCell;
  */
 public final class GameState {
 
+    /**
+     * This immutable, statically embedded class represents a MovingBomb from the
+     * point of view of the client.
+     */
     public static final class MovingBomb{
         /*
          * Attributes
          */
         private final Image image;
         private final SubCell position;
-        
+
+        /**
+         * Constructor of a moving bomb.
+         * 
+         * @param image
+         *            image representing the bomb
+         * @param position
+         *            of the bomb
+         */
         public MovingBomb(Image image, SubCell position){
             this.position = Objects.requireNonNull(position);
             this.image = image;
         }
 
+        /**
+         * Getter for the image.
+         * 
+         * @return image of the bomb
+         */
         public Image image() {
             return image;
         }
 
+        /**
+         * Getter for the position.
+         * 
+         * @return position of the bomb
+         */
         public SubCell position() {
             return position;
         }
-        
-        
     }
-    
-    
     
     
     /**
@@ -168,7 +186,8 @@ public final class GameState {
      *            list of the images representing the ScoreLine.
      * @param timeLine
      *            list of the images representing the time line (60 LED's).
-     * @param movingBombs TODO
+     * @param movingBombs
+     *            list of all moving bombs
      * @throws NullPointerException
      *             if one of the arguments is null
      * @throws IllegalArgumentException
@@ -247,7 +266,7 @@ public final class GameState {
     public List<Image> timeLine() {
         return timeLine;
     }
-    
+
     /**
      * Indicates whether the game is over or not.
      * 
@@ -257,24 +276,30 @@ public final class GameState {
         return players().stream().filter(Player::isAlive)
                 .collect(Collectors.toList());
     }
-    
+
     /**
-     * Indicates whether the game is over or not.
+     * Indicates whether the game is over or not. The exact implementation is
+     * incomplete and should be changed.
      * 
      * @return true if game is over, false otherwise
      */
     public boolean isGameOver() {
-        return alivePlayer().size() <= 1;   //FIXME not taking into account time over!
+        /*
+         * We don't take into account that a game can be over after a certain
+         * time. This is done in order to avoid supplementary attributes of this
+         * class (namely an attribute ticks or remainingTime) Nevertheless this
+         * simplified version does the job for what we wanted to achieve.
+         */
+        return alivePlayer().size() <= 1;
     }
-    
+
     /**
      * Optional of the winner.
      * 
-     * @return
+     * @return optional of the winner.
      */
     public Optional<Player> winner() {
         return alivePlayer().size() == 1 ? Optional.of(alivePlayer().get(0))
                 : Optional.empty();
     }
-
 }

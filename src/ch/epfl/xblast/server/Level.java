@@ -23,7 +23,7 @@ import ch.epfl.xblast.PlayerID;
 public final class Level {
     
     /*
-     * DEFAULT LEVEL
+     * DEFAULT LEVELS
      */
     public static final Level DEFAULT_LEVEL = new Level(defaultBoardPainter(),
             chargeGameState("DEFAULT"));
@@ -132,7 +132,7 @@ public final class Level {
 
             }
             /*
-             * add alives players
+             * add alive players
              */
             Cell[] startingPos = { new Cell(startingX, startingY),
                     new Cell(-startingX - 1, -startingY - 1),
