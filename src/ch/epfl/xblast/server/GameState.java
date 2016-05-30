@@ -67,7 +67,8 @@ public final class GameState {
      *            current explosions
      * @param blasts
      *            current blasts
-     * @param movingBombs TODO
+     * @param movingBombs
+     *            the list of moving bombs
      * @throws IllegalArgumentException
      *             if the number of players is not 4 or if the ticks value is
      *             negative.
@@ -192,15 +193,11 @@ public final class GameState {
                 .collect(Collectors.toList());
     }
     
-    /**TODO
-     * @return
-     */
-    public Map<Cell,MovingBomb> movingBombsCells(){
-        return movingBombsCells(movingBombs);
-    }
     
-    /**TODO
-     * @return
+    /**
+     * Returns a map associating the bombs to the SubCell they occupy.
+     * 
+     * @return map associating the bombs to the SubCell
      */
     public Map<SubCell,MovingBomb> movingBombsSubCells(){
         return movingBombsSubCells(movingBombs);
@@ -290,16 +287,15 @@ public final class GameState {
             }
         }
         Map<Cell,Bomb> bombedCells1 = bombedCells(bombs1);
+        
         // 5) evolve players
         List<Player> players1 = nextPlayers(players(), playerBonuses,
                 bombedCells1.keySet(), board1, blastedCells1,
                 speedChangeEvents);
 
-        //7)evolve moving bombs
+        // 6) evolve moving bombs
 
-        /*
-         * add new kickedBomb
-         */
+        // 6.1) add newly kicked bombs
         List<MovingBomb> movingBombs0 = new ArrayList<>(movingBombs);
         for(Player p:sortedPlayers){
             SubCell nextSubCell = p.directedPositions().tail().head().position();
@@ -313,12 +309,11 @@ public final class GameState {
                     && movingTowardsCentral;
             if(blockedByBomb && p.canKickBomb()){
                 movingBombs0.add(bombedCells1.get(currentSubCell.containingCell()).kickedBomb(p.direction()));
-                bombs1.remove(bombedCells1.get(currentSubCell.containingCell())) ;//FIXME aie
+                bombs1.remove(bombedCells1.get(currentSubCell.containingCell())) ;
             }
         }
-        /*
-         * Evolve movingBombs
-         */
+        
+        // 6.2) Evolve already movingBombs
         List<MovingBomb> movingBombs1= new ArrayList<>();
         for(Map.Entry<SubCell,MovingBomb> cb: movingBombsSubCells(movingBombs0).entrySet()){
             
@@ -365,11 +360,7 @@ public final class GameState {
                 movingBombs1.add(newBomb);
         }
             
-                
-                
-        
-        
-        // 6) construct and return the new GameStates
+        // 8) construct and return the new GameStates
         return new GameState(ticks() + 1, board1, players1, bombs1, explosions1, blasts1, movingBombs1);
     }
 
@@ -822,31 +813,23 @@ public final class GameState {
         return Collections.unmodifiableMap(bombedCells);
     }
     
-    /**
-     * BONUS METHOD
-     * @param movingBombs
-     * @return
-     */
-    private static Map<Cell, MovingBomb> movingBombsCells(List<MovingBomb> movingBombs) {
 
-        Map<Cell, MovingBomb> bombedcells = new HashMap<>();
-        for (MovingBomb bomb : movingBombs) {
-            bombedcells.put(bomb.cell(), bomb);
-        }
-        return Collections.unmodifiableMap(bombedcells);
-    }
+
     /**
-     * BONUS METHOD
+     * BONUS METHOD: returns a map associating the MovingBombs to their
+     * position.
+     * 
      * @param movingBombs
-     * @return
+     *            list of all moving bombs
+     * @return map associating the MovingBombs to their position
      */
     private static Map<SubCell, MovingBomb> movingBombsSubCells(List<MovingBomb> movingBombs) {
 
-        Map<SubCell, MovingBomb> bombedcells = new HashMap<>();
+        Map<SubCell, MovingBomb> bombedCells = new HashMap<>();
         for (MovingBomb bomb : movingBombs) {
-            bombedcells.put(bomb.subCell(), bomb);
+            bombedCells.put(bomb.subCell(), bomb);
         }
-        return Collections.unmodifiableMap(bombedcells);
+        return Collections.unmodifiableMap(bombedCells);
     }
 
     /**
