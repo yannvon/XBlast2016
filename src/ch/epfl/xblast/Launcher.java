@@ -1,4 +1,4 @@
-package ch.epfl.xblast.client;
+package ch.epfl.xblast;
 
 import java.awt.BorderLayout;
 import java.awt.Choice;
@@ -22,6 +22,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import ch.epfl.xblast.client.ImageCollection;
 import ch.epfl.xblast.server.Level;
 
 /**
@@ -31,7 +32,7 @@ import ch.epfl.xblast.server.Level;
  * @author Yann Vonlanthen (258857)
  *
  */
-public class MainGUI {
+public class Launcher {
 
     /*
      * Constants
