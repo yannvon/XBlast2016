@@ -27,6 +27,7 @@ public final class KeyboardEventHandler extends KeyAdapter
      */
     public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls();
     public static final List<Map<Integer, PlayerAction>> CONTROL_MAP_MULTI = controlsMulti();
+    
     /*
      * Attributes
      */

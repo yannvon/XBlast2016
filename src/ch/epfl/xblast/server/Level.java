@@ -1,7 +1,6 @@
 package ch.epfl.xblast.server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -22,13 +21,6 @@ import ch.epfl.xblast.PlayerID;
  *
  */
 public final class Level {
-    
-    /*
-     * Constants
-     */
-    private static final Block __ = Block.FREE;
-    private static final Block XX = Block.INDESTRUCTIBLE_WALL;
-    private static final Block xx = Block.DESTRUCTIBLE_WALL;
     
     /*
      * DEFAULT LEVEL
@@ -57,58 +49,6 @@ public final class Level {
         palette.put(Block.BONUS_ROLLER,BlockImage.BONUS_ROLLER);
         palette.put(Block.BONUS_SNAIL, BlockImage.BONUS_SNAIL);
         palette.put(Block.BONUS_KICKBOMB, BlockImage.BONUS_KICKBOMB);
-
-        return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
-    }
-
-    /**
-     * ADDITIONAL static method that constructs the default initial GameState,
-     * consisting of the default Board and the default player configuration.
-     * 
-     * The default player configuration places all players in the corner and the
-     * players start with 3 lives, a bomb range of 3 and 2 maximal bombs.
-     * 
-     * @return a default BoardPainter
-     */
-    private static GameState defaultGameState() {
-        int defaultLives = 3;
-        int defaultBombs = 2;
-        int defaultRange = 3;
-        List<Cell> defaultStartingPos = Arrays.asList(new Cell(1, 1),
-                new Cell(13, 1), new Cell(13, 11), new Cell(1, 11));
-
-        Board board = Board.ofQuadrantNWBlocksWalled(
-                Arrays.asList(
-                        Arrays.asList(__, __, __, __, __, xx, __),
-                        Arrays.asList(__, XX, xx, XX, xx, XX, xx),
-                        Arrays.asList(__, xx, __, __, __, xx, __),
-                        Arrays.asList(xx, XX, __, XX, XX, XX, XX),
-                        Arrays.asList(__, xx, __, xx, __, __, __),
-                        Arrays.asList(xx, XX, xx, XX, xx, XX, __)));
-
-        List<Player> players = new ArrayList<>();
-        for (PlayerID id : PlayerID.values()) {
-            players.add(new Player(id, defaultLives,
-                    defaultStartingPos.get(id.ordinal()), defaultBombs,
-                    defaultRange));
-        }
-
-        return new GameState(board, players);
-    }
-
-    private static BoardPainter randomBoardPainter() {
-
-        Map<Block, BlockImage> palette = new HashMap<>();
-
-        palette.put(Block.INDESTRUCTIBLE_WALL, BlockImage.DARK_BLOCK);
-        palette.put(Block.FREE, BlockImage.IRON_FLOOR);
-        palette.put(Block.DESTRUCTIBLE_WALL, BlockImage.EXTRA);
-        palette.put(Block.CRUMBLING_WALL, BlockImage.EXTRA_O);
-        palette.put(Block.BONUS_RANGE, BlockImage.RANDOM_BONUS);
-        palette.put(Block.BONUS_BOMB, BlockImage.RANDOM_BONUS);
-        palette.put(Block.BONUS_SNAIL, BlockImage.RANDOM_BONUS);
-        palette.put(Block.BONUS_ROLLER, BlockImage.RANDOM_BONUS);
-        palette.put(Block.BONUS_KICKBOMB, BlockImage.RANDOM_BONUS);
 
         return new BoardPainter(palette, BlockImage.IRON_FLOOR_S);
     }
