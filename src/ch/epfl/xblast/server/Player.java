@@ -505,7 +505,7 @@ public final class Player {
     public Player withRoller() {
         Player p = withPowerUp(State.WITH_ROLLER, Ticks.ROLLER_DURATION_TICKS);
         return new Player(id(),p.lifeStates(),
-                DirectedPosition.movingFast(directedPositions().tail().head()), //tail is a necessity since the player must be on a pair subcell
+                DirectedPosition.movingFast(new DirectedPosition(SubCell.centralSubCellOf(position().containingCell()), direction())), //tail is a necessity since the player must be on a pair subcell
                 maxBombs(), bombRange(), canKickBomb());
     }
 
