@@ -144,11 +144,12 @@ public final class Player {
         }
         
         /**
-         * BONUS: static method that returns an infinite sequence representing the
+         * BONUS METHOD: static method that returns an infinite sequence representing the
          * Player moving twice faster than usually
          * 
          * @param p
          *            directed Position
+         *            
          * @return Sequence of directed position representing the player moving
          *         fast
          */
@@ -165,6 +166,7 @@ public final class Player {
          * 
          * @param p
          *            directed Position
+         *            
          * @return Sequence of directed position representing the player moving
          *         slow
          */
@@ -503,9 +505,16 @@ public final class Player {
      * @return almost identical player but faster
      */
     public Player withRoller() {
-        Player p = withPowerUp(State.WITH_ROLLER, Ticks.ROLLER_DURATION_TICKS);
-        return new Player(id(),p.lifeStates(),
-                DirectedPosition.movingFast(new DirectedPosition(SubCell.centralSubCellOf(position().containingCell()), direction())), //tail is a necessity since the player must be on a pair subcell
+        /*
+         * the directedPosition have to begin at the central subCell. otherwise
+         * the player is moving on odd subcell and will never reach others
+         * centrals subcell neither the Stop-Distance to a bomb
+         */
+        return new Player(id(),
+                withPowerUp(State.WITH_ROLLER, Ticks.ROLLER_DURATION_TICKS),
+                DirectedPosition.movingFast(new DirectedPosition(
+                        SubCell.centralSubCellOf(position().containingCell()),
+                        direction())),
                 maxBombs(), bombRange(), canKickBomb());
     }
 
@@ -517,9 +526,9 @@ public final class Player {
      * @return almost identical player but slower
      */
     public Player withSnail() {
-        Player p = withPowerUp(State.SLOWED,Ticks.SNAIL_DURATION_TICKS);
-        return new Player(id(), p.lifeStates(),
-                DirectedPosition.movingSlow(p.directedPositions().head()),
+        return new Player(id(),
+                withPowerUp(State.SLOWED, Ticks.SNAIL_DURATION_TICKS),
+                DirectedPosition.movingSlow(directedPositions().head()),
                 maxBombs(), bombRange(), canKickBomb());
     }
 
@@ -535,24 +544,25 @@ public final class Player {
     }
 
     /**
-     * BONUS METHOD : Returns a new player that is completely identical except
-     * that he's powered with a bonus for a while
+     * BONUS METHOD : Construct a Sequence of LifeState using the given state.
      *
      * @param powerUp
      *            The new State of the player for a while
      *
-     * @return almost identical player but with the new State
+     * @return the new sequence of life state after taken a bonus that influence
+     *         the state
      */
-    private Player withPowerUp(State powerUp, int time) {
-        Sq<LifeState> newLifeStates = Sq
-                .repeat(time,
-                        new LifeState(lives(), powerUp))
-                .concat(Sq.constant(
-                        new LifeState(lives(), LifeState.State.VULNERABLE)));
-        return new Player(id(), newLifeStates, directedPositions(), maxBombs(),
-                bombRange(), false);
+    private Sq<LifeState> withPowerUp(State powerUp, int time) {
+        return Sq.repeat(time, new LifeState(lives(), powerUp)).concat(Sq
+                .constant(new LifeState(lives(), LifeState.State.VULNERABLE)));
     }
 
+    /**
+     * BONUS METHOD: getter: true if the player can kick a bomb
+     * 
+     * @return the possibility (or the impossibility) for a player to kick a
+     *         bomb
+     */
     public boolean canKickBomb() {
         return canKickBomb;
     }

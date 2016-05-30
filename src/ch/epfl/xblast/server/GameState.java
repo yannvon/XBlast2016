@@ -322,6 +322,7 @@ public final class GameState {
                 newBomb=newBomb.next();
             }
             SubCell subCell = cb.getKey();
+            
             /*
              * determine if the moving bomb should explode
              */
@@ -344,7 +345,9 @@ public final class GameState {
             SubCell nextCentral = newBomb.getDirectedPosition().findFirst(d->d.position().isCentral()).position();
             boolean stopped = !board1.blockAt(nextCentral.containingCell()).canHostPlayer() && newBomb.subCell().distanceToCentral()>=2;
             
-            //Determine if the bomb is on contact with an fixed bomb
+            /*
+             * Determine if the bomb is on contact with an fixed bomb
+             */
             boolean ricochet= bombedCells1.containsKey(nextCentral.containingCell()) && newBomb.subCell().distanceToCentral()>=2;
 
             
@@ -672,6 +675,9 @@ public final class GameState {
      * ADDITIONAL METHOD for nextMovedPlayers. Constructs a sequence of
      * DirectedPositions according to where the player wants to go.
      * 
+     * BONUS: the "speed" of the directedPositions is construct according to the
+     * State of the player
+     * 
      * @param p
      *            player that wants to move
      * @param speedChangeEvent
@@ -697,14 +703,16 @@ public final class GameState {
          * 2) a player can immediately go back or continue in same direction
          */
         if (speedChange.isPresent() && d.isParallelTo(p.direction())) {
-            //BONUS
+            /*
+             * BONUS: the speed depend on the state of the player
+             */
             switch(p.lifeState().state()){
             case SLOWED:
                 return DirectedPosition.movingSlow(new DirectedPosition(p.position(),d));
             case WITH_ROLLER:
                 return DirectedPosition.movingFast(new DirectedPosition(p.position(),d));
             default:
-            return DirectedPosition.moving(new DirectedPosition(p.position(),d));
+                return DirectedPosition.moving(new DirectedPosition(p.position(),d));
             }
         }
 
@@ -719,7 +727,7 @@ public final class GameState {
             Sq<DirectedPosition> dp1= sq.takeWhile(t -> !t.position().isCentral());
             
             /*
-             * Bonus choose the speed of the player
+             * Bonus
              */
             Sq<DirectedPosition> moving;
             switch(p.lifeState().state()){
@@ -825,10 +833,7 @@ public final class GameState {
      */
     private static Map<SubCell, MovingBomb> movingBombsSubCells(List<MovingBomb> movingBombs) {
 
-        Map<SubCell, MovingBomb> bombedCells = new HashMap<>();
-        for (MovingBomb bomb : movingBombs) {
-            bombedCells.put(bomb.subCell(), bomb);
-        }
+        Map<SubCell, MovingBomb> bombedCells = movingBombs.stream().collect(Collectors.toMap(MovingBomb::subCell, b -> b));
         return Collections.unmodifiableMap(bombedCells);
     }
 
