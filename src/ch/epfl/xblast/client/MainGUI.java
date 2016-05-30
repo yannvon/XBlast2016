@@ -8,10 +8,7 @@ import java.awt.Image;
 import java.awt.Label;
 import java.io.File;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -115,9 +112,7 @@ public class MainGUI {
         /*
          * LOCAL GAME
          */
-        //1)Input TODO different Levels or options
-        
-        //2)button
+        //1) buttons
         JButton localButton = new JButton("Local Game");
         localButton.addActionListener(e -> {
             String[] arg= {levelChoice.getSelectedItem()};
@@ -133,7 +128,7 @@ public class MainGUI {
             new Thread(localMain).start();
             f.dispose();});
         
-        //3)Panel
+        //2)Panel
         JPanel localPanel = new JPanel(new BorderLayout());
         localPanel.add(localButton,BorderLayout.EAST);
         localPanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, TAB_COLOR));
@@ -142,7 +137,7 @@ public class MainGUI {
          * JOIN GAME
          */
         //1)Input
-        JLabel instruction1 = new JLabel(" Enter server ip address  :  ",Label.LEFT);//FIXME What the fuck????
+        JLabel instruction1 = new JLabel(" Enter server ip address  :  ", Label.LEFT);
         
         JFormattedTextField textboxIP = new JFormattedTextField();
         textboxIP.setValue(DEFAULT_HOST);
@@ -276,8 +271,8 @@ public class MainGUI {
         panel.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GENERAL_COLOR));
         f.getContentPane().add(panel);
 
-        f.setResizable(false);
         f.pack();
+        f.setResizable(false);
         f.setVisible(true);
     }
 }

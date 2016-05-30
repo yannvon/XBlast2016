@@ -25,7 +25,7 @@ public final class KeyboardEventHandler extends KeyAdapter
     /*
      * Constants
      */
-    public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls(); //FIXME correct?
+    public static final Map<Integer, PlayerAction> DEFAULT_CONTROL_MAP = defaultControls();
     public static final List<Map<Integer, PlayerAction>> CONTROL_MAP_MULTI = controlsMulti();
     /*
      * Attributes
@@ -68,28 +68,7 @@ public final class KeyboardEventHandler extends KeyAdapter
         controlsP2.put(KeyEvent.VK_CONTROL, PlayerAction.STOP);
         controls.add(controlsP2);
         
-        /*TODO
-        //P3
-        Map<Integer, PlayerAction> controlsP3 = new HashMap<>();
-        controlsP3.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
-        controlsP3.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
-        controlsP3.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
-        controlsP3.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
-        controlsP3.put(KeyEvent.VK_SPACE, PlayerAction.DROP_BOMB);
-        controlsP3.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
-        controls.add(controlsP3);
-        
-        // P4
-        Map<Integer, PlayerAction> controlsP4 = new HashMap<>();
-        controlsP4.put(KeyEvent.VK_UP, PlayerAction.MOVE_N);
-        controlsP4.put(KeyEvent.VK_DOWN, PlayerAction.MOVE_S);
-        controlsP4.put(KeyEvent.VK_LEFT, PlayerAction.MOVE_W);
-        controlsP4.put(KeyEvent.VK_RIGHT, PlayerAction.MOVE_E);
-        controlsP4.put(KeyEvent.VK_SPACE, PlayerAction.DROP_BOMB);
-        controlsP4.put(KeyEvent.VK_SHIFT, PlayerAction.STOP);
-        controls.add(controlsP4);
-        */
-        return Collections.unmodifiableList(controls);
+         return Collections.unmodifiableList(controls);
     }
 
     /**

@@ -18,7 +18,6 @@ import javax.swing.SwingUtilities;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerAction;
 import ch.epfl.xblast.PlayerID;
-import ch.epfl.xblast.server.Bonus;
 
 /**
  * Main class of the Client. In charge of communicating with the server and

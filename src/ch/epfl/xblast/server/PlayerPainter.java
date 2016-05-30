@@ -1,7 +1,5 @@
 package ch.epfl.xblast.server;
 
-import java.util.Optional;
-
 /**
  * This non-instanciable class offers static methods to "paint" a player.
  * 
