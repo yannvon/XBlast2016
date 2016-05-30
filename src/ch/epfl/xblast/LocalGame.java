@@ -37,10 +37,6 @@ public class LocalGame {
     private static final Level DEFAULT_LEVEL = Level.TWO_PLAYER_LEVEL;
 
     /*
-     * Controls FIXME
-     */
-    
-    /*
      * Attributes
      */
     private static XBlastComponent xbc;
@@ -49,11 +45,11 @@ public class LocalGame {
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
         /*
          * Phase 1:
-         *      Select the Level TODO
+         * 
+         * Select the Level.
          */
 
         Level lvl = (args.length == 0)?DEFAULT_LEVEL:new Level(DEFAULT_LEVEL.boardPainter(), Level.chargeGameState(args[0]));
-        //TODO
         
         GameState gameState =  lvl.initialGameState();
         long startingTime = System.nanoTime();
@@ -162,14 +158,10 @@ public class LocalGame {
                 .put(PlayerID.PLAYER_1, playerAction);
         Consumer<PlayerAction> CONSP2 = (playerAction) -> actions
                 .put(PlayerID.PLAYER_2, playerAction);
-        Consumer<PlayerAction> CONSP3 = (playerAction) -> actions
-                .put(PlayerID.PLAYER_3, playerAction);
-        Consumer<PlayerAction> CONSP4 = (playerAction) -> actions
-                .put(PlayerID.PLAYER_4, playerAction);
 
-            /*
-             * keyListener
-             */
+        /*
+         * keyListener
+         */
         xbc.addKeyListener(new KeyboardEventHandler(
                 KeyboardEventHandler.CONTROL_MAP_MULTI.get(0), CONSP1));
         xbc.addKeyListener(new KeyboardEventHandler(
