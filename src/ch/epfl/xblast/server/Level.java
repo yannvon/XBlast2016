@@ -54,8 +54,7 @@ public final class Level {
     }
 
     /**
-     * Bonus method that import a gameState from a file TODO method to export
-     * gameState
+     * Bonus method that imports a gameState from a file.
      * 
      * @param name
      *            is the name of the file to import
@@ -111,7 +110,6 @@ public final class Level {
                     case '_':
                         row.add(Block.FREE);
                         break;
-                    // TODO bonuses
                     }
                 }
                 boardList.add(row);

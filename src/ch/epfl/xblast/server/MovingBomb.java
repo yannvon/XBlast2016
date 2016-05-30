@@ -13,13 +13,14 @@ import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 
 /**
- * Immutable class that represent a moving bomb (kicked by a player)
+ * Immutable class that represent a moving bomb (kicked by a player).
  * 
  * @author Loïc Vandenberghe (257742)
  * @author Yann Vonlanthen (258857)
  *
  */
 public final class MovingBomb {
+    
     /*
      * Attributes
      */
