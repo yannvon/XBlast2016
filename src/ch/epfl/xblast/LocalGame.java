@@ -1,14 +1,12 @@
 package ch.epfl.xblast;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -35,23 +33,19 @@ public class LocalGame {
     /**
      * Constants
      */
-
     private static final UnaryOperator<Integer> ACTION_TO_DIR_ORDINAL = x -> x - 1;
     private static final Level DEFAULT_LEVEL = Level.TWO_PLAYER_LEVEL;
+
     /*
-     * Controls 
+     * Controls FIXME
      */
     
-    /**
+    /*
      * Attributes
      */
     private static XBlastComponent xbc;
     private static Map<PlayerID,PlayerAction> actions = new HashMap<>();
     
-    
-    
-    
-
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
         /*
          * Phase 1:
@@ -100,8 +94,8 @@ public class LocalGame {
             Map<PlayerID, Optional<Direction>> speedChangeEvents = new HashMap<>();
             Set<PlayerID> bombDrpEvent = new HashSet<>();
 
-            for (Map.Entry<PlayerID,PlayerAction> e: actions.entrySet()) {
-                
+            for (Map.Entry<PlayerID, PlayerAction> e : actions.entrySet()) {
+
                 PlayerAction action = e.getValue();
                 PlayerID id = e.getKey();
                 switch (action) {
@@ -113,9 +107,9 @@ public class LocalGame {
                 case MOVE_W:
                 case MOVE_E:
                     int dirOrdinal = ACTION_TO_DIR_ORDINAL
-                    .apply(action.ordinal());
-                    speedChangeEvents.put(id, Optional
-                            .of(Direction.values()[dirOrdinal]));
+                            .apply(action.ordinal());
+                    speedChangeEvents.put(id,
+                            Optional.of(Direction.values()[dirOrdinal]));
                     break;
                 case STOP:
                     speedChangeEvents.put(id, Optional.empty());
@@ -123,7 +117,7 @@ public class LocalGame {
                     break;
 
                 }
-                
+
             }
             actions.clear();
 
@@ -134,36 +128,36 @@ public class LocalGame {
         }
 
         /*
-         *  3) Display last gameState (for winner message bonus)
+         * 3) Display last gameState (for winner message bonus)
          */
         List<Byte> serialized = GameStateSerializer
                 .serialize(lvl.boardPainter(), gameState);
-        xbc.setGameState(GameStateDeserializer.deserializeGameState(serialized), PlayerID.PLAYER_1);
+        xbc.setGameState(GameStateDeserializer.deserializeGameState(serialized),
+                PlayerID.PLAYER_1);
     }
-    
-        
+
     /**
      * 
      */
-    public static void createUI(){
-            
-            /*
-             * Open new Window.
-             */
-            JFrame f = new JFrame("XBlast 2016");
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            xbc = new XBlastComponent();
-            
-            f.getContentPane().add(xbc);
-            
-            f.setResizable(false);
-            f.setVisible(true);
-            f.pack();
-            xbc.requestFocusInWindow();
-    
-            /*
-             * Consumers
-             */
+    public static void createUI() {
+
+        /*
+         * Open new Window.
+         */
+        JFrame f = new JFrame("XBlast 2016");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        xbc = new XBlastComponent();
+
+        f.getContentPane().add(xbc);
+
+        f.setResizable(false);
+        f.setVisible(true);
+        f.pack();
+        xbc.requestFocusInWindow();
+
+        /*
+         * Consumers
+         */
         Consumer<PlayerAction> CONSP1 = (playerAction) -> actions
                 .put(PlayerID.PLAYER_1, playerAction);
         Consumer<PlayerAction> CONSP2 = (playerAction) -> actions
@@ -176,9 +170,10 @@ public class LocalGame {
             /*
              * keyListener
              */
-            xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.CONTROL_MAP_MULTI.get(0), CONSP1));
-            xbc.addKeyListener(new KeyboardEventHandler(KeyboardEventHandler.CONTROL_MAP_MULTI.get(1), CONSP2));
+        xbc.addKeyListener(new KeyboardEventHandler(
+                KeyboardEventHandler.CONTROL_MAP_MULTI.get(0), CONSP1));
+        xbc.addKeyListener(new KeyboardEventHandler(
+                KeyboardEventHandler.CONTROL_MAP_MULTI.get(1), CONSP2));
 
-        }
-
+    }
 }

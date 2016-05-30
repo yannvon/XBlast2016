@@ -19,7 +19,7 @@ public class GameEndPainter {
      * Constants
      */
     // --- images for winner printing
-    private static final int BYTE_NO_WINNER = 000;
+    private static final int BYTE_NO_WINNER = 0;
     private static final int[] BYTES_WINNER = {1, 2, 3, 4};
 
     // --- ImageCollection
@@ -34,7 +34,6 @@ public class GameEndPainter {
      */
     public static Image imageForWinner(Optional<Player> p){
         if(!p.isPresent()){
-            System.out.println("i was called");
             return SCORE_COLLECTION.imageOrNull(BYTE_NO_WINNER);
         }
         else {
