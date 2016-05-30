@@ -104,6 +104,21 @@ public final class Level {
                     case 'x':
                         row.add(Block.DESTRUCTIBLE_WALL);
                         break;
+                    case 'B':
+                        row.add(Block.BONUS_BOMB);
+                        break;
+                    case 'R':
+                        row.add(Block.BONUS_RANGE);
+                        break;
+                    case 'K':
+                        row.add(Block.BONUS_KICKBOMB);
+                        break;
+                    case 'F':
+                        row.add(Block.BONUS_ROLLER);
+                        break;
+                    case 'S':
+                        row.add(Block.BONUS_SNAIL);
+                        break;
                     case 'p':
                         startingX = x + 1;
                         startingY = y + 1;

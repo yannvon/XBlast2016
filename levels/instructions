@@ -7,6 +7,11 @@ Model for a gameState file:
 <board with:
 X=indestructible
 x=destuctible
+B = Bonus_bomb
+R = bonus Range
+S = bonus Slow
+F = bonus roller
+K = bonus Kick
 _=free
 p=starting position and free cell
 >
