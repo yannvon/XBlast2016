@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerAction;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.server.Bonus;
 
 /**
  * Main class of the Client. In charge of communicating with the server and
@@ -37,7 +38,8 @@ public class Main {
      */
     private static final int PORT = 2016;
     private static final int MAX_RECEIVING_BYTES = 2 * (Cell.COUNT + 1)
-            + 4 * PlayerID.values().length + 2;
+            + PlayerID.values().length * 3 * 9 + 4 * PlayerID.values().length
+            + 2;
     private static final int JOIN_REQUEST_REPEATING_TIME = 1000;
     private static final String DEFAULT_HOST = "localhost";
 

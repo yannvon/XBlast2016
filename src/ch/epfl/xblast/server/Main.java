@@ -39,7 +39,8 @@ public class Main {
     private static final int NUMBER_OF_PLAYERS = PlayerID.values().length;
     private static final int DEFAULT_NUMBER_OF_CLIENTS = NUMBER_OF_PLAYERS;
     private static final int MAX_SENDING_BYTES = 2 * (Cell.COUNT + 1)
-            + 4 * NUMBER_OF_PLAYERS + 2;
+            + PlayerID.values().length * 3 * 9 + 4 * PlayerID.values().length
+            + 2;
     private static final SocketAddress PORT_ADDRESS = new InetSocketAddress(2016);
 
     /**
